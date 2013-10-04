@@ -6,7 +6,7 @@ import communication.protocols.*;
 import communication.messages.*;
 
 /**
- * A general server networking interface
+ * A generic client-to-server communication server interface
  * @author Balazs Pete
  *
  */

@@ -5,6 +5,11 @@ import java.net.*;
 
 import communication.messages.*;
 
+/**
+ * A client-to-server networking client implemented using sockets
+ * @author Balazs Pete
+ *
+ */
 public class ClientUnicastSocketNetworkingInterface extends Thread implements
 		ClientNetworkingInterface {
 
@@ -16,6 +21,11 @@ public class ClientUnicastSocketNetworkingInterface extends Thread implements
     private ObjectOutputStream out = null;
     private ObjectInputStream in = null;
 	
+    /**
+     * Create an instance of UnicastSocketNetworkingClient
+     * @param host The host to connect to 
+     * @param port The port to bind to
+     */
 	public ClientUnicastSocketNetworkingInterface(String host, int port) {
 		this.host = host;
 		this.port = port;

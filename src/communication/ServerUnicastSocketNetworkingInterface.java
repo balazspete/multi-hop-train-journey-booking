@@ -6,11 +6,21 @@ import java.net.*;
 import communication.protocols.*;
 import communication.messages.*;
 
+/**
+ * A client-to-server networking server implemented using sockets
+ * @author Balazs Pete
+ *
+ */
 public class ServerUnicastSocketNetworkingInterface extends ServerCommunicationInterface {
 
 	private Protocol protocol = null;
 	private int port;
 	
+	/**
+	 * Create an instance of UnicastSocketNetworkingServer
+	 * @param protocol The protocol to used to handle messages
+	 * @param port The port to bind the interface to
+	 */
 	public ServerUnicastSocketNetworkingInterface(Protocol protocol, int port) {
 		this.protocol = protocol;
 		this.port = port;
@@ -42,11 +52,21 @@ public class ServerUnicastSocketNetworkingInterface extends ServerCommunicationI
 		}
 	}
 	
+	/**
+	 * A message handling wrapper to process messages in a separate thread
+	 * @author Balazs Pete
+	 *
+	 */
 	protected class MessageHandler extends Thread {
 		
 		private Socket socket = null;
 		private Protocol protocol = null;
 		
+		/**
+		 * Create a new instance of MessageHandler
+		 * @param protocol The protocol to use
+		 * @param socket The socket to use to send reply
+		 */
 		public MessageHandler(Protocol protocol, Socket socket) {
 			this.socket = socket;
 			this.protocol = protocol;
@@ -54,7 +74,6 @@ public class ServerUnicastSocketNetworkingInterface extends ServerCommunicationI
 		
 		public void run() {
 			try {
-
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 				
