@@ -6,7 +6,7 @@ import java.net.*;
 import communication.protocols.*;
 import communication.messages.*;
 
-public class ServerUnicastSocketNetworkingInterface extends ServerNetworkingInterface {
+public class ServerUnicastSocketNetworkingInterface extends ServerCommunicationInterface {
 
 	private Protocol protocol = null;
 	private int port;
