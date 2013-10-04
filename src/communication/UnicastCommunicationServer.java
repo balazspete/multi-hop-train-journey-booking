@@ -12,7 +12,7 @@ import communication.messages.*;
  */
 public abstract class UnicastCommunicationServer extends Thread {
 
-	protected HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
+	protected volatile HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
 	
 	/**
 	 * Start accepting incoming connections and messages
@@ -25,7 +25,7 @@ public abstract class UnicastCommunicationServer extends Thread {
 	 * @param protocol The Protocol to add
 	 */
 	public synchronized void putProtocol(Protocol protocol) {
-		protocolMap.put(protocol.getAcceptedMessageType(), protocol);
+		protocolMap.put(protocol.getAcceptedMessageType().intern(), protocol);
 	}
 	
 	/**

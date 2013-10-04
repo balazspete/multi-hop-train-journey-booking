@@ -8,7 +8,7 @@ import java.io.Serializable;
  *
  */
 public class TextMessage extends Message {
-
+	
 	/**
 	 * 
 	 */
@@ -45,6 +45,11 @@ public class TextMessage extends Message {
 	 */
 	public void setContents(String content) {
 		message = content;
+	}
+
+	@Override
+	public String getType() {
+		return "TextMessage";
 	}
 
 }
