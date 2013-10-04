@@ -6,6 +6,6 @@ public interface Protocol {
 
 	public String getAcceptedMessageType();
 	
-	public Message processMessage(Message message);
+	public Message processMessage(Object message);
 	
 }

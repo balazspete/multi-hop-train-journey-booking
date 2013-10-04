@@ -11,11 +11,11 @@ public abstract class ServerNetworkingInterface extends Thread {
 	
 	public abstract void acceptConnections() throws CommunicationException;
 	
-	public void addProtocol(Protocol protocol) {
+	public synchronized void addProtocol(Protocol protocol) {
 		protocolMap.put(protocol.getAcceptedMessageType(), protocol);
 	}
 	
-	public void removeProtocol(Protocol protocol) {
+	public synchronized void removeProtocol(Protocol protocol) {
 		protocolMap.remove(protocol.getAcceptedMessageType());
 	}
 	
