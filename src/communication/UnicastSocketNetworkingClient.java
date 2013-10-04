@@ -27,7 +27,7 @@ public class UnicastSocketNetworkingClient extends Thread implements
      * @param port The port to bind to
      */
 	public UnicastSocketNetworkingClient(String host, int port) {
-		this.host = host;
+		this.host = host.intern();
 		this.port = port;
 	}
 	
@@ -104,7 +104,7 @@ public class UnicastSocketNetworkingClient extends Thread implements
 			i.sendMessage(new TextMessage("hello"));
 			
 			Message m = i.getMessage();
-			i.sendMessage(new TextMessage("hello"));
+			System.out.println(m.getType() +"\n"+ m.getContents());
 			i.endConnection();
 		} catch (CommunicationException e) {
 			e.printStackTrace();

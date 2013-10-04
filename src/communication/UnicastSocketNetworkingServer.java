@@ -2,6 +2,7 @@ package communication;
 
 import java.io.*;
 import java.net.*;
+import java.util.Map;
 
 import communication.protocols.*;
 import communication.messages.*;
@@ -13,16 +14,13 @@ import communication.messages.*;
  */
 public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 
-	private Protocol protocol = null;
 	private int port;
 	
 	/**
 	 * Create an instance of UnicastSocketNetworkingServer
-	 * @param protocol The protocol to used to handle messages
 	 * @param port The port to bind the interface to
 	 */
-	public UnicastSocketNetworkingServer(Protocol protocol, int port) {
-		this.protocol = protocol;
+	public UnicastSocketNetworkingServer(int port) {
 		this.port = port;
 	}
 
@@ -35,7 +33,7 @@ public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
             serverSocket = new ServerSocket(port);
             
             while (listening) {
-            	new MessageHandler(protocol, serverSocket.accept()).start();
+            	new MessageHandler(protocolMap, serverSocket.accept()).start();
             }
             
 			serverSocket.close();
@@ -60,16 +58,16 @@ public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 	protected class MessageHandler extends Thread {
 		
 		private Socket socket = null;
-		private Protocol protocol = null;
+		private Map<String, Protocol> protocolMap = null;
 		
 		/**
 		 * Create a new instance of MessageHandler
 		 * @param protocol The protocol to use
 		 * @param socket The socket to use to send reply
 		 */
-		public MessageHandler(Protocol protocol, Socket socket) {
+		public MessageHandler(Map<String, Protocol> protocolMap, Socket socket) {
 			this.socket = socket;
-			this.protocol = protocol;
+			this.protocolMap = protocolMap;
 		}
 		
 		public void run() {
@@ -90,7 +88,18 @@ public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 			    	
 			    	if (object == null) break;
 			    	
-					Message message = protocol.processMessage(object);
+			    	Message input = (Message) object;
+			    	
+			    	System.out.println(input.getType());
+			    	Protocol protocol = protocolMap.get(input.getType().intern());
+			    	
+					Message message;
+					if(protocol != null) {
+						message = protocol.processMessage(object);
+					} else {
+						message = new ErrorMessage("Message type not supported");
+					}
+					
 					out.writeObject(message);
 			    }
 			    	
@@ -104,7 +113,9 @@ public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 	}
 	
 	public static void main(String[] args) {
-		UnicastSocketNetworkingServer i = new UnicastSocketNetworkingServer(new LoopbackProtocol(), 8000);
+		UnicastSocketNetworkingServer i = new UnicastSocketNetworkingServer(8000);
+		i.putProtocol(new LoopbackProtocol());
+		
 		try {
 			i.acceptConnections();
 		} catch (CommunicationException e) {

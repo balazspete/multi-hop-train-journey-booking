@@ -11,7 +11,7 @@ public class LoopbackProtocol implements Protocol {
 
 	@Override
 	public String getAcceptedMessageType() {
-		return "TextMessage";
+		return "TextMessage".intern();
 	}
 
 	@Override
