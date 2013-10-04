@@ -20,14 +20,27 @@ public abstract class BroadcastReceiver extends ProtocolControlledMessenger {
 	protected abstract boolean endConnection();
 	
 	/**
-	 * Handle the input broadcast message
-	 * @param message The broadcast message
+	 * Listen to and retrieve a broadcasted message
+	 * @return The received Message
 	 */
-	protected abstract void handleBroadcastMessage(Message message);
+	protected abstract Message getBroadcastMessage();
+	
+	/**
+	 * Stop listening to broadcasts
+	 */
+	protected void stopListening() {
+		listening = false;
+	}
 	
 	private void listenToBroadcasts() {
-		while (listening)
-			return;//getBroadcastMessage();
+		while (listening) {
+			Message msg = getBroadcastMessage();
+			try {
+				processMessage(msg);
+			} catch (InvalidMessageException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	@Override
