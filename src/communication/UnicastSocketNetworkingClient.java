@@ -83,6 +83,7 @@ public class UnicastSocketNetworkingClient extends Thread implements
 	public Message getMessage() throws CommunicationException {
 		Object object;
 		try {
+			// try to get message and check if input stream has ended
 			if ((object = in.readObject()) == null) {
 				throw new CommunicationException("Connection with server terminated");
 			}
