@@ -72,6 +72,7 @@ public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 		
 		public void run() {
 			try {
+				// Pass the socket streams to writable object streams
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 				
@@ -86,13 +87,14 @@ public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 						continue;
 					}
 			    	
+			    	// If stream has ended, end listening and close communication
 			    	if (object == null) break;
 			    	
+			    	// Determine protocol to be used
 			    	Message input = (Message) object;
-			    	
-			    	System.out.println(input.getType());
 			    	Protocol protocol = protocolMap.get(input.getType().intern());
 			    	
+			    	// Process message and get response
 					Message message;
 					if(protocol != null) {
 						message = protocol.processMessage(object);
@@ -100,7 +102,9 @@ public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 						message = new ErrorMessage("Message type not supported");
 					}
 					
+					// Send message
 					out.writeObject(message);
+					out.flush();
 			    }
 			    	
 			    out.close();
