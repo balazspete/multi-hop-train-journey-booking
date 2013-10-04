@@ -11,7 +11,7 @@ import communication.messages.*;
  *
  */
 public class UnicastSocketNetworkingClient extends Thread implements
-		ClientNetworkingInterface {
+		UnicastCommunicationClient {
 
 	private String host;
 	private int port;

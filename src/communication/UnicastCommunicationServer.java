@@ -10,7 +10,7 @@ import communication.messages.*;
  * @author Balazs Pete
  *
  */
-public abstract class ServerCommunicationInterface extends Thread {
+public abstract class UnicastCommunicationServer extends Thread {
 
 	protected HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
 	

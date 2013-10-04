@@ -11,7 +11,7 @@ import communication.messages.*;
  * @author Balazs Pete
  *
  */
-public class UnicastSocketNetworkingServer extends ServerCommunicationInterface {
+public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 
 	private Protocol protocol = null;
 	private int port;

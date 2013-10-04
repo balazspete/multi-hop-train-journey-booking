@@ -7,7 +7,7 @@ import communication.messages.Message;
  * @author Balazs Pete
  *
  */
-public interface ClientNetworkingInterface {
+public interface UnicastCommunicationClient {
 
 	/**
 	 * Establish a connection to the server
