@@ -18,9 +18,7 @@ public abstract class Message implements Serializable {
 	 * Get the type of the message
 	 * @return The type of the message
 	 */
-	public String getType() {
-		return this.getClass().getName();
-	}
+	public abstract String getType();
 	
 	/**
 	 * Get the contents of the message
