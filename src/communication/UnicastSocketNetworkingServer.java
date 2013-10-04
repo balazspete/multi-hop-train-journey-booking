@@ -11,7 +11,7 @@ import communication.messages.*;
  * @author Balazs Pete
  *
  */
-public class ServerUnicastSocketNetworkingInterface extends ServerCommunicationInterface {
+public class UnicastSocketNetworkingServer extends ServerCommunicationInterface {
 
 	private Protocol protocol = null;
 	private int port;
@@ -21,7 +21,7 @@ public class ServerUnicastSocketNetworkingInterface extends ServerCommunicationI
 	 * @param protocol The protocol to used to handle messages
 	 * @param port The port to bind the interface to
 	 */
-	public ServerUnicastSocketNetworkingInterface(Protocol protocol, int port) {
+	public UnicastSocketNetworkingServer(Protocol protocol, int port) {
 		this.protocol = protocol;
 		this.port = port;
 	}
@@ -104,7 +104,7 @@ public class ServerUnicastSocketNetworkingInterface extends ServerCommunicationI
 	}
 	
 	public static void main(String[] args) {
-		ServerUnicastSocketNetworkingInterface i = new ServerUnicastSocketNetworkingInterface(new LoopbackProtocol(), 8000);
+		UnicastSocketNetworkingServer i = new UnicastSocketNetworkingServer(new LoopbackProtocol(), 8000);
 		try {
 			i.acceptConnections();
 		} catch (CommunicationException e) {

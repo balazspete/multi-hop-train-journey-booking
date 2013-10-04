@@ -10,7 +10,7 @@ import communication.messages.*;
  * @author Balazs Pete
  *
  */
-public class ClientUnicastSocketNetworkingInterface extends Thread implements
+public class UnicastSocketNetworkingClient extends Thread implements
 		ClientNetworkingInterface {
 
 	private String host;
@@ -26,7 +26,7 @@ public class ClientUnicastSocketNetworkingInterface extends Thread implements
      * @param host The host to connect to 
      * @param port The port to bind to
      */
-	public ClientUnicastSocketNetworkingInterface(String host, int port) {
+	public UnicastSocketNetworkingClient(String host, int port) {
 		this.host = host;
 		this.port = port;
 	}
@@ -98,7 +98,7 @@ public class ClientUnicastSocketNetworkingInterface extends Thread implements
 	}
 
 	public static void main(String[] args) {
-		ClientUnicastSocketNetworkingInterface i=new ClientUnicastSocketNetworkingInterface("localhost", 8000);
+		UnicastSocketNetworkingClient i=new UnicastSocketNetworkingClient("localhost", 8000);
 		try {
 			i.createConnection();
 			i.sendMessage(new TextMessage("hello"));
