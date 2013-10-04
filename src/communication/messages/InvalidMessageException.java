@@ -8,6 +8,11 @@ package communication.messages;
 public class InvalidMessageException extends Exception {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4750296226455787348L;
+
+	/**
 	 * Create a new InvalidMessageException
 	 * @param message The message describing the exception
 	 */
