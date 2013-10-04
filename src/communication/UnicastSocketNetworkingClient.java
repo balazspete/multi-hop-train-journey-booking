@@ -5,8 +5,13 @@ import java.net.*;
 
 import communication.messages.*;
 
-public class ClientUnicastSocketNetworkingInterface extends Thread implements
-		ClientNetworkingInterface {
+/**
+ * A client-to-server networking client implemented using sockets
+ * @author Balazs Pete
+ *
+ */
+public class UnicastSocketNetworkingClient extends Thread implements
+		UnicastCommunicationClient {
 
 	private String host;
 	private int port;
@@ -16,7 +21,12 @@ public class ClientUnicastSocketNetworkingInterface extends Thread implements
     private ObjectOutputStream out = null;
     private ObjectInputStream in = null;
 	
-	public ClientUnicastSocketNetworkingInterface(String host, int port) {
+    /**
+     * Create an instance of UnicastSocketNetworkingClient
+     * @param host The host to connect to 
+     * @param port The port to bind to
+     */
+	public UnicastSocketNetworkingClient(String host, int port) {
 		this.host = host;
 		this.port = port;
 	}
@@ -88,7 +98,7 @@ public class ClientUnicastSocketNetworkingInterface extends Thread implements
 	}
 
 	public static void main(String[] args) {
-		ClientUnicastSocketNetworkingInterface i=new ClientUnicastSocketNetworkingInterface("localhost", 8000);
+		UnicastSocketNetworkingClient i=new UnicastSocketNetworkingClient("localhost", 8000);
 		try {
 			i.createConnection();
 			i.sendMessage(new TextMessage("hello"));
