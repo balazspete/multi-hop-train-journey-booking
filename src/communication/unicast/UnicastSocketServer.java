@@ -1,9 +1,10 @@
-package communication;
+package communication.unicast;
 
 import java.io.*;
 import java.net.*;
 import java.util.Map;
 
+import communication.CommunicationException;
 import communication.protocols.*;
 import communication.messages.*;
 
@@ -12,7 +13,7 @@ import communication.messages.*;
  * @author Balazs Pete
  *
  */
-public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
+public class UnicastSocketServer extends UnicastServer {
 
 	private int port;
 	
@@ -20,7 +21,7 @@ public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 	 * Create an instance of UnicastSocketNetworkingServer
 	 * @param port The port to bind the interface to
 	 */
-	public UnicastSocketNetworkingServer(int port) {
+	public UnicastSocketServer(int port) {
 		this.port = port;
 	}
 
@@ -117,7 +118,7 @@ public class UnicastSocketNetworkingServer extends UnicastCommunicationServer {
 	}
 	
 	public static void main(String[] args) {
-		UnicastSocketNetworkingServer i = new UnicastSocketNetworkingServer(8000);
+		UnicastSocketServer i = new UnicastSocketServer(8000);
 		i.putProtocol(new LoopbackProtocol());
 		
 		try {

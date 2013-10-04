@@ -1,8 +1,9 @@
-package communication;
+package communication.unicast;
 
 import java.io.*;
 import java.net.*;
 
+import communication.CommunicationException;
 import communication.messages.*;
 
 /**
@@ -10,8 +11,8 @@ import communication.messages.*;
  * @author Balazs Pete
  *
  */
-public class UnicastSocketNetworkingClient extends Thread implements
-		UnicastCommunicationClient {
+public class UnicastSocketClient extends Thread implements
+		UnicastClient {
 
 	private String host;
 	private int port;
@@ -26,7 +27,7 @@ public class UnicastSocketNetworkingClient extends Thread implements
      * @param host The host to connect to 
      * @param port The port to bind to
      */
-	public UnicastSocketNetworkingClient(String host, int port) {
+	public UnicastSocketClient(String host, int port) {
 		this.host = host.intern();
 		this.port = port;
 	}
@@ -99,7 +100,7 @@ public class UnicastSocketNetworkingClient extends Thread implements
 	}
 
 	public static void main(String[] args) {
-		UnicastSocketNetworkingClient i=new UnicastSocketNetworkingClient("localhost", 8000);
+		UnicastSocketClient i=new UnicastSocketClient("localhost", 8000);
 		try {
 			i.createConnection();
 			i.sendMessage(new TextMessage("hello"));

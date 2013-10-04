@@ -1,7 +1,8 @@
-package communication;
+package communication.unicast;
 
 import java.util.HashMap;
 
+import communication.CommunicationException;
 import communication.protocols.*;
 import communication.messages.*;
 
@@ -10,7 +11,7 @@ import communication.messages.*;
  * @author Balazs Pete
  *
  */
-public abstract class UnicastCommunicationServer extends Thread {
+public abstract class UnicastServer extends Thread {
 
 	protected volatile HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
 	

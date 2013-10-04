@@ -1,5 +1,6 @@
-package communication;
+package communication.unicast;
 
+import communication.CommunicationException;
 import communication.messages.Message;
 
 /**
@@ -7,7 +8,7 @@ import communication.messages.Message;
  * @author Balazs Pete
  *
  */
-public interface UnicastCommunicationClient {
+public interface UnicastClient {
 
 	/**
 	 * Establish a connection to the server
