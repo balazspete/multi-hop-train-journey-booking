@@ -1,10 +1,11 @@
 package communication.broadcast;
 
+import communication.CommunicationException;
 import communication.messages.*;
 import communication.protocols.ProtocolControlledMessenger;
 
 /**
- * A generic description of a Broadcast receiver node
+ * A generic description of a broadcast receiver node
  * @author Balazs Pete
  *
  */
@@ -13,22 +14,26 @@ public abstract class BroadcastReceiver extends ProtocolControlledMessenger {
 	private boolean listening = true;
 	
 	/**
-	 * Establish a connection to the server
-	 * @return True of the communication was established successfully
+	 * Establish a connection to the {@link BroadcastSender}
+	 * @return True if the communication was established successfully
+	 * @throws CommunicationException Thrown in case an error occurred while creating the connection
 	 */
-	protected abstract boolean createConnection();
+	protected abstract boolean createConnection() throws CommunicationException;
 	
 	/**
-	 * Terminate the connection to the server
+	 * Terminate the connection to the {@link BroadcastServer}
 	 * @return true if the connection was terminated successfully
+	 * @throws CommunicationException Thrown in case the connection could not be closed properly
 	 */
-	protected abstract boolean endConnection();
+	protected abstract boolean endConnection() throws CommunicationException;
 	
 	/**
 	 * Listen to and retrieve a broadcasted message
-	 * @return The received Message
+	 * @return The received {@link Message}
+	 * @throws ComunicationException Thrown in case an error occurred while receiving the message
+	 * @throws InvalidMessageException Thrown if the received {@link Message} could not be processed
 	 */
-	protected abstract Message getBroadcastMessage();
+	protected abstract Message getBroadcastMessage() throws CommunicationException, InvalidMessageException;
 	
 	/**
 	 * Stop listening to broadcasts
@@ -39,9 +44,12 @@ public abstract class BroadcastReceiver extends ProtocolControlledMessenger {
 	
 	private void listenToBroadcasts() {
 		while (listening) {
-			Message msg = getBroadcastMessage();
+			Message msg;
 			try {
+				msg = getBroadcastMessage();
 				processMessage(msg);
+			} catch (CommunicationException e) {
+				e.printStackTrace();
 			} catch (InvalidMessageException e) {
 				e.printStackTrace();
 			}
@@ -50,8 +58,19 @@ public abstract class BroadcastReceiver extends ProtocolControlledMessenger {
 	
 	@Override
 	public void run() {
-		createConnection();
+		try {
+			createConnection();
+		} catch (CommunicationException e) {
+			e.printStackTrace();
+			return;
+		}
+		
 		listenToBroadcasts();
-		endConnection();
+		
+		try {
+			endConnection();
+		} catch (CommunicationException e) {
+			e.printStackTrace();
+		}
 	}
 }

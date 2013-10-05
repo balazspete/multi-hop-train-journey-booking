@@ -2,6 +2,7 @@ package communication.broadcast;
 
 import java.util.*;
 
+import communication.CommunicationException;
 import communication.messages.*;
 
 /**
@@ -14,9 +15,10 @@ public abstract class BroadcastSender extends Thread {
 	private Set<BroadcastClientHandler> connectionHandlers = new HashSet<BroadcastClientHandler>();
 
 	/**
-	 * Start accepting connections from {@link BroadcastReceiver}s
+	 * Start accepting connections from {@link BroadcastReceiver}s and handle new connections
+	 * @throws CommunicationException Thrown if an error occurred during setup
 	 */
-	public abstract void acceptConnections();
+	public abstract void acceptConnections() throws CommunicationException;
 	
 	/**
 	 * Add a {@link BroadcastClientHandler}
@@ -43,5 +45,4 @@ public abstract class BroadcastSender extends Thread {
 			handler.addMessage(message);
 		}
 	}
-	
 }

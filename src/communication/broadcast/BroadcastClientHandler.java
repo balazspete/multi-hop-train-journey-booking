@@ -9,6 +9,8 @@ public abstract class BroadcastClientHandler implements Runnable {
 
 	private final int MAX_TRIES = 3;
 	
+	private boolean sendBroadcasts = true;
+	
 	private Queue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
 	private Object monitor = null;
 	
@@ -39,6 +41,13 @@ public abstract class BroadcastClientHandler implements Runnable {
 	}
 	
 	/**
+	 * Terminate broadcasts
+	 */
+	protected void endBroadcasts() {
+		sendBroadcasts = false;
+	}
+	
+	/**
 	 * Send the input {@link Message}
 	 * @param message The {@link Message} to be sent
 	 */
@@ -47,7 +56,7 @@ public abstract class BroadcastClientHandler implements Runnable {
 	@Override
 	public void run() {
 		synchronized(monitor) {
-			while(true) {
+			while(sendBroadcasts) {
 				try {
 					monitor.wait();
 				} catch (InterruptedException e) {

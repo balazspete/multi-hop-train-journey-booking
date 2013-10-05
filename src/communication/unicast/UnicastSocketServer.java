@@ -39,7 +39,7 @@ public class UnicastSocketServer extends UnicastServer {
             
 			serverSocket.close();
         } catch (Exception e) {
-        	throw new CommunicationException("Could not listen on port " + port);
+        	throw CommunicationException.CANNOT_USE_PORT;
         }
 	}
 	

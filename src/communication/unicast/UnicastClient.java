@@ -1,10 +1,11 @@
 package communication.unicast;
 
 import communication.CommunicationException;
+import communication.messages.InvalidMessageException;
 import communication.messages.Message;
 
 /**
- * A generic client-to-server communication client interface
+ * A generic client-to-server communication client interface (to be paired with a {@link UnicastServer}
  * @author Balazs Pete
  *
  */
@@ -25,17 +26,18 @@ public interface UnicastClient {
 	public boolean endConnection() throws CommunicationException;
 	
 	/**
-	 * Send a message to the server
-	 * @param message The message to be sent
+	 * Send a {@link Message} to the {@link UnicastServer}
+	 * @param message The {@link Message} to be sent
 	 * @throws CommunicationException Thrown if an error occurred during transmission
 	 */
 	public void sendMessage(Message message) throws CommunicationException;
 	
 	/**
-	 * Receive a message from the server (will block until message has been received)
-	 * @return The message received
-	 * @throws CommunicationException Thrown if an error occurred while receiving the message
+	 * Receive a {@link Message} from a {@link UnicastServer} (will block until message has been received)
+	 * @return The {@link Message} received
+	 * @throws CommunicationException Thrown if an error occurred while receiving the {@link Message}
+	 * @throws InvalidMessageException Thrown if the received {@link Message} cannot be interpreted
 	 */
-	public Message getMessage() throws CommunicationException;
+	public Message getMessage() throws CommunicationException, InvalidMessageException;
 	
 }

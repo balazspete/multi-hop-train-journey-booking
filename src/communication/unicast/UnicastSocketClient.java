@@ -23,7 +23,7 @@ public class UnicastSocketClient extends Thread implements
     private ObjectInputStream in = null;
 	
     /**
-     * Create an instance of UnicastSocketNetworkingClient
+     * Create an instance of {@link UnicastSocketNetworkingClient}
      * @param host The host to connect to 
      * @param port The port to bind to
      */
@@ -37,16 +37,16 @@ public class UnicastSocketClient extends Thread implements
 		try {
 			socket = new Socket(host, port);
 		} catch (UnknownHostException e1) {
-			throw new CommunicationException("Specified host `" + host + "` is unreachable (or does not exist)");
+			throw CommunicationException.UNREACHABLE_HOST;
 		} catch (IOException e1) {
-			throw new CommunicationException("Cannot connect to `" + host + "` on port " + port);
+			throw CommunicationException.CANNOT_OPEN_CONNECTION;
 		}
 		
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
-        	throw new CommunicationException("Could not listen on port " + port);
+        	throw CommunicationException.CANNOT_USE_PORT;
         }
 
         return true;
@@ -59,7 +59,7 @@ public class UnicastSocketClient extends Thread implements
 			in.close();
 			socket.close();
 		} catch (IOException e) {
-			throw new CommunicationException("Could not close connection");
+			throw CommunicationException.CANNOT_CLOSE_CONNECTION;
 		}
 		
 		return true;
@@ -70,30 +70,32 @@ public class UnicastSocketClient extends Thread implements
 		try {
 			out.writeObject(message);
 		} catch (IOException e) {
-			throw new CommunicationException("Failed to serialize message"); 
+			throw CommunicationException.CANNOT_SERIALIZE_MESSAGE;
 		}
 
 		try {
 			out.flush();
 		} catch (IOException e) {
-			throw new CommunicationException("Failed to send message to server"); 
+			throw CommunicationException.CANNOT_SEND_MESSAGE;
 		}
 	}
 
 	@Override
-	public Message getMessage() throws CommunicationException {
+	public Message getMessage() throws CommunicationException, InvalidMessageException {
 		Object object;
 		try {
 			// try to get message and check if input stream has ended
 			if ((object = in.readObject()) == null) {
-				throw new CommunicationException("Connection with server terminated");
+				throw CommunicationException.CONNECTION_TERMINATED;
 			}
 		} catch (CommunicationException e) {
-			throw e;
+			throw e; 
+		} catch (EOFException e) {
+			throw CommunicationException.CONNECTION_TERMINATED;
 		} catch (IOException e) {
-			throw new CommunicationException("Error while reading message");
+			throw CommunicationException.CANNOT_READ_MESSAGE;
 		} catch (ClassNotFoundException e) {
-			throw new CommunicationException("Received message is invalid");
+			throw new InvalidMessageException("Received message is invalid");
 		}
 		
 		return (Message) object;
@@ -105,8 +107,13 @@ public class UnicastSocketClient extends Thread implements
 			i.createConnection();
 			i.sendMessage(new TextMessage("hello"));
 			
-			Message m = i.getMessage();
-			System.out.println(m.getType() +"\n"+ m.getContents());
+			Message m;
+			try {
+				m = i.getMessage();
+				System.out.println(m.getType() +"\n"+ m.getContents());
+			} catch (InvalidMessageException e) {
+				e.printStackTrace();
+			}
 			i.endConnection();
 		} catch (CommunicationException e) {
 			e.printStackTrace();
