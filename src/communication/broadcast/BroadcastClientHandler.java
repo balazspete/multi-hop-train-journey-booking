@@ -5,7 +5,7 @@ import java.util.concurrent.*;
 
 import communication.messages.*;
 
-public abstract class BroadcastClientHandler implements Runnable {
+public abstract class BroadcastClientHandler extends Thread {
 
 	private final int MAX_TRIES = 3;
 	

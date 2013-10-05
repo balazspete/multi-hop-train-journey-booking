@@ -13,18 +13,20 @@ import communication.messages.*;
 public abstract class BroadcastSender extends Thread {
 	
 	private Set<BroadcastClientHandler> connectionHandlers = new HashSet<BroadcastClientHandler>();
+	private Object monitor = new Object();
 
 	/**
 	 * Start accepting connections from {@link BroadcastReceiver}s and handle new connections
 	 * @throws CommunicationException Thrown if an error occurred during setup
 	 */
-	public abstract void acceptConnections() throws CommunicationException;
+	protected abstract void acceptConnections() throws CommunicationException;
 	
 	/**
 	 * Add a {@link BroadcastClientHandler}
 	 * @param handler The {@link BroadcastClientHandler} to add
 	 */
 	public void addConnectionHandler(BroadcastClientHandler handler) {
+		handler.setMonitor(monitor);
 		connectionHandlers.add(handler);
 	}
 	
@@ -43,6 +45,18 @@ public abstract class BroadcastSender extends Thread {
 	public void broadcastMessage(Message message) {
 		for(BroadcastClientHandler handler : connectionHandlers) {
 			handler.addMessage(message);
+		}
+		
+		synchronized(monitor) {
+			monitor.notifyAll();
+		}
+	}
+	
+	public void run() {
+		try {
+			acceptConnections();
+		} catch (CommunicationException e) {
+			e.printStackTrace();
 		}
 	}
 }

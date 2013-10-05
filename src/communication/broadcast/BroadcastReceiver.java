@@ -42,14 +42,12 @@ public abstract class BroadcastReceiver extends ProtocolControlledMessenger {
 		listening = false;
 	}
 	
-	private void listenToBroadcasts() {
+	private void listenToBroadcasts() throws CommunicationException {
 		while (listening) {
 			Message msg;
 			try {
 				msg = getBroadcastMessage();
 				processMessage(msg);
-			} catch (CommunicationException e) {
-				e.printStackTrace();
 			} catch (InvalidMessageException e) {
 				e.printStackTrace();
 			}
@@ -65,7 +63,12 @@ public abstract class BroadcastReceiver extends ProtocolControlledMessenger {
 			return;
 		}
 		
-		listenToBroadcasts();
+		try {
+			listenToBroadcasts();
+		} catch (CommunicationException e) {
+			e.printStackTrace();
+			return;
+		}
 		
 		try {
 			endConnection();
