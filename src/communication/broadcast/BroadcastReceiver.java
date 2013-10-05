@@ -3,6 +3,11 @@ package communication.broadcast;
 import communication.messages.*;
 import communication.protocols.ProtocolControlledMessenger;
 
+/**
+ * A generic description of a Broadcast receiver node
+ * @author Balazs Pete
+ *
+ */
 public abstract class BroadcastReceiver extends ProtocolControlledMessenger {
 
 	private boolean listening = true;
