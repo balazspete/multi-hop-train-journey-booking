@@ -1,24 +1,17 @@
-package communication;
+package communication.protocols;
 
 import java.util.HashMap;
 
-import communication.protocols.*;
 import communication.messages.*;
 
 /**
- * A generic client-to-server communication server interface
+ * A networking interface which uses Protocols to handle Messages
  * @author Balazs Pete
  *
  */
-public abstract class UnicastCommunicationServer extends Thread {
+public abstract class ProtocolControlledMessenger extends Thread {
 
 	protected volatile HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
-	
-	/**
-	 * Start accepting incoming connections and messages
-	 * @throws CommunicationException Thrown in case of an error
-	 */
-	public abstract void acceptConnections() throws CommunicationException;
 	
 	/** 
 	 * Add a Protocol to handle a certain type of message, if a previous protocol with the same message type has been added, it will be replaced
@@ -42,7 +35,7 @@ public abstract class UnicastCommunicationServer extends Thread {
 	public void removeAllProtocols() {
 		protocolMap = new HashMap<String, Protocol>();
 	}
-
+	
 	/**
 	 * Process an input message using one of the input protocols
 	 * @param message The message to process
@@ -57,5 +50,4 @@ public abstract class UnicastCommunicationServer extends Thread {
 		
 		return p.processMessage(message);
 	}
-	
 }
