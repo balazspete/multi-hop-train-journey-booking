@@ -44,7 +44,11 @@ public abstract class BroadcastSender extends Thread {
 	 */
 	public void broadcastMessage(Message message) {
 		for(BroadcastClientHandler handler : connectionHandlers) {
-			handler.addMessage(message);
+			if(handler.isAlive()) {
+				handler.addMessage(message);
+			} else {
+				removeConnectionHandler(handler);
+			}
 		}
 		
 		synchronized(monitor) {

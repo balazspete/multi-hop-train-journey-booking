@@ -73,7 +73,7 @@ public class BroadcastSocketReceiver extends BroadcastReceiver {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			throw new InvalidMessageException("");
+			throw new InvalidMessageException("Failed to process th received message");
 		}
 		
 		return (Message) object;

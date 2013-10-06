@@ -48,6 +48,14 @@ public abstract class BroadcastClientHandler extends Thread {
 	}
 	
 	/**
+	 * Determine if the handler is still connected to the {@link BroadcastSocketReceiver}
+	 * @return True of the connection is alive, false otherwise
+	 */
+	public boolean isConnected() {
+		return sendBroadcasts;
+	}
+	
+	/**
 	 * Send the input {@link Message}
 	 * @param message The {@link Message} to be sent
 	 */

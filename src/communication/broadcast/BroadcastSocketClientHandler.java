@@ -18,6 +18,9 @@ public class BroadcastSocketClientHandler extends BroadcastClientHandler {
 		try {
 			out.writeObject(message);
 			out.flush();
+		} catch (SocketException e) {
+			endBroadcasts();
+			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
