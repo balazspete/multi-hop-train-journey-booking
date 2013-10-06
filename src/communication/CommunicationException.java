@@ -13,8 +13,8 @@ public class CommunicationException extends Exception {
 	private static final long serialVersionUID = -1153395142101460769L;
 
 	/**
-	 * Create a new CommunicationException
-	 * @param message The message to be contained by the exception
+	 * Create a new {@link CommunicationException}
+	 * @param message The {@link Message} to be contained by the exception
 	 */
 	private CommunicationException(String message) {
 		super(message);
@@ -31,7 +31,4 @@ public class CommunicationException extends Exception {
 		CANNOT_READ_MESSAGE			= new CommunicationException("Failed to open/read message"),
 	
 		CONNECTION_TERMINATED		= new CommunicationException("Connection with remote terminated");
-	
-	
-	
 }

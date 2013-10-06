@@ -30,7 +30,7 @@ public abstract class BroadcastReceiver extends ProtocolControlledMessenger {
 	/**
 	 * Listen to and retrieve a broadcasted message
 	 * @return The received {@link Message}
-	 * @throws ComunicationException Thrown in case an error occurred while receiving the message
+	 * @throws ComunicationException Thrown in case an error occurred while receiving the {@link Message}
 	 * @throws InvalidMessageException Thrown if the received {@link Message} could not be processed
 	 */
 	protected abstract Message getBroadcastMessage() throws CommunicationException, InvalidMessageException;

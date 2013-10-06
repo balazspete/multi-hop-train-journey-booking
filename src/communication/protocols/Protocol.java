@@ -10,14 +10,14 @@ import communication.messages.Message;
 public interface Protocol {
 
 	/**
-	 * Get the type of the accepted message
-	 * @return The class name of the message
+	 * Get the type of the accepted {@link Message}
+	 * @return The class name of the {@link Message}
 	 */
 	public String getAcceptedMessageType();
 	
 	/**
-	 * Handle an input message and return an answer
-	 * @param message The message to process
+	 * Handle an input {@link Message} and return an answer
+	 * @param message The {@link Message} to process
 	 * @return The reply
 	 */
 	public Message processMessage(Object message);

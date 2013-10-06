@@ -40,13 +40,13 @@ public abstract class Message implements Serializable {
 	
 	/**
 	 * Get the contents of the message
-	 * @return A Serializable object contained by the Message
+	 * @return A {@link Serializable} object contained by the Message
 	 */
 	public abstract Serializable getContents();
 	
 	/**
-	 * Set a Serializable object as the content of the message while overriding any previously stored content
-	 * @param content The Serializable object to be contained by this Message 
+	 * Set a {@link Serializable} object as the content of the message while overriding any previously stored content
+	 * @param content The {@link Serializable} object to be contained by this {@link Message}
 	 */
 	public abstract void setContents(Serializable content);
 	

@@ -12,7 +12,7 @@ import communication.messages.*;
  */
 public abstract class BroadcastSender extends Thread {
 	
-	private Set<BroadcastClientHandler> connectionHandlers = new HashSet<BroadcastClientHandler>();
+	private Set<BroadcastReceiverHandler> connectionHandlers = new HashSet<BroadcastReceiverHandler>();
 	private Object monitor = new Object();
 
 	/**
@@ -22,19 +22,19 @@ public abstract class BroadcastSender extends Thread {
 	protected abstract void acceptConnections() throws CommunicationException;
 	
 	/**
-	 * Add a {@link BroadcastClientHandler}
-	 * @param handler The {@link BroadcastClientHandler} to add
+	 * Add a {@link BroadcastReceiverHandler}
+	 * @param handler The {@link BroadcastReceiverHandler} to add
 	 */
-	public void addConnectionHandler(BroadcastClientHandler handler) {
+	public void addConnectionHandler(BroadcastReceiverHandler handler) {
 		handler.setMonitor(monitor);
 		connectionHandlers.add(handler);
 	}
 	
 	/**
-	 * Remove a {@link BroadcastClientHandler}
-	 * @param handler The {@link BroadcastClientHandler} to remove
+	 * Remove a {@link BroadcastReceiverHandler}
+	 * @param handler The {@link BroadcastReceiverHandler} to remove
 	 */
-	public void removeConnectionHandler(BroadcastClientHandler handler) {
+	public void removeConnectionHandler(BroadcastReceiverHandler handler) {
 		connectionHandlers.remove(handler);
 	}
 	
@@ -43,7 +43,7 @@ public abstract class BroadcastSender extends Thread {
 	 * @param message The {@link Message} to send
 	 */
 	public void broadcastMessage(Message message) {
-		for(BroadcastClientHandler handler : connectionHandlers) {
+		for(BroadcastReceiverHandler handler : connectionHandlers) {
 			if(handler.isAlive()) {
 				handler.addMessage(message);
 			} else {
@@ -56,6 +56,7 @@ public abstract class BroadcastSender extends Thread {
 		}
 	}
 	
+	@Override
 	public void run() {
 		try {
 			acceptConnections();

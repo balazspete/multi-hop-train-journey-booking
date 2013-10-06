@@ -2,6 +2,11 @@ package communication.messages;
 
 import java.io.Serializable;
 
+/**
+ * A {@link Message} communication an error to another party
+ * @author Balazs
+ *
+ */
 public class ErrorMessage extends Message{
 
 	/**
@@ -11,6 +16,10 @@ public class ErrorMessage extends Message{
 
 	private String error;
 	
+	/**
+	 * Create a message with a specified error message
+	 * @param errorMessage The error message text
+	 */
 	public ErrorMessage(String errorMessage) {
 		error = errorMessage;
 	}

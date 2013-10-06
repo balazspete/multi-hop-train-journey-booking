@@ -10,6 +10,11 @@ import communication.CommunicationException;
 import communication.messages.*;
 import communication.protocols.MessagePrinterProtocol;
 
+/**
+ * A {@link Socket} based implementation of a {@link BroadcastReceiver}
+ * @author Balazs Pete
+ *
+ */
 public class BroadcastSocketReceiver extends BroadcastReceiver {
 
 	private Socket socket = null;
@@ -20,6 +25,11 @@ public class BroadcastSocketReceiver extends BroadcastReceiver {
     private ObjectOutputStream out = null;
     private ObjectInputStream in = null;
 	
+    /**
+     * Create a new instance of {@link BroadcastSocketReceiver}
+     * @param host The host-name of the {@link BroadcastSocketReceiver} to connect to
+     * @param port The port to use
+     */
 	public BroadcastSocketReceiver(String host, int port) {
 		this.host = host.intern();
 		this.port = port;

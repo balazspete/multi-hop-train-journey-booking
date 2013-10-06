@@ -5,7 +5,12 @@ import java.util.concurrent.*;
 
 import communication.messages.*;
 
-public abstract class BroadcastClientHandler extends Thread {
+/**
+ * A generic connection handler for {@link BroadcastSocketSender}
+ * @author Balazs Pete
+ *
+ */
+public abstract class BroadcastReceiverHandler extends Thread {
 
 	private final int MAX_TRIES = 3;
 	
@@ -15,7 +20,7 @@ public abstract class BroadcastClientHandler extends Thread {
 	private Object monitor = null;
 	
 	/**
-	 * Set the monitor to be used by the {@link BroadcastClientHandler}s
+	 * Set the monitor to be used by the {@link BroadcastReceiverHandler}s
 	 * @param monitor The monitor to be used
 	 */
 	protected void setMonitor(Object monitor) {
@@ -95,5 +100,4 @@ public abstract class BroadcastClientHandler extends Thread {
 		
 		messageQueue = newQueue;
 	}
-
 }

@@ -5,11 +5,21 @@ import java.net.*;
 
 import communication.messages.Message;
 
-public class BroadcastSocketClientHandler extends BroadcastClientHandler {
+/**
+ * A sockets based implementation of {@link BroadcastReceiverHandler}
+ * @author Balazs
+ *
+ */
+public class BroadcastSocketReceiverHandler extends BroadcastReceiverHandler {
 
 	ObjectOutputStream out;
 	
-	public BroadcastSocketClientHandler(Socket socket) throws IOException {
+	/**
+	 * Create a new instance of {@link BroadcastSocketReceiverHandler}
+	 * @param socket The {@link Socket} associated with the receiver
+	 * @throws IOException Exception thrown in case connection could not be established
+	 */
+	public BroadcastSocketReceiverHandler(Socket socket) throws IOException {
 		this.out = new ObjectOutputStream(socket.getOutputStream());
 	}
 	

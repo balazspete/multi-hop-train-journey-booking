@@ -6,12 +6,21 @@ import java.net.*;
 import communication.CommunicationException;
 import communication.messages.TextMessage;
 
+/**
+ * A {@link Socket} based implementation of a {@link broadcastSender}
+ * @author Balazs Pete
+ *
+ */
 public class BroadcastSocketSender extends BroadcastSender {
 
 	private int port;
 	
 	private ServerSocket socket = null;
 	
+	/**
+	 * Create a new instance of {@link BroadcastSocketReceiver}
+	 * @param port The port to accept connections on
+	 */
 	public BroadcastSocketSender(int port) {
 		this.port = port;
 	}
@@ -24,7 +33,7 @@ public class BroadcastSocketSender extends BroadcastSender {
             socket = new ServerSocket(port);
             
             while (listening) {
-            	BroadcastSocketClientHandler h = new BroadcastSocketClientHandler(socket.accept());
+            	BroadcastSocketReceiverHandler h = new BroadcastSocketReceiverHandler(socket.accept());
             	addConnectionHandler(h);
             	h.start();
             }

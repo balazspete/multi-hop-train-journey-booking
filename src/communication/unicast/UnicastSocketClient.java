@@ -118,7 +118,5 @@ public class UnicastSocketClient extends Thread implements
 		} catch (CommunicationException e) {
 			e.printStackTrace();
 		}
-		
 	}
-	
 }
