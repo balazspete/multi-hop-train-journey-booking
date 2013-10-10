@@ -1,0 +1,1451 @@
+[
+    {
+        "routeID": "ROSSE-DLGHE",
+        "maxPassengers": 100,
+        "startTimes": [
+            {
+                "from": "ROSSE",
+                "time": "08:00:00"
+            },{
+                "from": "ROSSE",
+                "time": "12:00:00"
+            },{
+                "from": "ROSSE",
+                "time": "16:00:00"
+            },{
+                "from": "DLGHE",
+                "time": "08:00:00"
+            },{
+                "from": "DLGHE",
+                "time": "13:00:00"
+            },{
+                "from": "DLGHE",
+                "time": "17:00:00"
+            }
+        ],
+        "route": [
+            {
+                "A": "ROSSE",
+                "B": "ROSSS",
+                "length": 900,
+                "cost": 3
+            },{
+                "A": "ROSSS",
+                "B": "WEXFD",
+                "length": 900,
+                "cost": 2
+            },{
+                "A": "WEXFD",
+                "B": "ENNSC",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "ENNSC",
+                "B": "GOREY",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "GOREY",
+                "B": "ARKLW",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "ARKLW",
+                "B": "WCKLW",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "WCKLW",
+                "B": "BRAYS",
+                "length": 1200,
+                "cost": 4
+            },{
+                "A": "BRAYS",
+                "B": "DLGHE",
+                "length": 1200,
+                "cost": 3
+            }
+        ]
+    },{
+        "routeID": "DUBPS-ARKLW",
+        "maxPassengers": 60,
+        "startTimes": [
+            {
+                "from": "DUBPS",
+                "time": "09:00:00"
+            },{
+                "from": "DUBPS",
+                "time": "11:00:00"
+            },{
+                "from": "DUBPS",
+                "time": "15:00:00"
+            },{
+                "from": "DUBPS",
+                "time": "19:00:00"
+            },{
+                "from": "ARKLW",
+                "time": "10:00:00"
+            },{
+                "from": "ARKLW",
+                "time": "13:00:00"
+            },{
+                "from": "ARKLW",
+                "time": "15:00:00"
+            },{
+                "from": "ARKLW",
+                "time": "18:00:00"
+            }
+        ],
+        "route": [{
+                "A": "DUBPS",
+                "B": "DLGHE",
+                "length": 1200,
+                "cost": 4
+            },{
+                "A": "DLGHE",
+                "B": "BRAYS",
+                "length": 1200,
+                "cost": 3
+            },{
+                "A": "BRAYS",
+                "B": "GRYST",
+                "length": 600,
+                "cost": 2
+            },{
+                "A": "GRYST",
+                "B": "WCKLW",
+                "length": 1200,
+                "cost": 4
+            },{
+                "A": "WCKLW",
+                "B": "RATHD",
+                "length": 900,
+                "cost": 4
+            },{
+                "A": "RATHD",
+                "B": "ARKLW",
+                "length": 1500,
+                "cost": 7
+            }
+        ]
+    },{
+        "routeID": "DUBPS-MAYNT",
+        "maxPassengers": 120,
+        "startTimes": [{
+                "from": "DUBPS",
+                "time": "07:00:00"
+            },{
+                "from": "DUBPS",
+                "time": "09:00:00"
+            },{
+                "from": "DUBPS",
+                "time": "11:00:00"
+            },{
+                "from": "DUBPS",
+                "time": "15:00:00"
+            },{
+                "from": "DUBPS",
+                "time": "17:00:00"
+            },{
+                "from": "DUBPS",
+                "time": "20:00:00"
+            },{
+                "from": "DUBPS",
+                "time": "22:00:00"
+            },{
+                "from": "MAYNT",
+                "time": "07:00:00"
+            },{
+                "from": "MAYNT",
+                "time": "08:00:00"
+            },{
+                "from": "MAYNT",
+                "time": "12:00:00"
+            },{
+                "from": "MAYNT",
+                "time": "09:00:00"
+            },{
+                "from": "MAYNT",
+                "time": "10:00:00"
+            },{
+                "from": "MAYNT",
+                "time": "16:00:00"
+            }
+        ],
+        "route": [{
+                "A": "DUBPS",
+                "B": "DUBCN",
+                "length": 2,
+                "cost": 2
+            },{
+                "A": "DUBCN",
+                "B": "MAYNT",
+                "length": 30,
+                "cost": 6
+            }
+        ]
+    },{
+        "routeID": "DUBCN-DUNDK",
+        "maxPassengers": 200,
+        "startTimes": [{
+                "from": "DUBCN",
+                "time": "08:00:00"
+            },{
+                "from": "DUBCN",
+                "time": "13:30:00"
+            },{
+                "from": "DUBCN",
+                "time": "06:45:00"
+            },{
+                "from": "DUNDK",
+                "time": "11:00:00"
+            },{
+                "from": "DUNDK",
+                "time": "14:00:00"
+            },{
+                "from": "DUNDK",
+                "time": "18:00:00"
+            }
+        ],
+        "route": [{
+                "A": "DUBCN",
+                "B": "MLHDE",
+                "length": 900,
+                "cost": 4
+            },{
+                "A": "MLHDE",
+                "B": "RUELU",
+                "length": 600,
+                "cost": 2
+            },{
+                "A": "RUELU",
+                "B": "SKRIS",
+                "length": 600,
+                "cost": 3
+            },{
+                "A": "SKRIS",
+                "B": "BLBRG",
+                "length": 900,
+                "cost": 5
+            },{
+                "A": "BLBRG",
+                "B": "GRMNS",
+                "length": 1200,
+                "cost": 6
+            },{
+                "A": "GRMNS",
+                "B": "LYTWN",
+                "length": 1200,
+                "cost": 5
+            },{
+                "A": "LYTWN",
+                "B": "DROGH",
+                "length": 1500,
+                "cost": 6
+            },{
+                "A": "DROGH",
+                "B": "DUNDK",
+                "length": 1200,
+                "cost": 4
+            }
+        ]
+    },{
+        "routeID": "DUBCN-BLFST",
+        "maxPassengers": 220,
+        "startTimes": [{
+                "from": "DUBCN",
+                "time": "10:20:00"
+            },{
+                "from": "DUBCN",
+                "time": "14:50:00"
+            },{
+                "from": "DUBCN",
+                "time": "18:00:00"
+            },{
+                "from": "BLFST",
+                "time": "08:40:00"
+            },{
+                "from": "BLFST",
+                "time": "12:00:00"
+            },{
+                "from": "BLFST",
+                "time": "15:30:00"
+            }
+        ],
+        "route": [{
+                "A": "DUBCN",
+                "B": "DROGH",
+                "length": 4800,
+                "cost": 18
+            },{
+                "A": "DROGH",
+                "B": "DUNDK",
+                "length": 1500,
+                "cost": 7
+            },{
+                "A": "DUNDK",
+                "B": "NEWRY",
+                "length": 300,
+                "cost": 4
+            },{
+                "A": "NEWRY",
+                "B": "BLFST",
+                "length": 4200,
+                "cost": 15
+            }
+        ]
+    },{
+        "routeID": "NEWRY-BANGR",
+        "maxPassengers": 100,
+        "startTimes": [{
+                "from": "NEWRY",
+                "time": "07:30:00"
+            },{
+                "from": "NEWRY",
+                "time": "10:00:00"
+            },{
+                "from": "NEWRY",
+                "time": "12:00:00"
+            },{
+                "from": "NEWRY",
+                "time": "14:00:00"
+            },{
+                "from": "BANGR",
+                "time": "11:00:00"
+            },{
+                "from": "BANGR",
+                "time": "13:00:00"
+            },{
+                "from": "BANGR",
+                "time": "16:00:00"
+            },{
+                "from": "BANGR",
+                "time": "19:00:00"
+            }
+        ],
+        "route": [{
+                "A": "NEWRY",
+                "B": "PRTAD",
+                "length": 900,
+                "cost": 4
+            },{
+                "A": "PRTAD",
+                "B": "LURGN",
+                "length": 900,
+                "cost": 4
+            },{
+                "A": "LURGN",
+                "B": "LISBR",
+                "length": 1800,
+                "cost": 7
+            },{
+                "A": "LISBR",
+                "B": "BLFST",
+                "length": 1500,
+                "cost": 8
+            },{
+                "A": "BLFST",
+                "B": "BANGR",
+                "length": 2100,
+                "cost": 10
+            }
+        ]
+    },{
+        "routeID": "LARNE-NEWRY",
+        "maxPassengers": 60,
+        "startTimes": [{
+                "from": "NEWRY",
+                "time": "08:30:00"
+            },{
+                "from": "NEWRY",
+                "time": "10:30:00"
+            },{
+                "from": "NEWRY",
+                "time": "15:00:00"
+            },{
+                "from": "NEWRY",
+                "time": "17:00:00"
+            },{
+                "from": "BANGR",
+                "time": "11:00:00"
+            },{
+                "from": "BANGR",
+                "time": "12:00:00"
+            },{
+                "from": "BANGR",
+                "time": "14:00:00"
+            },{
+                "from": "BANGR",
+                "time": "16:00:00"
+            }
+        ],
+        "route": [{
+                "A": "NEWRY",
+                "B": "PRTAD",
+                "length": 900,
+                "cost": 4
+            },{
+                "A": "PRTAD",
+                "B": "LURGN",
+                "length": 900,
+                "cost": 4
+            },{
+                "A": "LURGN",
+                "B": "LISBR",
+                "length": 1800,
+                "cost": 7
+            },{
+                "A": "LISBR",
+                "B": "BLFST",
+                "length": 1500,
+                "cost": 8
+            },{
+                "A": "BLFST",
+                "B": "LARNE",
+                "length": 1500,
+                "cost": 7
+            }
+        ]
+    },{
+        "routeID": "BLFST-PRTRS",
+        "maxPassengers": 50,
+        "startTimes": [{
+                "from": "BLFST",
+                "time": "09:00:00"
+            },{
+                "from": "BLFST",
+                "time": "12:00:00"
+            },{
+                "from": "BLFST",
+                "time": "15:00:00"
+            },{
+                "from": "PRTRS",
+                "time": "07:00:00"
+            },{
+                "from": "PRTRS",
+                "time": "10:00:00"
+            },{
+                "from": "PRTRS",
+                "time": "14:30:00"
+            }
+        ],
+        "route": [{
+                "A": "BLFST",
+                "B": "ANTRM",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "ANTRM",
+                "B": "BLIMN",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "BLIMN",
+                "B": "CLRNE",
+                "length": 2400,
+                "cost": 9
+            },{
+                "A": "CLRNE",
+                "B": "PRTRS",
+                "length": 2700,
+                "cost": 10
+            }
+        ]
+    },{
+        "routeID": "ANTRM-DERRY",
+        "maxPassengers": 40,
+        "startTimes": [{
+                "from": "BLIMN",
+                "time": "10:00:00"
+            },{
+                "from": "BLIMN",
+                "time": "14:00:00"
+            },{
+                "from": "ANTRM",
+                "time": "12:00:00"
+            },{
+                "from": "ANTRM",
+                "time": "17:30:00"
+            }
+        ],
+        "route": [{
+                "A": "ANTRM",
+                "B": "BLIMN",
+                "length": 1800,
+                "cost": 5
+            },{
+                "A": "BLIMN",
+                "B": "DERRY",
+                "length": 4200,
+                "cost": 13
+            }
+        ]
+    },{
+        "routeID": "DUBCN-SLIGO",
+        "maxPassengers": 120,
+        "startTimes": [{
+                "from": "DUBCN",
+                "time": "10:00:00"
+            },{
+                "from": "DUBCN",
+                "time": "15:00:00"
+            },{
+                "from": "SLIGO",
+                "time": "11:00:00"
+            },{
+                "from": "SLIGO",
+                "time": "14:00:00"
+            }
+        ],
+        "route": [{
+                "A": "DUBCN",
+                "B": "MAYNT",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "MAYNT",
+                "B": "KLCCK",
+                "length": 1500,
+                "cost": 8
+            },{
+                "A": "KLCCK",
+                "B": "ENFLD",
+                "length": 1800,
+                "cost": 5
+            },{
+                "A": "ENFLD",
+                "B": "MULLN",
+                "length": 2100,
+                "cost": 6
+            },{
+                "A": "MULLN",
+                "B": "EDGWT",
+                "length": 2100,
+                "cost": 7
+            },{
+                "A": "EDGWT",
+                "B": "LNGFD",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "LNGFD",
+                "B": "BOYLE",
+                "length": 2700,
+                "cost": 8
+            },{
+                "A": "BOYLE",
+                "B": "CLLNY",
+                "length": 3000,
+                "cost": 8
+            },{
+                "A": "CLLNY",
+                "B": "SLIGO",
+                "length": 1500,
+                "cost": 5
+            }
+        ]
+    },{
+        "routeID": "SLIGO-LNGFR",
+        "maxPassengers": 60,
+        "startTimes": [{
+                "from": "SLIGO",
+                "time": "07:45:00"
+            },{
+                "from": "SLIGO",
+                "time": "11:00:00"
+            },{
+                "from": "SLIGO",
+                "time": "13:00:00"
+            },{
+                "from": "SLIGO",
+                "time": "15:00:00"
+            },{
+                "from": "SLIGO",
+                "time": "17:30:00"
+            },{
+                "from": "LNGFD",
+                "time": "08:00:00"
+            },{
+                "from": "LNGFD",
+                "time": "10:40:00"
+            },{
+                "from": "LNGFD",
+                "time": "12:20:00"
+            },{
+                "from": "LNGFD",
+                "time": "14:00:00"
+            },{
+                "from": "LNGFD",
+                "time": "06:55:00"
+            }
+        ],
+        "route": [{
+                "A": "SLIGO",
+                "B": "CLLNY",
+                "length": 1500,
+                "cost": 4
+            },{
+                "A": "CLLNY",
+                "B": "BLYMT",
+                "length": 1200,
+                "cost": 5
+            },{
+                "A": "BLYMT",
+                "B": "BOYLE",
+                "length": 1800,
+                "cost": 7
+            },{
+                "A": "BOYLE",
+                "B": "CAOSH",
+                "length": 2100,
+                "cost": 8
+            },{
+                "A": "CAOSH",
+                "B": "DROMD",
+                "length": 2100,
+                "cost": 7
+            },{
+                "A": "DROMD",
+                "B": "LNGFD",
+                "length": 2100,
+                "cost": 5
+            }
+        ]
+    },{
+        "routeID": "LNGFD-MAYNT",
+        "maxPassengers": 60,
+        "startTimes": [{
+                "from": "MAYNT",
+                "time": "08:00:00"
+            },{
+                "from": "MAYNT",
+                "time": "09:00:00"
+            },{
+                "from": "MAYNT",
+                "time": "12:00:00"
+            },{
+                "from": "MAYNT",
+                "time": "15:00:00"
+            },{
+                "from": "LNGFD",
+                "time": "10:00:00"
+            },{
+                "from": "LNGFD",
+                "time": "12:00:00"
+            },{
+                "from": "LNGFD",
+                "time": "15:00:00"
+            },{
+                "from": "LNGFD",
+                "time": "18:00:00"
+            }
+        ],
+        "route": [{
+                "A": "LNGFD",
+                "B": "EDGWT",
+                "length": 1500,
+                "cost": 4
+            },{
+                "A": "EDGWT",
+                "B": "MULLN",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "MULLN",
+                "B": "ENFLD",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "ENFLD",
+                "B": "KLCCK",
+                "length": 1800,
+                "cost": 4
+            },{
+                "A": "KLCCK",
+                "B": "MAYNT",
+                "length": 2100,
+                "cost": 6
+            }
+        ]
+    },{
+        "routeID": "DUBHS-WTRFD",
+        "maxPassengers": 140,
+        "startTimes": [{
+                "from": "DUBHS",
+                "time": "09:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "14:30:00"
+            },{
+                "from": "WTRFD",
+                "time": "10:30:00"
+            },{
+                "from": "WTRFD",
+                "time": "15:15:00"
+            }
+        ],
+        "route": [{
+                "A": "DUBHS",
+                "B": "KLDRE",
+                "length": 2100,
+                "cost": 5
+            },{
+                "A": "KLDRE",
+                "B": "ATHYS",
+                "length": 2400,
+                "cost": 8
+            },{
+                "A": "ATHYS",
+                "B": "CRLW",
+                "length": 2100,
+                "cost": 6
+            },{
+                "A": "CRLW",
+                "B": "MUBHG",
+                "length": 3600,
+                "cost": 15
+            },{
+                "A": "MUBHG",
+                "B": "KILKN",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "KILKN",
+                "B": "WTRFD",
+                "length": 2700,
+                "cost": 9
+            }
+        ]
+    },{
+        "routeID": "WTRFD-KILKN",
+        "maxPassengers": 80,
+        "startTimes": [{
+                "from": "WTRFD",
+                "time": "08:00:00"
+            },{
+                "from": "WTRFD",
+                "time": "10:00:00"
+            },{
+                "from": "WTRFD",
+                "time": "11:00:00"
+            },{
+                "from": "WTRFD",
+                "time": "14:00:00"
+            },{
+                "from": "WTRFD",
+                "time": "18:00:00"
+            },{
+                "from": "KILKN",
+                "time": "08:00:00"
+            },{
+                "from": "KILKN",
+                "time": "10:00:00"
+            },{
+                "from": "KILKN",
+                "time": "11:00:00"
+            },{
+                "from": "KILKN",
+                "time": "14:00:00"
+            },{
+                "from": "KILKN",
+                "time": "18:00:00"
+            }
+        ],
+        "route": [{
+                "A": "WTRFD",
+                "B": "THMST",
+                "length": 1500,
+                "cost": 6
+            },{
+                "A": "THMST",
+                "B": "KILKN",
+                "length": 1800,
+                "cost": 8
+            }
+        ]
+    },{
+        "routeID": "WTRFD-LIMME",
+        "maxPassengers": 120,
+        "startTimes": [{
+                "from": "WTRFD",
+                "time": "08:00:00"
+            },{
+                "from": "WTRFD",
+                "time": "11:00:00"
+            },{
+                "from": "WTRFD",
+                "time": "14:00:00"
+            },{
+                "from": "WTRFD",
+                "time": "16:30:00"
+            },{
+                "from": "LIMME",
+                "time": "08:00:00"
+            },{
+                "from": "LIMME",
+                "time": "11:00:00"
+            },{
+                "from": "LIMME",
+                "time": "14:00:00"
+            },{
+                "from": "LIMME",
+                "time": "16:30:00"
+            }
+        ],
+        "route": [{
+                "A": "WTRFD",
+                "B": "CRCKS",
+                "length": 1500,
+                "cost": 4
+            },{
+                "A": "CRCKS",
+                "B": "CLNML",
+                "length": 1200,
+                "cost": 4
+            },{
+                "A": "CLNML",
+                "B": "CAHIR",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "CAHIR",
+                "B": "TIPPY",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "TIPPY",
+                "B": "LIMMR",
+                "length": 2100,
+                "cost": 7
+            },{
+                "A": "LIMMR",
+                "B": "LIMME",
+                "length": 2100,
+                "cost": 5
+            }
+        ]
+    },{
+        "routeID": "DUBHS-LIMME",
+        "maxPassengers": 180,
+        "startTimes": [{
+                "from": "DUBHS",
+                "time": "09:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "14:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "17:20:00"
+            },{
+                "from": "LIMME",
+                "time": "10:00:00"
+            },{
+                "from": "LIMME",
+                "time": "12:00:00"
+            },{
+                "from": "LIMME",
+                "time": "16:00:00"
+            }
+        ],
+        "route": [{
+                "A": "DUBHS",
+                "B": "NWBRD",
+                "length": 1200,
+                "cost": 5
+            },{
+                "A": "NWBRD",
+                "B": "MONSN",
+                "length": 2400,
+                "cost": 8
+            },{
+                "A": "MONSN",
+                "B": "PRTLG",
+                "length": 1500,
+                "cost": 7
+            },{
+                "A": "PRTLG",
+                "B": "PRTLS",
+                "length": 1500,
+                "cost": 3
+            },{
+                "A": "PRTLS",
+                "B": "BLLYB",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "BLLYB",
+                "B": "TMPLM",
+                "length": 2100,
+                "cost": 5
+            },{
+                "A": "TMPLM",
+                "B": "THURL",
+                "length": 1500,
+                "cost": 6
+            },{
+                "A": "THURL",
+                "B": "LIMMR",
+                "length": 3600,
+                "cost": 10
+            },{
+                "A": "LIMMR",
+                "B": "LIMME",
+                "length": 3600,
+                "cost": 8
+            }
+        ]
+    },{
+        "routeID": "CORKS-TRALE",
+        "maxPassengers": 80,
+        "startTimes": [{
+                "from": "CORKS",
+                "time": "10:00:00"
+            },{
+                "from": "CORKS",
+                "time": "13:00:00"
+            },{
+                "from": "CORKS",
+                "time": "16:00:00"
+            },{
+                "from": "TRALE",
+                "time": "10:00:00"
+            },{
+                "from": "TRALE",
+                "time": "13:00:00"
+            },{
+                "from": "TRALE",
+                "time": "16:00:00"
+            }
+        ],
+        "route": [{
+                "A": "TRALE",
+                "B": "TRRNF",
+                "length": 1800,
+                "cost": 5
+            },{
+                "A": "TRRNF",
+                "B": "KLLNY",
+                "length": 1650,
+                "cost": 6
+            },{
+                "A": "KLLNY",
+                "B": "RTHMR",
+                "length": 1800,
+                "cost": 7
+            },{
+                "A": "RTHMR",
+                "B": "MLSTR",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "MLSTR",
+                "B": "BNTEE",
+                "length": 1800,
+                "cost": 7
+            },{
+                "A": "BNTEE",
+                "B": "MALLW",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "MALLW",
+                "B": "CORKS",
+                "length": 1800,
+                "cost": 7
+            }
+        ]
+    },{
+        "routeID": "MIDLT-LIMME",
+        "maxPassengers": 120,
+        "startTimes": [{
+                "from": "LIMME",
+                "time": "09:00:00"
+            },{
+                "from": "LIMME",
+                "time": "11:00:00"
+            },{
+                "from": "LIMME",
+                "time": "12:40:00"
+            },{
+                "from": "LIMME",
+                "time": "14:00:00"
+            },{
+                "from": "LIMME",
+                "time": "16:00:00"
+            },{
+                "from": "MIDLT",
+                "time": "09:00:00"
+            },{
+                "from": "MIDLT",
+                "time": "11:00:00"
+            },{
+                "from": "MIDLT",
+                "time": "12:40:00"
+            },{
+                "from": "MIDLT",
+                "time": "14:00:00"
+            },{
+                "from": "MIDLT",
+                "time": "16:00:00"
+            }
+        ],
+        "route": [{
+                "A": "LIMME",
+                "B": "LIMMR",
+                "length": 2400,
+                "cost": 7
+            },{
+                "A": "LIMMR",
+                "B": "CHRLV",
+                "length": 1800,
+                "cost": 5
+            },{
+                "A": "CHRLV",
+                "B": "MALLW",
+                "length": 2100,
+                "cost": 7
+            },{
+                "A": "MALLW",
+                "B": "CORKS",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "CORKS",
+                "B": "GLNTH",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "GLNTH",
+                "B": "COBHS",
+                "length": 1500,
+                "cost": 7
+            },{
+                "A": "COBHS",
+                "B": "MIDLT",
+                "length": 2100,
+                "cost": 8
+            }
+        ]
+    },{
+        "routeID": "LIMME-BLLYB",
+        "maxPassengers": 60,
+        "startTimes": [{
+                "from": "LIMME",
+                "time": "09:00:00"
+            },{
+                "from": "LIMME",
+                "time": "11:00:00"
+            },{
+                "from": "LIMME",
+                "time": "12:40:00"
+            },{
+                "from": "LIMME",
+                "time": "14:00:00"
+            },{
+                "from": "LIMME",
+                "time": "16:00:00"
+            },{
+                "from": "BLLYB",
+                "time": "09:00:00"
+            },{
+                "from": "BLLYB",
+                "time": "11:00:00"
+            },{
+                "from": "BLLYB",
+                "time": "12:40:00"
+            },{
+                "from": "BLLYB",
+                "time": "14:00:00"
+            },{
+                "from": "BLLYB",
+                "time": "16:00:00"
+            }
+        ],
+        "route": [{
+                "A": "LIMME",
+                "B": "CSTLC",
+                "length": 3600,
+                "cost": 11
+            },{
+                "A": "CSTLC",
+                "B": "BRDHL",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "BRDHL",
+                "B": "NENGH",
+                "length": 2100,
+                "cost": 8
+            },{
+                "A": "NENGH",
+                "B": "CLGHD",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "CLGHD",
+                "B": "RSCRE",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "RSCRE",
+                "B": "BLLYB",
+                "length": 2100,
+                "cost": 7
+            }
+        ]
+    },{
+        "routeID": "LIMME-GALWY",
+        "maxPassengers": 90,
+        "startTimes": [{
+                "from": "LIMME",
+                "time": "09:00:00"
+            },{
+                "from": "LIMME",
+                "time": "11:00:00"
+            },{
+                "from": "LIMME",
+                "time": "12:40:00"
+            },{
+                "from": "LIMME",
+                "time": "14:00:00"
+            },{
+                "from": "LIMME",
+                "time": "16:00:00"
+            },{
+                "from": "GALWY",
+                "time": "09:00:00"
+            },{
+                "from": "GALWY",
+                "time": "11:00:00"
+            },{
+                "from": "GALWY",
+                "time": "12:40:00"
+            },{
+                "from": "GALWY",
+                "time": "14:00:00"
+            },{
+                "from": "GALWY",
+                "time": "16:00:00"
+            }
+        ],
+        "route": [{
+                "A": "LIMME",
+                "B": "SXMLB",
+                "length": 1500,
+                "cost": 5
+            },{
+                "A": "SXMLB",
+                "B": "ENNIS",
+                "length": 2100,
+                "cost": 8
+            },{
+                "A": "ENNIS",
+                "B": "GORTS",
+                "length": 2400,
+                "cost": 7
+            },{
+                "A": "GORTS",
+                "B": "ARDHN",
+                "length": 1200,
+                "cost": 2
+            },{
+                "A": "ARDHN",
+                "B": "ATHNR",
+                "length": 1800,
+                "cost": 6
+            },{
+                "A": "ATHNR",
+                "B": "ORNMR",
+                "length": 2100,
+                "cost": 6
+            },{
+                "A": "ORNMR",
+                "B": "GALWY",
+                "length": 2400,
+                "cost": 8
+            }
+        ]
+    },{
+        "routeID": "DUBHS-GALWY",
+        "maxPassengers": 200,
+        "startTimes": [{
+                "from": "DUBHS",
+                "time": "08:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "10:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "14:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "18:00:00"
+            },{
+                "from": "GALWY",
+                "time": "08:00:00"
+            },{
+                "from": "GALWY",
+                "time": "10:00:00"
+            },{
+                "from": "GALWY",
+                "time": "14:00:00"
+            },{
+                "from": "GALWY",
+                "time": "18:00:00"
+            }
+        ],
+        "route": [{
+                "A": "GALWY",
+                "B": "ATHNR",
+                "length": 3600,
+                "cost": 8
+            },{
+                "A": "ATHNR",
+                "B": "ATHLN",
+                "length": 3900,
+                "cost": 10
+            },{
+                "A": "ATHLN",
+                "B": "DUBHS",
+                "length": 4200,
+                "cost": 14
+            }
+        ]
+    },{
+        "routeID": "GALWY-ATHLN",
+        "maxPassengers": 110,
+        "startTimes": [{
+                "from": "ATHLN",
+                "time": "08:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "10:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "14:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "18:00:00"
+            },{
+                "from": "GALWY",
+                "time": "08:00:00"
+            },{
+                "from": "GALWY",
+                "time": "10:00:00"
+            },{
+                "from": "GALWY",
+                "time": "14:00:00"
+            },{
+                "from": "GALWY",
+                "time": "18:00:00"
+            }
+        ],
+        "route": [{
+                "A": "GALWY",
+                "B": "ORNMR",
+                "length": 1800,
+                "cost": 4
+            },{
+                "A": "ORNMR",
+                "B": "ATHNR",
+                "length": 1800,
+                "cost": 4
+            },{
+                "A": "ATHNR",
+                "B": "ATTYM",
+                "length": 2100,
+                "cost": 5
+            },{
+                "A": "ATTYM",
+                "B": "WODLN",
+                "length": 2100,
+                "cost": 6
+            },{
+                "A": "WODLN",
+                "B": "BLLNS",
+                "length": 2400,
+                "cost": 7
+            },{
+                "A": "BLLNS",
+                "B": "ATHLN",
+                "length": 2100,
+                "cost": 5
+            }
+        ]
+    },{
+        "routeID": "DUBHS-ATHLN",
+        "maxPassengers": 110,
+        "startTimes": [{
+                "from": "ATHLN",
+                "time": "08:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "10:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "14:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "18:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "08:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "10:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "14:00:00"
+            },{
+                "from": "DUBHS",
+                "time": "18:00:00"
+            }
+        ],
+        "route": [{
+                "A": "ATHLN",
+                "B": "CLARA",
+                "length": 2400,
+                "cost": 7
+            },{
+                "A": "CLARA",
+                "B": "TULLG",
+                "length": 1800,
+                "cost": 4
+            },{
+                "A": "TULLG",
+                "B": "PRTLG",
+                "length": 3600,
+                "cost": 9
+            },{
+                "A": "PRTLG",
+                "B": "KLDRE",
+                "length": 3600,
+                "cost": 7
+            },{
+                "A": "KLDRE",
+                "B": "DUBHS",
+                "length": 1800,
+                "cost": 5
+            }
+        ]
+    },{
+        "routeID": "ATHLN-MNJCT",
+        "maxPassengers": 100,
+        "startTimes": [{
+                "from": "ATHLN",
+                "time": "08:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "10:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "11:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "14:00:00"
+            },{
+                "from": "ATHLN",
+                "time": "18:00:00"
+            },{
+                "from": "MNJCT",
+                "time": "08:00:00"
+            },{
+                "from": "MNJCT",
+                "time": "10:00:00"
+            },{
+                "from": "MNJCT",
+                "time": "11:00:00"
+            },{
+                "from": "MNJCT",
+                "time": "14:00:00"
+            },{
+                "from": "MNJCT",
+                "time": "18:00:00"
+            }
+        ],
+        "route": [{
+                "A": "ATHLN",
+                "B": "ROSCM",
+                "length": 3600,
+                "cost": 7
+            },{
+                "A": "ROSCM",
+                "B": "CSTLR",
+                "length": 2100,
+                "cost": 7
+            },{
+                "A": "CSTLR",
+                "B": "BLLYH",
+                "length": 3900,
+                "cost": 11
+            },{
+                "A": "BLLYH",
+                "B": "CLREM",
+                "length": 2100,
+                "cost": 6
+            },{
+                "A": "CLREM",
+                "B": "MNJCT",
+                "length": 1800,
+                "cost": 7
+            }
+        ]
+    },{
+        "routeID": "WSTPR-BLLIN",
+        "maxPassengers": 60,
+        "startTimes": [{
+                "from": "WSTPR",
+                "time": "08:00:00"
+            },{
+                "from": "WSTPR",
+                "time": "10:00:00"
+            },{
+                "from": "WSTPR",
+                "time": "11:00:00"
+            },{
+                "from": "WSTPR",
+                "time": "14:00:00"
+            },{
+                "from": "WSTPR",
+                "time": "18:00:00"
+            },{
+                "from": "BLLIN",
+                "time": "08:00:00"
+            },{
+                "from": "BLLIN",
+                "time": "10:00:00"
+            },{
+                "from": "BLLIN",
+                "time": "11:00:00"
+            },{
+                "from": "BLLIN",
+                "time": "14:00:00"
+            },{
+                "from": "BLLIN",
+                "time": "18:00:00"
+            }
+        ],
+        "route": [{
+                "A": "BLLIN",
+                "B": "FXFRD",
+                "length": 2100,
+                "cost": 6
+            },{
+                "A": "FXFRD",
+                "B": "MNJCT",
+                "length": 1800,
+                "cost": 5
+            },{
+                "A": "MNJCT",
+                "B": "CSTLB",
+                "length": 3600,
+                "cost": 8
+            },{
+                "A": "CSTLB",
+                "B": "WSTPR",
+                "length": 3300,
+                "cost": 8
+            }
+        ]
+    }
+]
