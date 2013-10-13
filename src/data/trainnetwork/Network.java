@@ -5,7 +5,6 @@ import java.util.*;
 
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
-import org.joda.time.LocalTime;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
@@ -158,8 +157,8 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 			e.printStackTrace();
 		}
 		
-		Section.scoreMode = Section.ScoreMode.Cost;
-		Station o = network.getStation("PRTRS");
+		Section.scoreMode = Section.ScoreMode.TravelTime;
+		Station o = network.getStation("BLFST");
 		Station t = network.getStation("GALWY");
 		
 		System.out.println(o.getName() + " - " + t.getName());
@@ -167,7 +166,7 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 		AppliedDijkstraShortestPath dijkstra = new AppliedDijkstraShortestPath(network, o, t);
 		System.out.println(network.getEdgeSource(dijkstra.getPath().get(0)));
 		for(Section s : dijkstra.getPath()) {
-			System.out.println(network.getEdgeTarget(s));
+			System.out.println(network.getEdgeTarget(s) + " - " + s.getStartTime().toString());
 		}
 		
 		
