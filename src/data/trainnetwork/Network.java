@@ -27,6 +27,8 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 	 * 
 	 */
 	private static final long serialVersionUID = 4239399173964630465L;
+	
+	Map<String, Station> stationMap;
 
 	/**
 	 * Create a new instance of {@link Network} with a given {@link EdgeFactory}
@@ -34,8 +36,16 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 	 */
 	public Network(EdgeFactory<Station, Section> edgeFactory) {
 		super(edgeFactory);
+		stationMap = new LinkedHashMap<String, Station>();
 	}
 
+	@Override
+	public boolean addVertex(Station vertex) {
+		boolean result = super.addVertex(vertex);
+		if(result) stationMap.put(vertex.getID(), vertex);
+		return result;
+	}
+	
 	/**
 	 * Add a {@link Collection} of {@link Station}s to the Network
 	 * @param vertices The {@link Station}s to add to the network
@@ -86,9 +96,17 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 		
 		JSONArray rawRoutes = (JSONArray) JSONTools.getParameter(object, "routes");
 		Vector<Route> routes = getRoutes(rawRoutes);
-		network.addRoutes(stations, routes);
-		
+		boolean r = network.addRoutes(stations, routes);
 		return network;
+	}
+	
+	/**
+	 * Get a {@link Station} from its ID or null if no such station is in the network
+	 * @param stationID The station's ID
+	 * @return The station or null
+	 */
+	public Station getStation(String stationID) {
+		return stationMap.get(stationID);
 	}
 	
 	private static Map<String, Station> getStations(JSONArray stationsData) throws IllegalArgumentException, MissingParameterException {
