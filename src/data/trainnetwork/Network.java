@@ -77,7 +77,7 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 				result = result && addEdge(from, to, si.getSection());
 			}
 		}
-		return true;
+		return result;
 	}
 	
 	/**
