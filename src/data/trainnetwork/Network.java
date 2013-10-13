@@ -3,14 +3,13 @@ package data.trainnetwork;
 import java.io.*;
 import java.util.*;
 
-import javax.swing.JFrame;
-
-import org.jgraph.JGraph;
 import org.jgrapht.*;
-import org.jgrapht.ext.*;
 import org.jgrapht.graph.*;
+import org.joda.time.LocalTime;
 import org.json.simple.*;
 import org.json.simple.parser.*;
+
+import algorithm.graph.AppliedDijkstraShortestPath;
 
 import util.JSONTools;
 
@@ -72,7 +71,10 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 				Station from = stations.get(si.getStartStationID());
 				Station to = stations.get(si.getEndStationID());
 				
-				if(from == null || to == null) continue;
+				if(from == null || to == null) {
+					System.out.println("======\nError\n" + si.getStartStationID() + "\n" + si.getEndStationID() );
+					continue;
+				}
 				
 				result = result && addEdge(from, to, si.getSection());
 			}
@@ -132,16 +134,18 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 	public static void main(String[] args) {
 		JSONParser parser = new JSONParser();
 		Object obj;
+		Network network = null;
+		
 		try {
 			obj = parser.parse(new FileReader("/Users/balazspete/Desktop/out.json"));
-			Network network = getNetworkFromJSON((JSONObject) obj);
+			network = getNetworkFromJSON((JSONObject) obj);
 			
-			JGraph jgraph = new JGraph(new JGraphModelAdapter(network));
-			JFrame frame = new JFrame();
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.pack();
-			frame.add(jgraph);
-			frame.setVisible(true);
+//			JGraph jgraph = new JGraph(new JGraphModelAdapter(network));
+//			JFrame frame = new JFrame();
+//			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//			frame.pack();
+//			frame.add(jgraph);
+//			frame.setVisible(true);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -154,5 +158,21 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 			e.printStackTrace();
 		}
 		
+		Section.scoreMode = Section.ScoreMode.Cost;
+		Station o = network.getStation("PRTRS");
+		Station t = network.getStation("GALWY");
+		
+		System.out.println(o.getName() + " - " + t.getName());
+		
+		AppliedDijkstraShortestPath dijkstra = new AppliedDijkstraShortestPath(network, o, t);
+		System.out.println(network.getEdgeSource(dijkstra.getPath().get(0)));
+		for(Section s : dijkstra.getPath()) {
+			System.out.println(network.getEdgeTarget(s));
+		}
+		
+		
 	}
+	
+	
+
 }
