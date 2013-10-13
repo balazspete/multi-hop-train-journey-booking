@@ -3,10 +3,8 @@ package data.trainnetwork;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.joda.time.LocalTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -69,24 +67,5 @@ public class Route extends LinkedList<SectionInfo> {
 		}
 
 		return route;
-	}
-	
-	public static void main(String[] args) {
-		JSONParser parser = new JSONParser();
-		try {
-			Object obj = parser.parse(new FileReader("/Users/balazspete/Desktop/test.json"));
-			getRouteFromJSON((JSONObject) obj);
-		} catch (MissingParameterException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }
