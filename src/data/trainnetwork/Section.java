@@ -14,7 +14,7 @@ import data.MissingParameterException;
  *
  */
 public class Section extends DefaultWeightedEdge {
-
+	
 	public enum ScoreMode {
 		TravelTime, Cost, NumberOfHops 
 	}
@@ -25,6 +25,7 @@ public class Section extends DefaultWeightedEdge {
 	private static final long serialVersionUID = 116967749447316838L;
 	
 	public static ScoreMode scoreMode = ScoreMode.TravelTime; 
+	public static int DIFFERENT_ROUTE_MULTIPLICATOR = 2;
 	
 	private String routeID;
 	private LocalTime startTime;
@@ -130,13 +131,22 @@ public class Section extends DefaultWeightedEdge {
 	@Override
 	protected double getWeight() {
 		switch(scoreMode) {
-			case Cost: return journeyLength * cost;
+			case Cost: return cost;
 			default: return journeyLength;
+		}
+	}
+	
+	public double getWeight(Section other) {
+		if (other != null &&
+				other.getRouteID().equalsIgnoreCase(routeID)) {
+			return getWeight();
+		} else {
+			return getWeight() * DIFFERENT_ROUTE_MULTIPLICATOR;
 		}
 	}
 	
 	@Override
 	public String toString() {
-		return "<" + routeID + " >";
+		return "<" + routeID + ">";
 	}
 }
