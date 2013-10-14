@@ -2,6 +2,8 @@ package algorithm.graph;
 
 import java.util.*;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
 
 import data.trainnetwork.*;
@@ -15,7 +17,7 @@ public final class AppliedDijkstraShortestPath
 {
 	private Network network;
 	private Station source, target;
-	private LocalTime time;
+	private DateTime time;
 	
 	private Map<Station, Section> reversePath = new HashMap<Station, Section>();
 	private List<Section> path = new LinkedList<Section>();
@@ -26,7 +28,7 @@ public final class AppliedDijkstraShortestPath
 	 * @param target The target {@link Station}
 	 */
 	public AppliedDijkstraShortestPath(Network network, Station source, Station target) {
-		this(network, source, target, new LocalTime(0));
+		this(network, source, target, (new LocalTime(0)).toDateTimeToday());
 	}
 	
 	/**
@@ -35,12 +37,12 @@ public final class AppliedDijkstraShortestPath
 	 * @param target The target {@link Station}
 	 * @param time The start time at the source
 	 */
-	public AppliedDijkstraShortestPath(Network network, Station source, Station target, LocalTime time) {
+	public AppliedDijkstraShortestPath(Network network, Station source, Station target, DateTime time) {
 		this.network = network;
 		this.source = source;
 		this.target = target;
 		this.time = time;
-		
+		System.out.println(time.toString());
 		search();
 		createPath();
 	}
@@ -55,7 +57,7 @@ public final class AppliedDijkstraShortestPath
 	
 	private void search() {
 		Map<Station, Double> distances = new HashMap<Station, Double>();
-		Map<Station, LocalTime> times = new HashMap<Station, LocalTime>();
+		Map<Station, DateTime> times = new HashMap<Station, DateTime>();
 		
 		distances.put(source, 0.0);
 		times.put(source, time);
@@ -65,13 +67,14 @@ public final class AppliedDijkstraShortestPath
 		
 		while(!nodeList.isEmpty()) {
 			Station current = getMinimumDistance(nodeList, distances);
-			LocalTime currentTime = times.get(current);
+			DateTime currentTime = times.get(current);
 			double myDistance = distances.get(current);
 			Section previous = reversePath.get(current);
 			
 			for(Section section : network.outgoingEdgesOf(current)) {
-				if (section.getStartTime().isBefore(currentTime)) {
-					continue;
+				DateTime _time = section.getStartTime().toDateTimeToday();
+				if (_time.isBefore(currentTime)) {
+					_time.plusDays(1);
 				}
 				
 				Station other = network.getEdgeTarget(section);
@@ -81,13 +84,23 @@ public final class AppliedDijkstraShortestPath
 					distance = Double.POSITIVE_INFINITY;
 				}
 				
-				double newDistance = myDistance + section.getWeight(previous);
+				double newDistance = 0;
+				double weight = section.getWeight(previous);
+				if(Section.scoreMode == Section.ScoreMode.TravelTime) {
+					weight = _time.getMillis() + weight;
+							//+ weight;
+					System.out.println(weight);
+					myDistance = weight;
+				} else {
+					newDistance = myDistance + weight;
+				}
 				
 				if(newDistance < distance) {
 					distances.put(other, newDistance);
 					reversePath.put(other, section);
 					nodeList.add(other);
-					times.put(other, section.getStartTime().plusSeconds((int) section.getJourneyLength()));
+					times.put(other, 
+							_time.plusSeconds((int) section.getJourneyLength()));
 				}
 			}
 			
