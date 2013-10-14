@@ -19,6 +19,10 @@ public class Section extends DefaultWeightedEdge {
 		TravelTime, Cost, NumberOfHops 
 	}
 	
+	public enum Status {
+		AVAILABLE, FULL
+	}
+	
 	/**
 	 * 
 	 */
@@ -32,6 +36,7 @@ public class Section extends DefaultWeightedEdge {
 	private long journeyLength;
 	private int cost;
 	private int maxPassengers;
+	private Status status;
 
 	/**
 	 * Create a new instance of {@link Section}
@@ -40,9 +45,7 @@ public class Section extends DefaultWeightedEdge {
 	 * @param journeyLength The length of the journey on the {@link Section}
 	 */
 	public Section(String routeID, LocalTime startTime, long journeyLength) {
-		this.routeID = routeID;
-		this.startTime = startTime;
-		this.journeyLength = journeyLength;
+		this(routeID, startTime, journeyLength, 0);
 	}
 	
 	/**
@@ -52,10 +55,21 @@ public class Section extends DefaultWeightedEdge {
 	 * @param journeyLength The length of the journey on the {@link Section}
 	 */
 	public Section(String routeID, LocalTime startTime, long journeyLength, int cost) {
+		this(routeID, startTime, journeyLength, cost, Status.AVAILABLE);
+	}
+	
+	/**
+	 * Create a new instance of {@link Section}
+	 * @param routeID The ID of the train route the
+	 * @param startTime The time at which the train leaves the station
+	 * @param journeyLength The length of the journey on the {@link Section}
+	 */
+	public Section(String routeID, LocalTime startTime, long journeyLength, int cost, Status status) {
 		this.routeID = routeID;
 		this.startTime = startTime;
 		this.journeyLength = journeyLength;
 		this.cost = cost;
+		this.setStatus(status);
 	}
 	
 	/**
@@ -148,5 +162,13 @@ public class Section extends DefaultWeightedEdge {
 	@Override
 	public String toString() {
 		return "<" + routeID + ">";
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 }
