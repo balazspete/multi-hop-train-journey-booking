@@ -5,7 +5,6 @@ import java.util.*;
 
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
-import org.joda.time.LocalTime;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
@@ -109,6 +108,40 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 	 */
 	public Station getStation(String stationID) {
 		return stationMap.get(stationID);
+	}
+	
+	/**
+	 * Add {@link Station}s to the {@link Network} from a {@link JSONArray}
+	 * @param stationsData The {@link JSONArray} containing the list of {@link Station}s
+	 * @return True if all stations within stationsData has been added, false otherwise
+	 */
+	public boolean createStations(JSONArray stationsData) {
+		Map<String, Station> stations;
+		try {
+			stations = getStations(stationsData);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return addVertices(stations.values());
+	}
+	
+	/**
+	 * Add {@link Section}s to the {@link Network} from a {@link JSONArray} containing {@link Route} information
+	 * @param routesData The {@link JSONArray} containing a list of {@link Routes}
+	 * @return True if all {@link Section}s have been added correctly
+	 */
+	public boolean createSections(JSONArray routesData) {
+		Vector<Route> routes;
+		try {
+			routes = getRoutes(routesData);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return addRoutes(stationMap, routes);
 	}
 	
 	private static Map<String, Station> getStations(JSONArray stationsData) throws IllegalArgumentException, MissingParameterException {
