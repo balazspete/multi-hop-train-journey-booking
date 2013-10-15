@@ -1,6 +1,7 @@
 package data.trainnetwork;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.json.simple.JSONObject;
 
@@ -19,19 +20,24 @@ public class Section extends DefaultWeightedEdge {
 		TravelTime, Cost, NumberOfHops 
 	}
 	
+	public enum Status {
+		AVAILABLE, FULL
+	}
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 116967749447316838L;
 	
 	public static ScoreMode scoreMode = ScoreMode.TravelTime; 
-	public static int DIFFERENT_ROUTE_MULTIPLICATOR = 2;
+	public static double DIFFERENT_ROUTE_MULTIPLICATOR = 2;
 	
 	private String routeID;
-	private LocalTime startTime;
+	private DateTime startTime;
 	private long journeyLength;
 	private int cost;
 	private int maxPassengers;
+	private Status status;
 
 	/**
 	 * Create a new instance of {@link Section}
@@ -39,10 +45,8 @@ public class Section extends DefaultWeightedEdge {
 	 * @param startTime The time at which the train leaves the station
 	 * @param journeyLength The length of the journey on the {@link Section}
 	 */
-	public Section(String routeID, LocalTime startTime, long journeyLength) {
-		this.routeID = routeID;
-		this.startTime = startTime;
-		this.journeyLength = journeyLength;
+	public Section(String routeID, DateTime startTime, long journeyLength) {
+		this(routeID, startTime, journeyLength, 0);
 	}
 	
 	/**
@@ -51,11 +55,22 @@ public class Section extends DefaultWeightedEdge {
 	 * @param startTime The time at which the train leaves the station
 	 * @param journeyLength The length of the journey on the {@link Section}
 	 */
-	public Section(String routeID, LocalTime startTime, long journeyLength, int cost) {
+	public Section(String routeID, DateTime startTime, long journeyLength, int cost) {
+		this(routeID, startTime, journeyLength, cost, Status.AVAILABLE);
+	}
+	
+	/**
+	 * Create a new instance of {@link Section}
+	 * @param routeID The ID of the train route the
+	 * @param startTime The time at which the train leaves the station
+	 * @param journeyLength The length of the journey on the {@link Section}
+	 */
+	public Section(String routeID, DateTime startTime, long journeyLength, int cost, Status status) {
 		this.routeID = routeID;
 		this.startTime = startTime;
 		this.journeyLength = journeyLength;
 		this.cost = cost;
+		this.setStatus(status);
 	}
 	
 	/**
@@ -76,9 +91,9 @@ public class Section extends DefaultWeightedEdge {
 	
 	/**
 	 * Get the time at which the train leaves the station
-	 * @return The {@link LocalTime} of departure
+	 * @return The {@link DateTime} of departure
 	 */
-	public LocalTime getStartTime() {
+	public DateTime getStartTime() {
 		return startTime;
 	}
 	
@@ -107,13 +122,26 @@ public class Section extends DefaultWeightedEdge {
 	 * @throws MissingParameterException Thrown if a required argument is not defined in the JSON
 	 */
 	public static Section getSectionFromJSON(JSONObject rawSection, String routeID) throws IllegalArgumentException, MissingParameterException {
+		return getSectionFromJSON(rawSection, routeID, (new LocalTime(0)).toDateTimeToday());
+	}
+	
+	/**
+	 * Create a {@link Section} from a corresponding {@link JSONObject}
+	 * @param rawSection The JSON data for the section
+	 * @param routeID The ID of the associated route
+	 * @param baseTime {@link DateTime} specifying the date for the section's time
+	 * @return The newly created {@link Section}
+	 * @throws IllegalArgumentException Thrown if an argument within the JSON is of incorrect type
+	 * @throws MissingParameterException Thrown if a required argument is not defined in the JSON
+	 */
+	public static Section getSectionFromJSON(JSONObject rawSection, String routeID, DateTime baseTime) throws IllegalArgumentException, MissingParameterException {
 		Object time = JSONTools.getParameter(rawSection, "time");
 		Object length = JSONTools.getParameter(rawSection, "length");
 		Object cost = JSONTools.getParameter(rawSection, "cost");
 		
 		return new Section(
 			routeID,
-			new LocalTime(time), 
+			(new LocalTime(time)).toDateTime(baseTime), 
 			(Long) length,
 			(int)(long)(Long) cost);
 	}
@@ -148,5 +176,13 @@ public class Section extends DefaultWeightedEdge {
 	@Override
 	public String toString() {
 		return "<" + routeID + ">";
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 }
