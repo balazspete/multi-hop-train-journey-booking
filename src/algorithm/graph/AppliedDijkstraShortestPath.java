@@ -42,7 +42,7 @@ public final class AppliedDijkstraShortestPath
 		this.source = source;
 		this.target = target;
 		this.time = time;
-		System.out.println(time.toString());
+
 		search();
 		createPath();
 	}
@@ -56,6 +56,67 @@ public final class AppliedDijkstraShortestPath
 	}
 	
 	private void search() {
+		if (Section.scoreMode == Section.ScoreMode.TravelTime) {
+			timeBasedSearch();
+		} else if (Section.scoreMode == Section.ScoreMode.NumberOfHops) {
+			double temp = Section.DIFFERENT_ROUTE_MULTIPLICATOR;
+			Section.DIFFERENT_ROUTE_MULTIPLICATOR = Double.POSITIVE_INFINITY;
+			timeBasedSearch();
+			Section.DIFFERENT_ROUTE_MULTIPLICATOR = temp;
+		} else {
+			costBasedSearch();
+		}
+	}
+	
+	private void timeBasedSearch() {
+		Map<Station, Double> distances = new HashMap<Station, Double>();
+		Map<Station, DateTime> times = new HashMap<Station, DateTime>();
+		
+		times.put(source, time);
+		
+		List<Station> nodeList = new LinkedList<Station>();
+		nodeList.add(source);
+		
+		while(!nodeList.isEmpty()) {
+			Station current = getClosestInTime(nodeList, times);
+			DateTime currentTime = times.get(current);
+			
+			for(Section section : network.outgoingEdgesOf(current)) {
+				if (section.getStartTime().isBefore(currentTime)) {
+					continue;
+				}
+
+				Station target = network.getEdgeTarget(section);
+
+				DateTime previousTime = times.get(target);
+				DateTime newTime = section.getStartTime().plusSeconds((int) section.getJourneyLength());
+
+				if(newTime.isBefore(previousTime)) {
+					reversePath.put(target, section);
+					nodeList.add(target);
+					times.put(target, newTime);
+				}
+			}
+			
+			nodeList.remove(current);
+		}
+	}
+	
+	private static Station getClosestInTime(List<Station> Q, Map<Station, DateTime> dist) {
+		DateTime minimum = null;
+		Station result = null;
+		for(Station s : Q) {
+			DateTime temp = dist.get(s);
+			if(temp != null && (minimum == null || (temp.isBefore(minimum) || temp.isEqual(minimum)))) {
+				result = s;
+				minimum = temp;
+			}
+		}
+		
+		return result;
+	}
+	
+	private void costBasedSearch() {
 		Map<Station, Double> distances = new HashMap<Station, Double>();
 		Map<Station, DateTime> times = new HashMap<Station, DateTime>();
 		
@@ -68,39 +129,31 @@ public final class AppliedDijkstraShortestPath
 		while(!nodeList.isEmpty()) {
 			Station current = getMinimumDistance(nodeList, distances);
 			DateTime currentTime = times.get(current);
-			double myDistance = distances.get(current);
 			Section previous = reversePath.get(current);
+			double myDistance = distances.get(current);
 			
 			for(Section section : network.outgoingEdgesOf(current)) {
-				DateTime _time = section.getStartTime().toDateTimeToday();
-				if (_time.isBefore(currentTime)) {
-					_time.plusDays(1);
+				
+				if (section.getStartTime().isBefore(currentTime)) {
+					continue;
 				}
-				
+
 				Station other = network.getEdgeTarget(section);
-				
+				DateTime otherTime = times.get(other);
+
 				Double distance = distances.get(other);
 				if(distance == null) {
 					distance = Double.POSITIVE_INFINITY;
 				}
-				
-				double newDistance = 0;
-				double weight = section.getWeight(previous);
-				if(Section.scoreMode == Section.ScoreMode.TravelTime) {
-					weight = _time.getMillis() + weight;
-							//+ weight;
-					System.out.println(weight);
-					myDistance = weight;
-				} else {
-					newDistance = myDistance + weight;
-				}
-				
-				if(newDistance < distance) {
+
+				double newDistance = myDistance + section.getWeight(previous);
+				DateTime newTime = section.getStartTime().plusSeconds((int) section.getJourneyLength());
+
+				if(newDistance < distance || (newDistance == distance && otherTime.isAfter(newTime))) {
 					distances.put(other, newDistance);
 					reversePath.put(other, section);
 					nodeList.add(other);
-					times.put(other, 
-							_time.plusSeconds((int) section.getJourneyLength()));
+					times.put(other, newTime);
 				}
 			}
 			
