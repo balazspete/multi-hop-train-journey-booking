@@ -64,12 +64,14 @@ public class Section extends DefaultWeightedEdge {
 	 * @param routeID The ID of the train route the
 	 * @param startTime The time at which the train leaves the station
 	 * @param journeyLength The length of the journey on the {@link Section}
+	 * @param status The availability status of the section
 	 */
 	public Section(String routeID, DateTime startTime, long journeyLength, int cost, Status status) {
 		this.routeID = routeID;
 		this.startTime = startTime;
 		this.journeyLength = journeyLength;
 		this.cost = cost;
+		this.status = status;
 		this.setStatus(status);
 	}
 	
@@ -178,11 +180,36 @@ public class Section extends DefaultWeightedEdge {
 		return "<" + routeID + ">";
 	}
 
+	/**
+	 * Get the {@link Status} of the {@link Section}
+	 * @return The current status
+	 */
 	public Status getStatus() {
 		return status;
 	}
 
+	/**
+	 * Set the {@link Status} of the section
+	 * @param status The new status
+	 */
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+	
+	/**
+	 * Check against the current time whether the section is available to book
+	 * @return True if the section can be booked, false otherwise
+	 */
+	public boolean isAvailable() {
+		return isAvailable(DateTime.now());
+	}
+	
+	/**
+	 * Check against an input {@link DateTime} whether the section is available to book
+	 * @param time The {@link DateTime} to check against
+	 * @return true if the section can be booked, false otherwise
+	 */
+	public boolean isAvailable(DateTime time) {
+		return time.isAfter(startTime) && status == Status.AVAILABLE;
 	}
 }

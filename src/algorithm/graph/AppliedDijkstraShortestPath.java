@@ -82,7 +82,7 @@ public final class AppliedDijkstraShortestPath
 			DateTime currentTime = times.get(current);
 			
 			for(Section section : network.outgoingEdgesOf(current)) {
-				if (section.getStartTime().isBefore(currentTime)) {
+				if (section.isAvailable(currentTime)) {
 					continue;
 				}
 
@@ -134,7 +134,7 @@ public final class AppliedDijkstraShortestPath
 			
 			for(Section section : network.outgoingEdgesOf(current)) {
 				
-				if (section.getStartTime().isBefore(currentTime)) {
+				if (section.isAvailable(currentTime)) {
 					continue;
 				}
 
@@ -185,6 +185,5 @@ public final class AppliedDijkstraShortestPath
 			}
 		}
 	}
-	
 }
 

@@ -92,12 +92,11 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 		Network network = new Network(new ClassBasedEdgeFactory<Station, Section>(Section.class));
 		
 		JSONArray rawStations = (JSONArray) JSONTools.getParameter(object, "stations");
-		Map<String, Station> stations = getStations(rawStations);
-		network.addVertices(stations.values());
+		network.createStations(rawStations);
 		
 		JSONArray rawRoutes = (JSONArray) JSONTools.getParameter(object, "routes");
-		Vector<Route> routes = getRoutes(rawRoutes);
-		boolean r = network.addRoutes(stations, routes);
+		network.createSections(rawRoutes);
+		
 		return network;
 	}
 	
@@ -192,8 +191,8 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 		}
 		
 		Section.scoreMode = Section.ScoreMode.TravelTime;
-		Station o = network.getStation("BLFST");
-		Station t = network.getStation("GALWY");
+		Station o = network.getStation("GALWY");
+		Station t = network.getStation("CORKS");
 		
 		System.out.println(o.getName() + " - " + t.getName());
 		
