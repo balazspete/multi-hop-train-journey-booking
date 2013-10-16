@@ -3,6 +3,7 @@ package util;
 import java.io.*;
 import java.util.*;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.json.simple.*;
 import org.json.simple.parser.*;
@@ -44,13 +45,13 @@ public class NetworkJSONCompiler {
 		}
 	}
 
-	public static Map compile(JSONArray stations, JSONArray routes) throws MissingParameterException, IOException {
+	public static Map compile(JSONArray stations, JSONArray routes, DateTime day) throws MissingParameterException, IOException {
 		LinkedHashMap network = new LinkedHashMap();
 		
 		verifyStations(stations);
 		network.put("stations", stations);
 		
-		Vector _routes = compileRoutes(routes);
+		Vector _routes = compileRoutes(routes, day);
 		network.put("routes", _routes);
 		
 		return network;
@@ -68,7 +69,7 @@ public class NetworkJSONCompiler {
 		}
 	}
 	
-	private static Vector compileRoutes(JSONArray routes) throws MissingParameterException, IOException {
+	private static Vector compileRoutes(JSONArray routes, DateTime day) throws MissingParameterException, IOException {
 		Vector result = new Vector();
 		
 		for (int a = 0; a<routes.size(); a++) {
@@ -113,7 +114,7 @@ public class NetworkJSONCompiler {
 				JSONArray arr = new JSONArray();
 				for (Section s : _sections) {
 					JSONObject _s = s.toJSON(reverse);
-					_s.put("time", time.toString());
+					_s.put("time", time.toDateTime(day).toString());
 					arr.add(_s.clone());
 					time = time.plusSeconds(((int) s.getLength())+300);
 				}
@@ -137,13 +138,14 @@ public class NetworkJSONCompiler {
 			return;
 		}
 		
+		DateTime day = DateTime.now();
 		JSONParser parser = new JSONParser();
 		
 		try {
 			JSONArray stations = (JSONArray) parser.parse(new FileReader(args[0]));
 			JSONArray routes = (JSONArray) parser.parse(new FileReader(args[1]));
 			
-			Map result = compile(stations, routes);
+			Map result = compile(stations, routes, day);
 			
 			PrintStream out;
 			if(args.length == 2 || args[2].equalsIgnoreCase("stdout")) {

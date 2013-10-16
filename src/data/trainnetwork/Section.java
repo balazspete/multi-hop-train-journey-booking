@@ -143,7 +143,7 @@ public class Section extends DefaultWeightedEdge {
 		
 		return new Section(
 			routeID,
-			(new LocalTime(time)).toDateTime(baseTime), 
+			new DateTime(time), 
 			(Long) length,
 			(int)(long)(Long) cost);
 	}
