@@ -20,9 +20,9 @@ import data.trainnetwork.*;
 public class MasterDataRepository extends DataRepository {
 
 	private static final String 
-		ROUTES_DATA = "/Users/balazspete/Desktop/routes.json", 
-		STATIONS_DATA = "/Users/balazspete/Desktop/stations.json", 
-		NODES_INFO = "/Users/balazspete/Desktop/nodes.json";
+		ROUTES_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/compiled_routes.json", 
+		STATIONS_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/stations.json", 
+		NODES_INFO = "/Users/balazspete/Projects/multi-hop-train-booking/nodes.json";
 	
 	/**
 	 * Create a new {@link MasterDataRepository}
