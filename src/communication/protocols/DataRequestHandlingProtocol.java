@@ -51,7 +51,6 @@ public class DataRequestHandlingProtocol<DATA> extends RequestHandlingProtocol {
 			}
 		}
 		
-		System.out.println(type+" "+data.size()+" "+requestedData.size());
 		return new DataRequestReplyMessage<Set<DATA>>(requestedData);
 	}
 }
