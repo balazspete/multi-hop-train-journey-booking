@@ -27,13 +27,13 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 	private static final long serialVersionUID = 4239399173964630465L;
 	
 	Map<String, Station> stationMap;
-
+	
 	/**
 	 * Create a new instance of {@link Network} with a given {@link EdgeFactory}
 	 * @param edgeFactory {@link EdgeFactory}
 	 */
-	public Network(EdgeFactory<Station, Section> edgeFactory) {
-		super(edgeFactory);
+	public Network() {
+		super(new ClassBasedEdgeFactory<Station, Section>(Section.class));
 		stationMap = new LinkedHashMap<String, Station>();
 	}
 
@@ -55,6 +55,15 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 			result = result && addVertex(station);
 		}
 		return result;
+	}
+	
+	@Override
+	public boolean addEdge(Station source, Station target, Section section) {
+		if(containsEdge(section)) {
+			removeEdge(section);
+		}
+		
+		return super.addEdge(source, target, section);
 	}
 	
 	/**
@@ -89,7 +98,7 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 	 * @throws MissingParameterException Thrown if one of the required parameters is not defined for an element
 	 */
 	public static Network getNetworkFromJSON(JSONObject object) throws IllegalArgumentException, MissingParameterException {
-		Network network = new Network(new ClassBasedEdgeFactory<Station, Section>(Section.class));
+		Network network = new Network();
 		
 		JSONArray rawStations = (JSONArray) JSONTools.getParameter(object, "stations");
 		network.createStations(rawStations);
@@ -141,6 +150,20 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 		}
 		
 		return addRoutes(stationMap, routes);
+	}
+	
+	public void update(Set<Station> stations, Set<SectionInfo> sections) {
+		for (Station s : stations) {
+			addVertex(s);
+		}
+		
+		for (SectionInfo s : sections) {
+			System.out.println(s.getStartStationID()+" "+s.getEndStationID());
+			addEdge(
+				getStation(s.getStartStationID()), 
+				getStation(s.getEndStationID()), 
+				s.getSection());
+		}
 	}
 	
 	private static Map<String, Station> getStations(JSONArray stationsData) throws IllegalArgumentException, MissingParameterException {

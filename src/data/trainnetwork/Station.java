@@ -1,5 +1,7 @@
 package data.trainnetwork;
 
+import java.io.Serializable;
+
 import org.json.simple.JSONObject;
 
 import util.JSONTools;
@@ -12,8 +14,13 @@ import data.graph.Vertex;
  * @author Balazs Pete
  *
  */
-public class Station implements Vertex {
+public class Station implements Vertex, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7835704912216857559L;
+	
 	private String name, id;
 	
 	/**

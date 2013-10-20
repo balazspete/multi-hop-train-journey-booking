@@ -140,12 +140,21 @@ public class Section extends DefaultWeightedEdge {
 		Object time = JSONTools.getParameter(rawSection, "time");
 		Object length = JSONTools.getParameter(rawSection, "length");
 		Object cost = JSONTools.getParameter(rawSection, "cost");
+		Status status = Status.AVAILABLE;
+		try {
+			String _status = (String) JSONTools.getParameter(rawSection, "status");
+			if(_status.equalsIgnoreCase("full")) {
+				status = Status.FULL;
+			}
+		} catch(MissingParameterException e) {
+		}
 		
 		return new Section(
 			routeID,
 			new DateTime(time), 
 			(Long) length,
-			(int)(long)(Long) cost);
+			(int)(long)(Long) cost,
+			status);
 	}
 	
 	@Override
