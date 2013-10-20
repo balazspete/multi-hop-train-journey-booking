@@ -20,6 +20,6 @@ public interface Protocol {
 	 * @param message The {@link Message} to process
 	 * @return The reply
 	 */
-	public Message processMessage(Object message);
+	public Message processMessage(Message message);
 	
 }

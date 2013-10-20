@@ -15,7 +15,7 @@ public class LoopbackProtocol implements Protocol {
 	}
 
 	@Override
-	public Message processMessage(Object message) {
+	public Message processMessage(Message message) {
 		return (TextMessage) message;
 	}
 }
