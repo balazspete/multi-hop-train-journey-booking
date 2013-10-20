@@ -78,7 +78,6 @@ public class StaticDataLoader implements DataLoader {
 	
 	@SuppressWarnings("unchecked")
 	private void update(Message stationsMessage, Message sectionsMessage, Message nodesMessage) {
-		System.out.println(stationsMessage.getContents());
 		stations = (Set<Station>) stationsMessage.getContents();
 		sections = (Set<SectionInfo>) sectionsMessage.getContents();
 		nodeInfos = (Set<NodeInfo>) nodesMessage.getContents();

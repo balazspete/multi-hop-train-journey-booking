@@ -158,7 +158,6 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 		}
 		
 		for (SectionInfo s : sections) {
-			System.out.println(s.getStartStationID()+" "+s.getEndStationID());
 			addEdge(
 				getStation(s.getStartStationID()), 
 				getStation(s.getEndStationID()), 
