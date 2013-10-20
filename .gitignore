@@ -8,3 +8,6 @@
 .DS_Store
 
 jgrapht-javadoc/*
+
+out.json
+compiled_*.json
