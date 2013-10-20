@@ -5,7 +5,7 @@ import java.io.Serializable;
 import data.request.DataRequest;
 
 /**
- * A {@link Message} containing a {@link DataRequest} of type <DE>
+ * A {@link Message} containing a {@link DataRequest} of type DE
  * @author Balazs Pete
  *
  * @param <DE> The class of the object that the containing {@link DataRequest} is requesting for
