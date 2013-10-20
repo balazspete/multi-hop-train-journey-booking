@@ -15,8 +15,8 @@ public class MessagePrinterProtocol implements Protocol {
 	}
 
 	@Override
-	public Message processMessage(Object message) {
-		System.out.println(((Message) message).getContents());
+	public Message processMessage(Message message) {
+		System.out.println(message.getContents());
 		return null;
 	}
 }

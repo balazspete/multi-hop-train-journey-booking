@@ -1,20 +1,19 @@
 package data.trainnetwork;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.LinkedList;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.simple.*;
 
 import util.JSONTools;
 
 import data.MissingParameterException;
 
 public class Route extends LinkedList<SectionInfo> {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2823284930510141078L;
 	
 	private String id;
 	private int maxPassengers = -1;

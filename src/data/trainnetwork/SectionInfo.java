@@ -1,10 +1,16 @@
 package data.trainnetwork;
 
-public class SectionInfo {
+import java.io.Serializable;
 
+public class SectionInfo implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6284726094757907863L;
+	
 	private Section section;
 	private String startStationID, endStationID;
-	
 
 	public SectionInfo(Section section, String startStationID, String endStationID) {
 		this.section = section;

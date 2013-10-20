@@ -98,7 +98,7 @@ public class UnicastSocketServer extends UnicastServer {
 			    	// Process message and get response
 					Message message;
 					if(protocol != null) {
-						message = protocol.processMessage(object);
+						message = protocol.processMessage(input);
 					} else {
 						message = new ErrorMessage("Message type not supported");
 					}
