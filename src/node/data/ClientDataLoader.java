@@ -27,13 +27,14 @@ public class ClientDataLoader extends StaticDataLoader {
 	 */
 	public ClientDataLoader(Network network, RouteToNodeMap map) {
 		// TODO retrieve information from config
-		super(null, -1);
+		super("localhost", 7000);
 		this.network = network;
 		this.map = map;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void update(Message stationsMessage, Message sectionsMessage, Message nodesMessage) {
+	@Override
+	protected void update(Message stationsMessage, Message sectionsMessage, Message nodesMessage) {
 		Set<Station> stations = (Set<Station>) stationsMessage.getContents();
 		Set<SectionInfo> sections = (Set<SectionInfo>) sectionsMessage.getContents();
 		

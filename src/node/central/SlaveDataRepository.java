@@ -9,11 +9,11 @@ import data.system.NodeInfo;
 import data.trainnetwork.*;
 
 /**
- * A {@link DataRepository} serving structured static data, retrieving raw information from a {@link MasterDataRepository}
+ * A {@link StaticDataRepository} serving structured static data, retrieving raw information from a {@link MasterDataRepository}
  * @author Balazs Pete
  *
  */
-public class SlaveDataRepository extends DataRepository {
+public class SlaveDataRepository extends StaticDataRepository {
 
 	private Network network;
 	
@@ -51,9 +51,15 @@ public class SlaveDataRepository extends DataRepository {
 		nodes = loader.getNodeInfos();
 		network.update(stations, sections);
 	}
+	
+	public void test() {
+		System.out.println(network.vertexSet().size());
+		System.out.println(network.edgeSet().size());
+	}
 
 	public static void main(String[] args) {
 		SlaveDataRepository repo = new SlaveDataRepository();
 		repo.start();
+		repo.test();
 	}
 }

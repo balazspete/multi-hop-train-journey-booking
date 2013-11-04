@@ -1,26 +1,18 @@
-package node.central;
+package node.data;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import communication.protocols.Protocol;
 import communication.unicast.UnicastSocketServer;
+
 import data.system.NodeInfo;
-import data.trainnetwork.*;
+import data.trainnetwork.SectionInfo;
+import data.trainnetwork.Station;
 
-/**
- * An object describing a general data repository for the static data within the system
- * @author Balazs Pete
- *
- */
 public abstract class DataRepository extends Thread {
-
-	protected static final int MAX_TRIES = 3;
 	
 	private UnicastSocketServer server;
-
-	protected Set<Station> stations = new HashSet<Station>();
-	protected Set<SectionInfo> sections = new HashSet<SectionInfo>();
-	protected Set<NodeInfo> nodes = new HashSet<NodeInfo>();
 	
 	/**
 	 * Create a repository which listens for connection on a specified port

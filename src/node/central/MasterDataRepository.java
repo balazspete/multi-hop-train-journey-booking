@@ -13,11 +13,11 @@ import data.system.NodeInfo;
 import data.trainnetwork.*;
 
 /**
- * A {@link DataRepository} serving raw static data
+ * A {@link StaticDataRepository} serving raw static data
  * @author Balazs Pete
  *
  */
-public class MasterDataRepository extends DataRepository {
+public class MasterDataRepository extends StaticDataRepository {
 
 	private static final String 
 		ROUTES_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/compiled_routes.json", 
@@ -89,8 +89,14 @@ public class MasterDataRepository extends DataRepository {
 		return protocols;
 	}
 
+	public void test() {
+		System.out.println(sections.size());
+		System.out.println(stations.size());
+	}
+	
 	public static void main(String[] args) {
 		MasterDataRepository repo = new MasterDataRepository();
 		repo.start();
+		repo.test();
 	}
 }
