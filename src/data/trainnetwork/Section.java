@@ -32,12 +32,12 @@ public class Section extends DefaultWeightedEdge {
 	public static ScoreMode scoreMode = ScoreMode.TravelTime; 
 	public static double DIFFERENT_ROUTE_MULTIPLICATOR = 2;
 	
-	private String routeID;
-	private DateTime startTime;
-	private long journeyLength;
-	private int cost;
-	private int maxPassengers;
-	private Status status;
+	protected String routeID;
+	protected DateTime startTime;
+	protected long journeyLength;
+	protected int cost;
+	protected int maxPassengers;
+	protected Status status;
 
 	/**
 	 * Create a new instance of {@link Section}
@@ -220,5 +220,15 @@ public class Section extends DefaultWeightedEdge {
 	 */
 	public boolean isAvailable(DateTime time) {
 		return time.isAfter(startTime) && status == Status.AVAILABLE;
+	}
+	
+	public static boolean isValidIdentifier(String id) {
+		// TODO implement id check
+		return false;
+	}
+	
+	public static Section getSectionFromId(String id) {
+		// TODO implement
+		return null;
 	}
 }
