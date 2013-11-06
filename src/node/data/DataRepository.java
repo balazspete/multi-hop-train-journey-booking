@@ -1,15 +1,15 @@
 package node.data;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import communication.protocols.Protocol;
 import communication.unicast.UnicastSocketServer;
 
-import data.system.NodeInfo;
-import data.trainnetwork.SectionInfo;
-import data.trainnetwork.Station;
-
+/**
+ * An object describing a general data repository
+ * @author Balazs Pete
+ *
+ */
 public abstract class DataRepository extends Thread {
 	
 	private UnicastSocketServer server;
