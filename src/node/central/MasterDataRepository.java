@@ -43,14 +43,15 @@ public class MasterDataRepository extends StaticDataRepository {
 	/**
 	 * Update the repository from the source JSON files
 	 */
+	@SuppressWarnings("unchecked")
 	public void update() {
 		JSONParser parser = new JSONParser();
 		
 		try {
-			JSONArray stations = (JSONArray) parser.parse(new FileReader(STATIONS_DATA));
-			for (Object _station : stations) {
+			JSONArray _stations = (JSONArray) parser.parse(new FileReader(STATIONS_DATA));
+			for (Object _station : _stations) {
 				Station station = Station.getStationFromJSON((JSONObject) _station);
-				this.stations.add(station);
+				stations.add(station);
 			}
 
 			JSONArray routes = (JSONArray) parser.parse(new FileReader(ROUTES_DATA));

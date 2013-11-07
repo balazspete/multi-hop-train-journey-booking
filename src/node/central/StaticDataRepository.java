@@ -16,9 +16,9 @@ public abstract class StaticDataRepository extends DataRepository {
 
 	protected static final int MAX_TRIES = 3;
 
-	protected Set<Station> stations = new HashSet<Station>();
-	protected Set<SectionInfo> sections = new HashSet<SectionInfo>();
-	protected Set<NodeInfo> nodes = new HashSet<NodeInfo>();
+	protected static Set<Station> stations = new HashSet<Station>();
+	protected static Set<SectionInfo> sections = new HashSet<SectionInfo>();
+	protected static Set<NodeInfo> nodes = new HashSet<NodeInfo>();
 	
 	/**
 	 * Create a repository which listens for connection on a specified port
