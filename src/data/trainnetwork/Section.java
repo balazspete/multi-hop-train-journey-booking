@@ -35,8 +35,7 @@ public class Section extends DefaultWeightedEdge {
 	protected String routeID;
 	protected DateTime startTime;
 	protected long journeyLength;
-	protected int cost;
-	protected int maxPassengers;
+	protected int cost, maxPassengers, sectionNumber;
 	protected Status status;
 
 	/**
@@ -45,8 +44,8 @@ public class Section extends DefaultWeightedEdge {
 	 * @param startTime The time at which the train leaves the station
 	 * @param journeyLength The length of the journey on the {@link Section}
 	 */
-	public Section(String routeID, DateTime startTime, long journeyLength) {
-		this(routeID, startTime, journeyLength, 0);
+	public Section(String routeID, int sectionNumber, DateTime startTime, long journeyLength) {
+		this(routeID, sectionNumber, startTime, journeyLength, 0);
 	}
 	
 	/**
@@ -55,8 +54,8 @@ public class Section extends DefaultWeightedEdge {
 	 * @param startTime The time at which the train leaves the station
 	 * @param journeyLength The length of the journey on the {@link Section}
 	 */
-	public Section(String routeID, DateTime startTime, long journeyLength, int cost) {
-		this(routeID, startTime, journeyLength, cost, Status.AVAILABLE);
+	public Section(String routeID, int sectionNumber, DateTime startTime, long journeyLength, int cost) {
+		this(routeID, sectionNumber, startTime, journeyLength, cost, Status.AVAILABLE);
 	}
 	
 	/**
@@ -66,8 +65,9 @@ public class Section extends DefaultWeightedEdge {
 	 * @param journeyLength The length of the journey on the {@link Section}
 	 * @param status The availability status of the section
 	 */
-	public Section(String routeID, DateTime startTime, long journeyLength, int cost, Status status) {
+	public Section(String routeID, int sectionNumber, DateTime startTime, long journeyLength, int cost, Status status) {
 		this.routeID = routeID;
+		this.sectionNumber = sectionNumber;
 		this.startTime = startTime;
 		this.journeyLength = journeyLength;
 		this.cost = cost;
@@ -119,24 +119,26 @@ public class Section extends DefaultWeightedEdge {
 	 * Create a {@link Section} from a corresponding {@link JSONObject}
 	 * @param rawSection The JSON data for the section
 	 * @param routeID The ID of the associated route
+	 * @param sectionNumber The position of theSection within the train route
 	 * @return The newly created {@link Section}
 	 * @throws IllegalArgumentException Thrown if an argument within the JSON is of incorrect type
 	 * @throws MissingParameterException Thrown if a required argument is not defined in the JSON
 	 */
-	public static Section getSectionFromJSON(JSONObject rawSection, String routeID) throws IllegalArgumentException, MissingParameterException {
-		return getSectionFromJSON(rawSection, routeID, (new LocalTime(0)).toDateTimeToday());
+	public static Section getSectionFromJSON(JSONObject rawSection, String routeID, int sectionNumber) throws IllegalArgumentException, MissingParameterException {
+		return getSectionFromJSON(rawSection, routeID, sectionNumber, (new LocalTime(0)).toDateTimeToday());
 	}
 	
 	/**
 	 * Create a {@link Section} from a corresponding {@link JSONObject}
 	 * @param rawSection The JSON data for the section
 	 * @param routeID The ID of the associated route
+	 * @param sectionNumber The position of the section within the train route
 	 * @param baseTime {@link DateTime} specifying the date for the section's time
 	 * @return The newly created {@link Section}
 	 * @throws IllegalArgumentException Thrown if an argument within the JSON is of incorrect type
 	 * @throws MissingParameterException Thrown if a required argument is not defined in the JSON
 	 */
-	public static Section getSectionFromJSON(JSONObject rawSection, String routeID, DateTime baseTime) throws IllegalArgumentException, MissingParameterException {
+	public static Section getSectionFromJSON(JSONObject rawSection, String routeID, int sectionNumber, DateTime baseTime) throws IllegalArgumentException, MissingParameterException {
 		Object time = JSONTools.getParameter(rawSection, "time");
 		Object length = JSONTools.getParameter(rawSection, "length");
 		Object cost = JSONTools.getParameter(rawSection, "cost");
@@ -151,6 +153,7 @@ public class Section extends DefaultWeightedEdge {
 		
 		return new Section(
 			routeID,
+			sectionNumber,
 			new DateTime(time), 
 			(Long) length,
 			(int)(long)(Long) cost,
@@ -186,7 +189,7 @@ public class Section extends DefaultWeightedEdge {
 	
 	@Override
 	public String toString() {
-		return "<" + routeID + ">";
+		return "<" + routeID + ":" + sectionNumber + ">";
 	}
 
 	/**
@@ -222,13 +225,17 @@ public class Section extends DefaultWeightedEdge {
 		return time.isAfter(startTime) && status == Status.AVAILABLE;
 	}
 	
-	public static boolean isValidIdentifier(String id) {
-		// TODO implement id check
-		return false;
+	public String getID() {
+		return "" + routeID + "|" + sectionNumber + "|" + startTime.toString();
 	}
 	
-	public static Section getSectionFromId(String id) {
-		// TODO implement
-		return null;
-	}
+//	public static boolean isValidIdentifier(String id) {
+//		// TODO implement id check
+//		return false;
+//	}
+//	
+//	public static Section getSectionFromId(String id) {
+//		// TODO implement
+//		return null;
+//	}
 }

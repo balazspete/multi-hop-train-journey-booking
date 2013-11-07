@@ -13,17 +13,17 @@ public class BookableSection extends Section {
 	
 	private Set<Seat> reservedSeats, preReservedSeats;
 	
-	public BookableSection(String routeID, DateTime startTime,
+	public BookableSection(String routeID, int sectionNumber, DateTime startTime,
 			long journeyLength, int cost) {
-		super(routeID, startTime, journeyLength, cost);
+		super(routeID, sectionNumber, startTime, journeyLength, cost);
 		
 		this.reservedSeats = new HashSet<Seat>();
 		this.preReservedSeats = new HashSet<Seat>();
 	}
 	
-	public BookableSection(String routeID, DateTime startTime,
+	public BookableSection(String routeID, int sectionNumber, DateTime startTime,
 			long journeyLength, int cost, Set<Seat> bookedSeats, Set<Seat> prebookedSeats) {
-		super(routeID, startTime, journeyLength, cost);
+		super(routeID, sectionNumber, startTime, journeyLength, cost);
 		
 		this.reservedSeats = bookedSeats;
 		this.preReservedSeats = prebookedSeats;
