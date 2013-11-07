@@ -10,14 +10,16 @@ import data.InconsistentDataException;
  * @author Balazs Pete
  *
  */
-public class TransactionManager {
+public class TransactionManager<KEY, VALUE> {
 
 	private volatile Map<String, Transaction> transactionsTable;
+	private volatile Map<KEY, VALUE> data;
 	
 	/**
 	 * Create a new TransactionManager
 	 */
-	public TransactionManager() {
+	public TransactionManager(Map<KEY, VALUE> data) {
+		this.data = data;
 		transactionsTable = new HashMap<String, Transaction>();
 	}
 	
@@ -26,7 +28,8 @@ public class TransactionManager {
 	 * @param content The content to execute
 	 * @throws FailedTransactionException Thrown if transaction creation or execution failed
 	 */
-	public void execute(TransactionContent content) throws FailedTransactionException {
+	public void execute(TransactionContent<KEY, VALUE> content) throws FailedTransactionException {
+		content.setData(data);
 		try {
 			Transaction t = initiateTransaction(content);
 			t.execute();
@@ -64,7 +67,7 @@ public class TransactionManager {
 		}
 	}
 	
-	private Transaction initiateTransaction(TransactionContent content) throws InvalidTransactionException {
+	private Transaction initiateTransaction(TransactionContent<KEY, VALUE> content) throws InvalidTransactionException {
 		if (transactionsTable.containsKey(content.getId()))
 			throw new InvalidTransactionException("Transaction ID already exists");
 		
