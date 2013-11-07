@@ -11,3 +11,4 @@ jgrapht-javadoc/*
 
 out.json
 compiled_*.json
+distributed_datastore.cache
