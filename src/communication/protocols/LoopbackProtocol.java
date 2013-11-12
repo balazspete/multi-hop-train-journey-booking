@@ -18,4 +18,9 @@ public class LoopbackProtocol implements Protocol {
 	public Message processMessage(Message message) {
 		return (TextMessage) message;
 	}
+
+	@Override
+	public boolean hasReply() {
+		return true;
+	}
 }

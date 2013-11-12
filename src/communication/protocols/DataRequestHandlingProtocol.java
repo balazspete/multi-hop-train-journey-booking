@@ -53,4 +53,9 @@ public class DataRequestHandlingProtocol<DATA> extends RequestHandlingProtocol {
 		
 		return new DataRequestReplyMessage<Set<DATA>>(requestedData);
 	}
+
+	@Override
+	public boolean hasReply() {
+		return true;
+	}
 }

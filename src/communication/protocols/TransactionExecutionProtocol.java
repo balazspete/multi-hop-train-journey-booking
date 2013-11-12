@@ -36,4 +36,9 @@ public class TransactionExecutionProtocol<KEY, VALUE> implements Protocol {
 			return TransactionExecutionReplyMessage.failedMessage(content.getId());
 		}
 	}
+
+	@Override
+	public boolean hasReply() {
+		return true;
+	}
 }

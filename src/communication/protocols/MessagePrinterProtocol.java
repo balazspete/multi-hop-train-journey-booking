@@ -19,4 +19,9 @@ public class MessagePrinterProtocol implements Protocol {
 		System.out.println(message.getContents());
 		return null;
 	}
+
+	@Override
+	public boolean hasReply() {
+		return false;
+	}
 }

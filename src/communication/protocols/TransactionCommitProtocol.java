@@ -44,4 +44,9 @@ public class TransactionCommitProtocol<KEY, VALUE> implements Protocol {
 		}
 	}
 
+	@Override
+	public boolean hasReply() {
+		return true;
+	}
+
 }

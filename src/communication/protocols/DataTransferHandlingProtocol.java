@@ -46,4 +46,9 @@ public class DataTransferHandlingProtocol<DATA> extends RequestHandlingProtocol 
 		return new DataTransferReplyMessage(msg.getTransferId());
 	}
 
+	@Override
+	public boolean hasReply() {
+		return true;
+	}
+
 }
