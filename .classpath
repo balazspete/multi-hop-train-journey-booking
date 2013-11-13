@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="jgraph.jar"/>
 	<classpathentry kind="lib" path="cloning-1.9.0.jar"/>
+	<classpathentry kind="lib" path="objenesis-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
