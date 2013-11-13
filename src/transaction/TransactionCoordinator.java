@@ -15,7 +15,6 @@ import communication.messages.Message;
 import communication.messages.TransactionCommitMessage;
 import communication.messages.TransactionExecutionMessage;
 import communication.messages.TransactionExecutionReplyMessage.Reply;
-import communication.unicast.UnicastClient;
 import communication.unicast.UnicastSocketClient;
 
 import data.system.NodeInfo;

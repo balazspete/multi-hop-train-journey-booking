@@ -5,6 +5,7 @@ package transaction;
  * @author Balazs Pete
  *
  */
+@SuppressWarnings("rawtypes")
 public class Transaction {
 
 	private VaultManager lockManager = new VaultManager();

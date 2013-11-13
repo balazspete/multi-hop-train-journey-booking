@@ -35,11 +35,10 @@ public abstract class DistributedRepository extends DataRepository {
 		super(PORT);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void initialize() {
 		sections = new HashMap<String, Vault<BookableSection>>();
-		transactions = new TransactionManager<String, Vault<BookableSection>>(sections, (WriteOnlyLock) communicationLock);
+		transactions = new TransactionManager<String, Vault<BookableSection>>(sections);
 		
 		int count = 0;
 		while (count++ < 3) {
