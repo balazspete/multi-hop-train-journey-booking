@@ -14,12 +14,14 @@ public class TransactionManager<KEY, VALUE> {
 
 	private volatile Map<String, Transaction> transactionsTable;
 	private volatile Map<KEY, VALUE> data;
+	private WriteOnlyLock<Object> monitor;
 	
 	/**
 	 * Create a new TransactionManager
 	 */
-	public TransactionManager(Map<KEY, VALUE> data) {
+	public TransactionManager(Map<KEY, VALUE> data, WriteOnlyLock<Object> monitor) {
 		this.data = data;
+		this.monitor = monitor;
 		transactionsTable = new HashMap<String, Transaction>();
 	}
 	
