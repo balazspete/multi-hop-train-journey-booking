@@ -44,7 +44,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	private TransactionContent<KEY, VALUE> content;
 	private Map<KEY, VALUE> data;
 	private Collection<NodeInfo> nodes;
-	private WriteOnlyLock<Object> monitor;
+	private WriteOnlyLock<Integer> monitor;
 	
 	private Transaction transaction;
 	
@@ -64,7 +64,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		TransactionContent<KEY, VALUE> content, 
 		Map<KEY, VALUE> data, 
 		Collection<NodeInfo> nodes, 
-		WriteOnlyLock<Object> monitor
+		WriteOnlyLock<Integer> monitor
 	) {
 		this.content = content;
 		this.data = data;
@@ -181,23 +181,37 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	private void doRemoteCommit() {
 		TransactionCommitMessage message = new TransactionCommitMessage(content.getId());
 		message.setContents(TransactionCommitMessage.CommitAction.COMMIT);
-		sendMessageToAllNodes(message);
+		monitor.writeLock();
+		try {
+			sendMessageToAllNodes(message);
+		} catch (LockException e) {
+			e.printStackTrace();
+		} finally {
+			monitor.writeUnlock();
+		}
 	}
 	
 	private void doRemoteAbort() {
 		TransactionCommitMessage message = new TransactionCommitMessage(content.getId());
 		message.setContents(TransactionCommitMessage.CommitAction.ABORT);
-		sendMessageToAllNodes(message);
+		monitor.writeLock();
+		try {
+			sendMessageToAllNodes(message);
+		} catch (LockException e) {
+			e.printStackTrace();
+		} finally {
+			monitor.writeUnlock();
+		}
 	}
 	
-	private void sendMessageToAllNodes(Message message) {
+	private void sendMessageToAllNodes(Message message) throws LockException {
 		Queue<NodeInfo> messageQueue = new ConcurrentLinkedQueue<NodeInfo>(nodes);
 		
 		int count = 0;
 		while (count++ < nodes.size() || messageQueue.size() == 0) {
 			NodeInfo node = messageQueue.remove();
 			try {
-				UnicastSocketClient.sendOneMessage(node.getLocation(), DistributedRepository.PORT, message, false);
+				UnicastSocketClient.sendOneMessage(node.getLocation(), monitor.getWriteable(), message, false);
 			} catch (CommunicationException e) {
 				messageQueue.add(node);
 			}
