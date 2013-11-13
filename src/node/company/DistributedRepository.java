@@ -2,6 +2,7 @@ package node.company;
 
 import java.util.*;
 
+import transaction.TransactionCoordinatorManager;
 import transaction.TransactionManager;
 import transaction.Vault;
 import transaction.WriteOnlyLock;
@@ -28,6 +29,7 @@ public abstract class DistributedRepository extends DataRepository {
 
 	protected volatile Map<String, Vault<BookableSection>> sections;
 	protected volatile TransactionManager<String, Vault<BookableSection>> transactions;
+	protected volatile TransactionCoordinatorManager<String, Vault<BookableSection>> transactionCoordinators;
 	
 	protected static WriteOnlyLock<Integer> communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
 	
