@@ -2,10 +2,15 @@ package communication.unicast;
 
 import java.io.*;
 import java.net.*;
+import java.util.Set;
+
+import node.company.DistributedRepository;
+import node.company.DistributedRepository.DataLoadException;
 
 import communication.CommunicationException;
 import communication.messages.*;
 import data.system.NodeInfo;
+import data.trainnetwork.BookableSection;
 
 /**
  * A client-to-server networking client implemented using sockets
@@ -15,6 +20,8 @@ import data.system.NodeInfo;
 public class UnicastSocketClient extends Thread implements
 		UnicastClient {
 
+	public static final int MAX_TRIES = 3;
+	
 	private String host;
 	private int port;
 	
@@ -104,6 +111,75 @@ public class UnicastSocketClient extends Thread implements
 		node.addLocation(host);
 		message.setSender(node);
 		return message;
+	}
+	
+	/**
+	 * Send one message to a {@link UnicastSocketServer}
+	 * @param location The address of the server
+	 * @param port The port the server is running on
+	 * @param message The message to send
+	 * @throws CommunicationException Thrown if an error occurred while sending the message
+	 */
+	public static Message sendOneMessage(String location, int port, Message message, boolean receiveReply) throws CommunicationException {
+		UnicastSocketClient client = new UnicastSocketClient(location, DistributedRepository.PORT);
+		return sendOneMessage(client, message, receiveReply);
+	}
+	
+	/**
+	 * Send one message to a {@link UnicastSocketServer}
+	 * @param client The {@link UnicastSocketClient} to use
+	 * @param message The message to send
+	 * @throws CommunicationException Thrown if an error occurred while sending the message
+	 */
+	public static Message sendOneMessage(UnicastSocketClient client, Message message, boolean receiveReply) throws CommunicationException {
+		int count = 0;
+		while (true) {
+			try {
+				client.createConnection();
+				break;
+			} catch (CommunicationException e) {
+				e.printStackTrace();
+				if (count++ > MAX_TRIES) {
+					throw CommunicationException.CANNOT_OPEN_CONNECTION;
+				}
+			}
+		}
+		
+		count = 0;
+		while (true) {
+			try {
+				client.sendMessage(message);
+				break;
+			} catch (CommunicationException e) {
+				e.printStackTrace();
+				if (count++ > MAX_TRIES) {
+					throw CommunicationException.CANNOT_SEND_MESSAGE;
+				}
+			}
+		}
+		
+		Message msg = null;
+		if (receiveReply) {
+			try {
+				msg = client.getMessage();
+			} catch (InvalidMessageException e) {
+			}
+		}
+		
+		count = 0;
+		while (true) {
+			try {
+				client.endConnection();
+				break;
+			} catch (CommunicationException e) {
+				e.printStackTrace();
+			}
+			if (count++ > MAX_TRIES) {
+				throw CommunicationException.CANNOT_CLOSE_CONNECTION;
+			}
+		}
+		
+		return msg;
 	}
 
 	public static void main(String[] args) {
