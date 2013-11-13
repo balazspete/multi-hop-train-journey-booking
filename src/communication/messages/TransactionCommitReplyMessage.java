@@ -49,8 +49,8 @@ public class TransactionCommitReplyMessage extends TransactionMessage {
 	 * @param transactionId The id of the corresponding message
 	 * @return The message
 	 */
-	public static TransactionExecutionReplyMessage committedMessage(String transactionId) {
-		TransactionExecutionReplyMessage msg = new TransactionExecutionReplyMessage(transactionId);
+	public static TransactionCommitReplyMessage committedMessage(String transactionId) {
+		TransactionCommitReplyMessage msg = new TransactionCommitReplyMessage(transactionId);
 		msg.setContents(Status.COMMITTED);
 		return msg;
 	}
@@ -60,8 +60,8 @@ public class TransactionCommitReplyMessage extends TransactionMessage {
 	 * @param transactionId The id of the corresponding message
 	 * @return The message
 	 */
-	public static TransactionExecutionReplyMessage abortedMessage(String transactionId) {
-		TransactionExecutionReplyMessage msg = new TransactionExecutionReplyMessage(transactionId);
+	public static TransactionCommitReplyMessage abortedMessage(String transactionId) {
+		TransactionCommitReplyMessage msg = new TransactionCommitReplyMessage(transactionId);
 		msg.setContents(Status.ABORTED);
 		return msg;
 	}
