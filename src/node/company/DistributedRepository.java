@@ -4,6 +4,7 @@ import java.util.*;
 
 import transaction.TransactionManager;
 import transaction.Vault;
+import transaction.WriteOnlyLock;
 
 import communication.CommunicationException;
 import communication.messages.DataRequestMessage;
@@ -20,21 +21,25 @@ public abstract class DistributedRepository extends DataRepository {
 		private static final long serialVersionUID = -6869722814419718639L;
 	}
 	
+	public static final int PORT = 8001;
+	
 	protected static final String DATA_STORE_LOCATION = "localhost";
 	protected static final int DATA_STORE_PORT = 8005;
 
 	protected volatile Map<String, Vault<BookableSection>> sections;
 	protected volatile TransactionManager<String, Vault<BookableSection>> transactions;
 	
+	protected static WriteOnlyLock<Integer> communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
+	
 	public DistributedRepository() {
-		// TODO load from config
-		super(8001);
+		super(PORT);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void initialize() {
 		sections = new HashMap<String, Vault<BookableSection>>();
-		transactions = new TransactionManager<String, Vault<BookableSection>>(sections);
+		transactions = new TransactionManager<String, Vault<BookableSection>>(sections, (WriteOnlyLock) communicationLock);
 		
 		int count = 0;
 		while (count++ < 3) {
@@ -57,34 +62,22 @@ public abstract class DistributedRepository extends DataRepository {
 		BookableSectionDataRequest request = new BookableSectionDataRequest();
 		DataRequestMessage<BookableSection> requestMessage = new DataRequestMessage<BookableSection>(request, "BookableSection");
 		
-		System.out.println("requestmessage: " +requestMessage);
-		try {
-			client.createConnection();
-			client.sendMessage(requestMessage);
-		} catch (CommunicationException e) {
-			e.printStackTrace();
-			throw new DataLoadException();
-		}
-		
 		Set<BookableSection> data = null;
+		
+		Message msg;
 		try {
-			Message msg = client.getMessage();
+			msg = UnicastSocketClient.sendOneMessage(client, requestMessage, true);
 			data = (Set<BookableSection>) msg.getContents();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DataLoadException();
-		}
-
-		try {
-			client.endConnection();
 		} catch (CommunicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Failed to contact DataStore
+			return;
 		}
 		
-		for (BookableSection entry : data) {
-			Vault<BookableSection> vault = new Vault<BookableSection>(entry);
-			sections.put(entry.getID().intern(), vault);
+		if (data != null) {
+			for (BookableSection entry : data) {
+				Vault<BookableSection> vault = new Vault<BookableSection>(entry);
+				sections.put(entry.getID().intern(), vault);
+			}
 		}
 	}
 }

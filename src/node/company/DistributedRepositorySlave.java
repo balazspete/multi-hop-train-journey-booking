@@ -15,8 +15,8 @@ public class DistributedRepositorySlave extends DistributedRepository {
 	@Override
 	protected Set<Protocol> getProtocols() {
 		Set<Protocol> protocols = new HashSet<Protocol>();
-		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>>(transactions));
-		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>>(transactions));
+		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
+		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
 		
 		// TODO add client handling
 		
