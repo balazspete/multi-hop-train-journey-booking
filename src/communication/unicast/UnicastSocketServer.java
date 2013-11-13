@@ -7,6 +7,7 @@ import java.util.Map;
 import communication.CommunicationException;
 import communication.protocols.*;
 import communication.messages.*;
+import data.system.NodeInfo;
 
 /**
  * A client-to-server networking server implemented using sockets
@@ -93,12 +94,16 @@ public class UnicastSocketServer extends UnicastServer {
 			    	
 			    	// Determine protocol to be used
 			    	Message input = (Message) object;
+					NodeInfo node = new NodeInfo(socket.getInetAddress().getHostName());
+					node.addLocation(socket.getInetAddress().getHostAddress());
+					input.setSender(node);
 			    	Protocol protocol = protocolMap.get(input.getType().intern());
 			    	
 			    	// Process message and get response
 					Message message;
 					if(protocol != null) {
 						message = protocol.processMessage(input);
+						if (!protocol.hasReply()) return;
 					} else {
 						message = new ErrorMessage("Message type not supported");
 					}

@@ -5,6 +5,7 @@ import java.net.*;
 
 import communication.CommunicationException;
 import communication.messages.*;
+import data.system.NodeInfo;
 
 /**
  * A client-to-server networking client implemented using sockets
@@ -98,7 +99,11 @@ public class UnicastSocketClient extends Thread implements
 			throw new InvalidMessageException("Received message is invalid");
 		}
 		
-		return (Message) object;
+		Message message = (Message) object;
+		NodeInfo node = new NodeInfo(null);
+		node.addLocation(host);
+		message.setSender(node);
+		return message;
 	}
 
 	public static void main(String[] args) {
