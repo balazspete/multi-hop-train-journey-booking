@@ -21,6 +21,7 @@ public class TransactionExecutionReplyProtocol<KEY, VALUE> implements Protocol {
 
 	@Override
 	public Message processMessage(Message message) {
+		System.out.println("received exec reply");
 		TransactionExecutionReplyMessage msg = (TransactionExecutionReplyMessage) message;
 		TransactionCoordinator<KEY, VALUE> tc = manager.get(msg.getTransactionId()); 
 		

@@ -21,6 +21,7 @@ public class TransactionCommitReplyProtocol<KEY, VALUE> implements Protocol {
 
 	@Override
 	public Message processMessage(Message message) {
+		System.out.println("Received commit reply");
 		TransactionExecutionReplyMessage msg = (TransactionExecutionReplyMessage) message;
 		TransactionCoordinator<KEY, VALUE> tc = manager.get(msg.getTransactionId()); 
 		

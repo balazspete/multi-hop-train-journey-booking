@@ -33,6 +33,8 @@ public class TransactionExecutionProtocol<KEY, VALUE> implements Protocol {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Message processMessage(Message message) {
+		System.out.println("execution message sent");
+		
 		TransactionContent<KEY, VALUE> content = 
 				(TransactionContent<KEY, VALUE>) message.getContents();
 		
