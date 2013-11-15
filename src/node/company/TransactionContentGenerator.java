@@ -1,5 +1,7 @@
 package node.company;
 
+import java.util.Map;
+
 import org.joda.time.DateTime;
 
 import data.trainnetwork.BookableSection;
@@ -22,7 +24,11 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 			public void run() throws FailedTransactionException {
 				BookableSection s = new BookableSection("section", 1, DateTime.now(), 10, 10);
 				System.out.println("EXECUTING");
-				data.put(s.getID(), new Vault<BookableSection>(s));
+				
+				Map <String, Vault<BookableSection>> _data = (Map<String, Vault<BookableSection>>) manager.writeLock(new Vault(data));
+				_data.put(s.getID(), new Vault<BookableSection>(s));
+				
+				
 			}
 		};
 		
