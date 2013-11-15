@@ -28,6 +28,15 @@ public class Vault<T> extends Lock<T> {
 		return super.getReadable();
 	}
 	
+	@Override
+	public T getWriteable() throws LockException {
+		if (lockedData == null) {
+			lockedData = cloner.deepClone(base);
+		}
+		
+		return super.getWriteable();
+	}
+	
 	/**
 	 * Commit the changes 
 	 */

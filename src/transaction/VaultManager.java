@@ -42,7 +42,7 @@ public class VaultManager {
 	 * @return The value on which the lock was requested
 	 */
 	public Object readLock(Vault lock) {
-		lock.writeLock();
+		lock.readLock();
 		locks.put(lock, LockType.READ);
 		
 		return lock.getReadable();
