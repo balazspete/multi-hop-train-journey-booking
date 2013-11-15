@@ -151,7 +151,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		}
 		
 		if (replies.size() == nodes.size()) {
-			this.start();
+			new Thread(this).start();
 		}
 		
 		return true;
