@@ -24,6 +24,7 @@ public class Transaction {
 	 * @throws FailedTransactionException Throws if the execution failed
 	 */
 	public void execute() throws FailedTransactionException {
+		content.setVaultManager(lockManager);
 		content.run();
 	}
 	

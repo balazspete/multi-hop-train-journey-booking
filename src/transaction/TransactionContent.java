@@ -18,6 +18,7 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	private static final long serialVersionUID = -4571149016161551365L;
 	
 	private String id;
+	protected transient VaultManager manager;
 	protected transient Map<KEY, VALUE> data;
 	
 	/**
@@ -47,6 +48,14 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	 */
 	public void setData(Map<KEY, VALUE> data) {
 		this.data = data;
+	}
+	
+	/**
+	 * Set the vault manager
+	 * @param manager The vault manager to use
+	 */
+	public void setVaultManager(VaultManager manager) {
+		this.manager= manager; 
 	}
 	
 	public Map getData() {
