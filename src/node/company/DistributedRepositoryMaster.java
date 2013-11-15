@@ -44,7 +44,7 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		TransactionCoordinator<String, Vault<BookableSection>> tc
 			= new TransactionCoordinator<String, Vault<BookableSection>>(c, sections, ni, communicationLock);
 		
-		transactionCoordinators.put("00", tc);
+		transactionCoordinators.put(tc.getTransactionId(), tc);
 		
 		tc.start();
 	}
