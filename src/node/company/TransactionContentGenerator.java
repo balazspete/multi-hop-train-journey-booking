@@ -1,5 +1,7 @@
 package node.company;
 
+import org.joda.time.DateTime;
+
 import data.trainnetwork.BookableSection;
 import transaction.FailedTransactionException;
 import transaction.TransactionContent;
@@ -18,11 +20,9 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 			private static final long serialVersionUID = -8167406104784795108L;
 			@Override
 			public void run() throws FailedTransactionException {
-				// TODO Auto-generated method stub
-//				BookableSection s = new BookableSection("section", 1, DateTime.now(), 10, 10);
-//				System.out.println("EXECUTING");
-//				data.put(s.getID(), new Vault<BookableSection>(s));
-				System.out.println("tc:hello");
+				BookableSection s = new BookableSection("section", 1, DateTime.now(), 10, 10);
+				System.out.println("EXECUTING");
+				data.put(s.getID(), new Vault<BookableSection>(s));
 			}
 		};
 		
