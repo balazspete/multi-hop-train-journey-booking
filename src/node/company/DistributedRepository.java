@@ -27,12 +27,11 @@ public abstract class DistributedRepository extends DataRepository {
 	protected static final String DATA_STORE_LOCATION = "localhost";
 	protected static final int DATA_STORE_PORT = 8005;
 
-	protected volatile Map<String, Vault<BookableSection>> sections;
-	protected volatile TransactionManager<String, Vault<BookableSection>> transactions;
-	protected volatile TransactionCoordinatorManager<String, Vault<BookableSection>> transactionCoordinators 
-			= new TransactionCoordinatorManager<String, Vault<BookableSection>>();;
+	protected static Map<String, Vault<BookableSection>> sections;
+	protected static TransactionManager<String, Vault<BookableSection>> transactions;
+	protected static TransactionCoordinatorManager<String, Vault<BookableSection>> transactionCoordinators;
 	
-	protected static WriteOnlyLock<Integer> communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
+	protected static WriteOnlyLock<Integer> communicationLock;
 	
 	public DistributedRepository() {
 		super(PORT);
@@ -42,6 +41,8 @@ public abstract class DistributedRepository extends DataRepository {
 	protected void initialize() {
 		sections = new HashMap<String, Vault<BookableSection>>();
 		transactions = new TransactionManager<String, Vault<BookableSection>>(sections);
+		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>>();
+		communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
 		
 		int count = 0;
 		while (count++ < 3) {
