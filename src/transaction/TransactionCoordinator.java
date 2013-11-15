@@ -208,7 +208,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		Queue<NodeInfo> messageQueue = new ConcurrentLinkedQueue<NodeInfo>(nodes);
 		
 		int count = 0;
-		while (count++ < nodes.size() || messageQueue.size() == 0) {
+		while (count++ < nodes.size() || messageQueue.size() != 0) {
 			NodeInfo node = messageQueue.remove();
 			try {
 				UnicastSocketClient.sendOneMessage(node.getLocation(), monitor.getWriteable(), message, false);

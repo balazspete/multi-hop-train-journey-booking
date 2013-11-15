@@ -29,7 +29,8 @@ public abstract class DistributedRepository extends DataRepository {
 
 	protected volatile Map<String, Vault<BookableSection>> sections;
 	protected volatile TransactionManager<String, Vault<BookableSection>> transactions;
-	protected volatile TransactionCoordinatorManager<String, Vault<BookableSection>> transactionCoordinators;
+	protected volatile TransactionCoordinatorManager<String, Vault<BookableSection>> transactionCoordinators 
+			= new TransactionCoordinatorManager<String, Vault<BookableSection>>();;
 	
 	protected static WriteOnlyLock<Integer> communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
 	

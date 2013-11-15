@@ -18,7 +18,7 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	private static final long serialVersionUID = -4571149016161551365L;
 	
 	private String id;
-	protected Map<KEY, VALUE> data;
+	protected transient Map<KEY, VALUE> data;
 	
 	/**
 	 * Create a new TransactionContent
@@ -47,6 +47,10 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	 */
 	public void setData(Map<KEY, VALUE> data) {
 		this.data = data;
+	}
+	
+	public Map getData() {
+		return data;
 	}
 	
 	/**
