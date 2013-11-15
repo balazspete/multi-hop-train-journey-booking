@@ -3,6 +3,8 @@ package communication.protocols;
 import transaction.TransactionCoordinator;
 import transaction.TransactionCoordinatorManager;
 import communication.messages.Message;
+import communication.messages.TransactionCommitReplyMessage;
+import communication.messages.TransactionCommitReplyMessage.Status;
 import communication.messages.TransactionExecutionReplyMessage;
 import communication.messages.TransactionExecutionReplyMessage.Reply;
 
@@ -22,10 +24,10 @@ public class TransactionCommitReplyProtocol<KEY, VALUE> implements Protocol {
 	@Override
 	public Message processMessage(Message message) {
 		System.out.println("Received commit reply");
-		TransactionExecutionReplyMessage msg = (TransactionExecutionReplyMessage) message;
+		TransactionCommitReplyMessage msg = (TransactionCommitReplyMessage) message;
 		TransactionCoordinator<KEY, VALUE> tc = manager.get(msg.getTransactionId()); 
 		
-		tc.logReply(msg.getSender().getLocation(), (Reply) msg.getContents());
+		tc.logReply(msg.getSender().getLocation(), null);
 		
 		return null;
 	}

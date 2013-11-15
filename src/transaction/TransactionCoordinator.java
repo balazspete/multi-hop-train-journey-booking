@@ -145,13 +145,13 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		replies.add(node);
 		
 		if (status != TransactionStatus.DONE) {
-			if (reply == Reply.FAILED) {
+			if (reply == null || reply == Reply.FAILED) {
 				stage = TransactionStage.ABORT;
 			}
-		}
-		
-		if (replies.size() == nodes.size()) {
-			new Thread(this).start();
+			
+			if (replies.size() == nodes.size()) {
+				new Thread(this).start();
+			}
 		}
 		
 		return true;
@@ -211,6 +211,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		while (count++ < nodes.size() || messageQueue.size() != 0) {
 			NodeInfo node = messageQueue.remove();
 			try {
+				System.out.println("--send message--");
 				UnicastSocketClient.sendOneMessage(node.getLocation(), monitor.getWriteable(), message, false);
 			} catch (CommunicationException e) {
 				messageQueue.add(node);
