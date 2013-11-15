@@ -47,6 +47,16 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		transactionCoordinators.put(tc.getTransactionId(), tc);
 		
 		tc.start();
+		
+		while (true) {
+			System.out.println("sections-check" + sections);
+			try {
+				sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	
