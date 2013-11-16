@@ -65,7 +65,6 @@ public abstract class DistributedRepository extends DataRepository {
 
 	@Override
 	protected abstract Set<Protocol> getProtocols();
-	
 	@SuppressWarnings("unchecked")
 	private void restoreFromStore() throws DataLoadException {
 		UnicastSocketClient client = new UnicastSocketClient(DATA_STORE_LOCATION, DATA_STORE_PORT);
@@ -84,7 +83,8 @@ public abstract class DistributedRepository extends DataRepository {
 			return;
 		}
 		
-		while (data != null && data.size() > 0) {
+		boolean committed = false;
+		while (data != null && !committed) {
 			Token t = sections.writeLock();
 			Map<String, Vault<BookableSection>> _sections;
 			try {
@@ -94,6 +94,7 @@ public abstract class DistributedRepository extends DataRepository {
 					_sections.put(entry.getID().intern(), vault);
 				}
 				sections.commit(t);
+				committed = true;
 			} catch (LockException e) {
 				System.err.println(e.getMessage());
 				// Loop until all sections are saved

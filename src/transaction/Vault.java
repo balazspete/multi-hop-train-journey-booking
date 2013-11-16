@@ -57,4 +57,8 @@ public class Vault<T> extends Lock<T> {
 			lockedData = null;
 		}
 	}
+	
+	public String toString() {
+		return "vault["+base.toString()+"]";
+	}
 }
