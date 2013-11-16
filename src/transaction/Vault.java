@@ -39,19 +39,22 @@ public class Vault<T> extends Lock<T> {
 	
 	/**
 	 * Commit the changes 
+	 * @param token The lock token
 	 */
-	public void commit() {
-		if (rwl.isWriteLockedByCurrentThread()) {
+	public void commit(Token token) {
+		if (canWrite(token)) {
 			base = cloner.deepClone(lockedData);
+			lockedData = null;
 		}
-		
-		lockedData = null;
 	}
 	
 	/**
 	 * Discard the changes
+	 * @param token The lock token
 	 */
-	public void abort() {
-		lockedData = null;
+	public void abort(Token token) {
+		if (canWrite(token)) {
+			lockedData = null;
+		}
 	}
 }

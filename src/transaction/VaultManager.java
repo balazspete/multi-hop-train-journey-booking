@@ -75,7 +75,7 @@ public class VaultManager {
 	 */
 	public void commit() {
 		for (Vault lock : locks.keySet()) {
-			lock.commit();
+			lock.commit(locks.get(lock));
 		}
 	}
 	
@@ -84,7 +84,7 @@ public class VaultManager {
 	 */
 	public void abort() {
 		for (Vault lock : locks.keySet()) {
-			lock.abort();
+			lock.abort(locks.get(lock));
 		}
 	}
 	

@@ -74,11 +74,20 @@ public class Lock<T> {
 	 * @throws LockException 
 	 */
 	public T getReadable(Token token) throws LockException {
-		if (!currentLocks.contains(token)) {
+		if (!canRead(token)) {
 			throw new LockException("You do not have a read lock on the item");
 		}
 		
 		return cloner.deepClone(lockedData);
+	}
+	
+	/**
+	 * Determine whether the holder of the token can read the object
+	 * @param token The token
+	 * @return True if the token is currently read locking the object, false otherwise
+	 */
+	public boolean canRead(Token token) {
+		return currentLocks.contains(token);
 	}
 	
 	/**
@@ -87,11 +96,20 @@ public class Lock<T> {
 	 * @throws LockException Thrown if the thread has not secured a write lock 
 	 */
 	public T getWriteable(Token token) throws LockException {
-		if (!writeMode || !currentLocks.contains(token)) {
+		if (!canWrite(token)) {
 			throw new LockException("You do not have a write lock on the item");
 		}
 		
 		return lockedData;
+	}
+	
+	/**
+	 * Determine whether the holder of the token has write lock
+	 * @param token The token
+	 * @return true If the input token is currently used to write lock
+	 */
+	public boolean canWrite(Token token) {
+		return writeMode && currentLocks.contains(token);
 	}
 	
 	/**
