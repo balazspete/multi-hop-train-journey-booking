@@ -41,10 +41,8 @@ public class TransactionExecutionProtocol<KEY, VALUE> implements Protocol {
 		try {
 			manager.execute(content);
 			reply = TransactionExecutionReplyMessage.readyToCommitMessage(content.getId());
-			System.out.println("Transaction<" + content.getId() + "> COMMITTING");
 		} catch (FailedTransactionException e) {
 			reply = TransactionExecutionReplyMessage.failedMessage(content.getId());
-			System.out.println("Transaction<" + content.getId() + "> ABORTING");
 		}
 
 		boolean success = false;
