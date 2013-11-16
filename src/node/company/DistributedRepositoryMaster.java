@@ -2,10 +2,7 @@ package node.company;
 
 import java.util.*;
 
-import org.joda.time.DateTime;
-
 import transaction.*;
-import transaction.Lock.Token;
 
 import communication.protocols.*;
 import data.system.NodeInfo;
@@ -27,10 +24,7 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	}
 
 	public void test() {
-		BookableSection s = new BookableSection("section", 1, DateTime.now(), 10, 10);
-		s.setMaxPassengers(100);
-		Vault<BookableSection> v = new Vault<BookableSection>(s);
-		sections.put("---", v);
+		
 		TransactionContent<String, Vault<BookableSection>> c = TransactionContentGenerator.getTestContent();
 		
 		NodeInfo i = new NodeInfo("VAIO");
@@ -46,23 +40,6 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		
 		tc.start();
 		
-		while (true) {
-			Token t = v.readLock();
-			try {
-				System.out.println("sections-check" + v.getReadable(t).toString());
-			} catch (LockException e) {
-				e.printStackTrace();
-			} finally {
-				v.readUnlock(t);
-			}
-			
-			try {
-				sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	

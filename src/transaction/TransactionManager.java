@@ -13,13 +13,13 @@ import data.InconsistentDataException;
 public class TransactionManager<KEY, VALUE> {
 
 	private volatile Map<String, Transaction> transactionsTable;
-	private volatile Map<KEY, VALUE> data;
+	private volatile Vault<Map<KEY, VALUE>> dataVault;
 	
 	/**
 	 * Create a new TransactionManager
 	 */
-	public TransactionManager(Map<KEY, VALUE> data) {
-		this.data = data;
+	public TransactionManager(Vault<Map<KEY, VALUE>> data) {
+		this.dataVault = data;
 		transactionsTable = new HashMap<String, Transaction>();
 	}
 	
@@ -29,7 +29,7 @@ public class TransactionManager<KEY, VALUE> {
 	 * @throws FailedTransactionException Thrown if transaction creation or execution failed
 	 */
 	public void execute(TransactionContent<KEY, VALUE> content) throws FailedTransactionException {
-		content.setData(data);
+		content.setData(dataVault);
 		try {
 			Transaction t = initiateTransaction(content);
 			t.execute();

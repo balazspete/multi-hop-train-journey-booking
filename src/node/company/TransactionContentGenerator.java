@@ -1,9 +1,13 @@
 package node.company;
 
+import java.util.Map;
+
 import data.trainnetwork.BookableSection;
 import data.trainnetwork.Seat;
 import data.trainnetwork.SectionFullException;
 import transaction.FailedTransactionException;
+import transaction.Lock.Token;
+import transaction.LockException;
 import transaction.TransactionContent;
 import transaction.Vault;
 
@@ -19,8 +23,9 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 			= new TransactionContent<String, Vault<BookableSection>>() {
 			private static final long serialVersionUID = -8167406104784795108L;
 			@Override
-			public void run() throws FailedTransactionException {
+			public void script(Token t) throws FailedTransactionException, LockException {
 				
+				Map<String, Vault<BookableSection>> data = dataVault.getReadable(t);
 				
 				Vault<BookableSection> d = data.get("---");
 				BookableSection s = (BookableSection) manager.writeLock(d);
@@ -33,6 +38,9 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 				}
 				
 				System.out.println(s);
+				
+				
+				
 				
 			}
 		};

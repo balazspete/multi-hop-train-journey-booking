@@ -3,6 +3,7 @@ package node.company;
 import java.util.*;
 
 import transaction.*;
+import transaction.Lock.Token;
 
 import communication.CommunicationException;
 import communication.messages.DataRequestMessage;
@@ -34,7 +35,7 @@ public abstract class DistributedRepository extends DataRepository {
 	protected static final String DATA_STORE_LOCATION = "localhost";
 	protected static final int DATA_STORE_PORT = 8005;
 
-	protected static Map<String, Vault<BookableSection>> sections;
+	protected static Vault<Map<String, Vault<BookableSection>>> sections;
 	protected static TransactionManager<String, Vault<BookableSection>> transactions;
 	protected static TransactionCoordinatorManager<String, Vault<BookableSection>> transactionCoordinators;
 	
@@ -46,7 +47,7 @@ public abstract class DistributedRepository extends DataRepository {
 
 	@Override
 	protected void initialize() {
-		sections = new HashMap<String, Vault<BookableSection>>();
+		sections = new Vault<Map<String, Vault<BookableSection>>>(new HashMap<String, Vault<BookableSection>>());
 		transactions = new TransactionManager<String, Vault<BookableSection>>(sections);
 		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>>();
 		communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
@@ -83,10 +84,21 @@ public abstract class DistributedRepository extends DataRepository {
 			return;
 		}
 		
-		if (data != null) {
-			for (BookableSection entry : data) {
-				Vault<BookableSection> vault = new Vault<BookableSection>(entry);
-				sections.put(entry.getID().intern(), vault);
+		while (data != null && data.size() > 0) {
+			Token t = sections.writeLock();
+			Map<String, Vault<BookableSection>> _sections;
+			try {
+				_sections = sections.getWriteable(t);
+				for (BookableSection entry : data) {
+					Vault<BookableSection> vault = new Vault<BookableSection>(entry);
+					_sections.put(entry.getID().intern(), vault);
+				}
+				sections.commit(t);
+			} catch (LockException e) {
+				System.err.println(e.getMessage());
+				// Loop until all sections are saved
+			} finally {
+				sections.writeUnlock(t);
 			}
 		}
 	}

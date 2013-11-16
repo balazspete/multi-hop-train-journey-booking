@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Map;
 
+import transaction.Lock.Token;
+
 /**
  * An object containing logic to execute within a transaction
  * @author Balazs Pete
@@ -19,7 +21,7 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	
 	private String id;
 	protected transient VaultManager manager;
-	protected transient Map<KEY, VALUE> data;
+	protected transient Vault<Map<KEY, VALUE>> dataVault;
 	
 	/**
 	 * Create a new TransactionContent
@@ -32,8 +34,19 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	 * Contains the logic to execute by a transaction
 	 * @throws FailedTransactionException Thrown if execution failed
 	 */
-	public abstract void run() throws FailedTransactionException;
+	public void run() throws FailedTransactionException {
+		Token t = dataVault.readLock();
+		try {
+			script(t);
+		} catch (LockException e) {
+			throw new FailedTransactionException(e.getMessage());
+		} finally {
+			dataVault.readUnlock(t);
+		}
+	}
 
+	public abstract void script(Token t) throws FailedTransactionException, LockException;
+	
 	/**
 	 * Get the ID of the corresponding transaction
 	 * @return The ID
@@ -46,8 +59,8 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	 * Set the map to work with
 	 * @param data The data map
 	 */
-	public void setData(Map<KEY, VALUE> data) {
-		this.data = data;
+	public void setData(Vault<Map<KEY, VALUE>> data) {
+		this.dataVault = data;
 	}
 	
 	/**
@@ -65,10 +78,5 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	 */
 	public boolean equals(TransactionContent<KEY, VALUE> content) {
 		return id.equals(content.getId());
-	}
-	
-	@Deprecated
-	public Map<KEY, VALUE> getData() {
-		return data;
 	}
 }

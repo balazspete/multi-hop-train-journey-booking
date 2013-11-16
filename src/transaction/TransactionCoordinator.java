@@ -42,7 +42,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	}
 	
 	private TransactionContent<KEY, VALUE> content;
-	private Map<KEY, VALUE> data;
+	private Vault<Map<KEY, VALUE>> dataVault;
 	private Collection<NodeInfo> nodes;
 	private WriteOnlyLock<Integer> monitor;
 	
@@ -63,12 +63,12 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	 */
 	public TransactionCoordinator(
 		TransactionContent<KEY, VALUE> content, 
-		Map<KEY, VALUE> data, 
+		Vault<Map<KEY, VALUE>> data, 
 		Collection<NodeInfo> nodes, 
 		WriteOnlyLock<Integer> monitor
 	) {
 		this.content = content;
-		this.data = data;
+		this.dataVault = data;
 		this.nodes = nodes;
 		this.monitor = monitor;
 	}
@@ -160,7 +160,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	
 	private void doLocalTransaction() throws FailedTransactionException {
 		TransactionContent<KEY, VALUE> _content = new Cloner().deepClone(content);
-		_content.setData(data);
+		_content.setData(dataVault);
 		
 		transaction = new Transaction(_content);
 		transaction.execute();
