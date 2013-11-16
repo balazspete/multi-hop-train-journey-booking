@@ -9,8 +9,8 @@ import communication.protocols.DataRequestHandlingProtocol;
 import communication.protocols.DataTransferHandlingProtocol;
 import communication.protocols.Protocol;
 import data.trainnetwork.BookableSection;
-
 import node.data.DataRepository;
+import node.data.RepositoryException;
 
 /**
  * A node used to store BookableSection data
@@ -139,7 +139,7 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	protected static Store sections;
 	protected StoreSaver saver;
 	
-	public DistributedRepositoryDataStore() {
+	public DistributedRepositoryDataStore() throws RepositoryException {
 		// TODO load from config
 		super(8005);
 	}
@@ -179,9 +179,13 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DistributedRepositoryDataStore ds = new DistributedRepositoryDataStore();
-		ds.test();
-		ds.start();
-		
+		DistributedRepositoryDataStore ds;
+		try {
+			ds = new DistributedRepositoryDataStore();
+			ds.test();
+			ds.start();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
 	}
 }

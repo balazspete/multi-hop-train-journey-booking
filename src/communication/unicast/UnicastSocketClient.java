@@ -6,7 +6,6 @@ import java.util.Set;
 
 import node.company.DistributedRepository;
 import node.company.DistributedRepository.DataLoadException;
-
 import communication.CommunicationException;
 import communication.messages.*;
 import data.system.NodeInfo;
@@ -111,6 +110,9 @@ public class UnicastSocketClient extends Thread implements
 		NodeInfo node = new NodeInfo(null);
 		node.addLocation(host);
 		message.setSender(node);
+		
+		System.out.println("UnicastSocketServer: Received a " + message.getType() + " from " + message.getSender().getLocation() + " | " + message.getContents());
+		
 		return message;
 	}
 	
@@ -139,9 +141,10 @@ public class UnicastSocketClient extends Thread implements
 				client.createConnection();
 				break;
 			} catch (CommunicationException e) {
-				e.printStackTrace();
 				if (count++ > MAX_TRIES) {
 					throw CommunicationException.CANNOT_OPEN_CONNECTION;
+				} else {
+					System.err.println(e.getMessage() + "; Retrying...");
 				}
 			}
 		}
@@ -152,9 +155,10 @@ public class UnicastSocketClient extends Thread implements
 				client.sendMessage(message);
 				break;
 			} catch (CommunicationException e) {
-				e.printStackTrace();
 				if (count++ > MAX_TRIES) {
 					throw CommunicationException.CANNOT_SEND_MESSAGE;
+				} else {
+					System.err.println(e.getMessage() + "; Retrying...");
 				}
 			}
 		}
@@ -164,6 +168,7 @@ public class UnicastSocketClient extends Thread implements
 			try {
 				msg = client.getMessage();
 			} catch (InvalidMessageException e) {
+				System.err.println(e.getMessage());
 			}
 		}
 		
@@ -173,10 +178,11 @@ public class UnicastSocketClient extends Thread implements
 				client.endConnection();
 				break;
 			} catch (CommunicationException e) {
-				e.printStackTrace();
-			}
-			if (count++ > MAX_TRIES) {
-				throw CommunicationException.CANNOT_CLOSE_CONNECTION;
+				if (count++ > MAX_TRIES) {
+					throw CommunicationException.CANNOT_CLOSE_CONNECTION;
+				} else {
+					System.err.println(e.getMessage() + "; Retrying...");
+				}
 			}
 		}
 		

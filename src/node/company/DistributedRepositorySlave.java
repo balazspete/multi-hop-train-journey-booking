@@ -3,6 +3,7 @@ package node.company;
 import java.util.HashSet;
 import java.util.Set;
 
+import node.data.RepositoryException;
 import transaction.Vault;
 import communication.protocols.Protocol;
 import communication.protocols.TransactionCommitProtocol;
@@ -12,6 +13,10 @@ import communication.protocols.TransactionExecutionReplyProtocol;
 import data.trainnetwork.BookableSection;
 
 public class DistributedRepositorySlave extends DistributedRepository {
+
+	public DistributedRepositorySlave() throws RepositoryException {
+		super();
+	}
 
 	@Override
 	protected Set<Protocol> getProtocols() {
@@ -30,6 +35,7 @@ public class DistributedRepositorySlave extends DistributedRepository {
 
 	public void test() {
 		while (true) {
+			
 			System.out.println("sections-check: "+sections);
 			try {
 				sleep(2000);
@@ -41,9 +47,14 @@ public class DistributedRepositorySlave extends DistributedRepository {
 	}
 	
 	public static void main(String[] args) {
-		DistributedRepositorySlave s = new DistributedRepositorySlave();
-		s.start();
-		s.test();
-		
+		DistributedRepositorySlave s;
+		try {
+			s = new DistributedRepositorySlave();
+			s.start();
+			s.test();
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

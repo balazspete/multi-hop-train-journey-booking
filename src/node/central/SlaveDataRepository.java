@@ -2,8 +2,8 @@ package node.central;
 
 import java.util.*;
 
+import node.data.RepositoryException;
 import node.data.StaticDataLoader;
-
 import communication.protocols.*;
 import data.system.NodeInfo;
 import data.trainnetwork.*;
@@ -19,8 +19,9 @@ public class SlaveDataRepository extends StaticDataRepository {
 	
 	/**
 	 * Create a {@link SlaveDataRepository}
+	 * @throws RepositoryException Thrown if the initialisation failed
 	 */
-	public SlaveDataRepository() {
+	public SlaveDataRepository() throws RepositoryException {
 		// TODO load port# from config
 		super(7000);
 	}
@@ -58,8 +59,13 @@ public class SlaveDataRepository extends StaticDataRepository {
 	}
 
 	public static void main(String[] args) {
-		SlaveDataRepository repo = new SlaveDataRepository();
-		repo.start();
-		repo.test();
+		SlaveDataRepository repo;
+		try {
+			repo = new SlaveDataRepository();
+			repo.start();
+			repo.test();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -2,13 +2,17 @@ package node.company;
 
 import java.util.*;
 
+import node.data.RepositoryException;
 import transaction.*;
 import communication.protocols.*;
-
 import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
 
 public class DistributedRepositoryMaster extends DistributedRepository {
+
+	public DistributedRepositoryMaster() throws RepositoryException {
+		super();
+	}
 
 	@Override
 	protected Set<Protocol> getProtocols() {
@@ -44,9 +48,14 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	
 	
 	public static void main(String[] args) {
-		DistributedRepositoryMaster r = new DistributedRepositoryMaster();
-		r.start();
-		r.test();
+		DistributedRepositoryMaster r;
+		try {
+			r = new DistributedRepositoryMaster();
+			r.start();
+			r.test();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

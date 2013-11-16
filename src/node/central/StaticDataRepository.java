@@ -3,7 +3,7 @@ package node.central;
 import java.util.*;
 
 import node.data.DataRepository;
-
+import node.data.RepositoryException;
 import data.system.NodeInfo;
 import data.trainnetwork.*;
 
@@ -23,8 +23,9 @@ public abstract class StaticDataRepository extends DataRepository {
 	/**
 	 * Create a repository which listens for connection on a specified port
 	 * @param port The port on which the repository should accept connections
+	 * @throws RepositoryException Thrown if the initialisation failed
 	 */
-	public StaticDataRepository(int port) {
+	public StaticDataRepository(int port) throws RepositoryException {
 		 super(port);
 	}
 }

@@ -17,8 +17,9 @@ public abstract class DataRepository extends Thread {
 	/**
 	 * Create a repository which listens for connection on a specified port
 	 * @param port The port on which the repository should accept connections
+	 * @throws RepositoryException 
 	 */
-	public DataRepository(int port) {
+	public DataRepository(int port) throws RepositoryException {
 		 server = new UnicastSocketServer(port);
 		 initialize();
 		 loadProtocols();
@@ -31,8 +32,9 @@ public abstract class DataRepository extends Thread {
 
 	/**
 	 * A method initialising all required components of the repository (executed at creation)
+	 * @throws RepositoryException Thrown when the node initialisation has failed
 	 */
-	protected abstract void initialize();
+	protected abstract void initialize() throws RepositoryException;
 	
 	/**
 	 * Retrieve all protocols used by the repository

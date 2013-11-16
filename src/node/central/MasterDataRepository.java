@@ -3,11 +3,12 @@ package node.central;
 import java.io.*;
 import java.util.*;
 
+import node.data.RepositoryException;
+
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
 import communication.protocols.*;
-
 import data.MissingParameterException;
 import data.system.NodeInfo;
 import data.trainnetwork.*;
@@ -26,8 +27,9 @@ public class MasterDataRepository extends StaticDataRepository {
 	
 	/**
 	 * Create a new {@link MasterDataRepository}
+	 * @throws RepositoryException Thrown if the initialisation failed
 	 */
-	public MasterDataRepository() {
+	public MasterDataRepository() throws RepositoryException {
 		// TODO load port# from config
 		super(8000);
 		update();
@@ -96,8 +98,13 @@ public class MasterDataRepository extends StaticDataRepository {
 	}
 	
 	public static void main(String[] args) {
-		MasterDataRepository repo = new MasterDataRepository();
-		repo.start();
-		repo.test();
+		MasterDataRepository repo;
+		try {
+			repo = new MasterDataRepository();
+			repo.start();
+			repo.test();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
 	}
 }

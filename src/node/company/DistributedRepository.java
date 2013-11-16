@@ -4,7 +4,6 @@ import java.util.*;
 
 import transaction.*;
 import transaction.Lock.Token;
-
 import communication.CommunicationException;
 import communication.messages.DataRequestMessage;
 import communication.messages.Message;
@@ -13,6 +12,7 @@ import communication.unicast.UnicastSocketClient;
 import data.request.BookableSectionDataRequest;
 import data.trainnetwork.*;
 import node.data.DataRepository; 
+import node.data.RepositoryException;
 
 /**
  * The core module of a distributed {@link DataRepository} 
@@ -27,6 +27,10 @@ public abstract class DistributedRepository extends DataRepository {
 	 *
 	 */
 	public class DataLoadException extends Exception {
+		public DataLoadException(String string) {
+			// TODO Auto-generated constructor stub
+		}
+
 		private static final long serialVersionUID = -6869722814419718639L;
 	}
 	
@@ -41,12 +45,12 @@ public abstract class DistributedRepository extends DataRepository {
 	
 	protected static WriteOnlyLock<Integer> communicationLock;
 	
-	public DistributedRepository() {
+	public DistributedRepository() throws RepositoryException {
 		super(PORT);
 	}
 
 	@Override
-	protected void initialize() {
+	protected void initialize() throws DistributedRepositoryException {
 		sections = new Vault<Map<String, Vault<BookableSection>>>(new HashMap<String, Vault<BookableSection>>());
 		transactions = new TransactionManager<String, Vault<BookableSection>>(sections);
 		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>>();
@@ -58,7 +62,8 @@ public abstract class DistributedRepository extends DataRepository {
 				restoreFromStore();
 				count = Integer.MAX_VALUE;
 			} catch (DataLoadException e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
+				throw DistributedRepositoryException.FAILED_TO_LOAD_DATA;
 			}
 		}
 	}
@@ -80,7 +85,7 @@ public abstract class DistributedRepository extends DataRepository {
 			data = (Set<BookableSection>) msg.getContents();
 		} catch (CommunicationException e) {
 			// Failed to contact DataStore
-			return;
+			throw new DataLoadException("Failed to load data from `store`");
 		}
 		
 		boolean committed = false;
