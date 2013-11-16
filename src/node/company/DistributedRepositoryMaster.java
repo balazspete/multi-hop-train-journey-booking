@@ -3,8 +3,8 @@ package node.company;
 import java.util.*;
 
 import transaction.*;
-
 import communication.protocols.*;
+
 import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
 
@@ -28,7 +28,7 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		TransactionContent<String, Vault<BookableSection>> c = TransactionContentGenerator.getTestContent();
 		
 		NodeInfo i = new NodeInfo("VAIO");
-		i.addLocation("192.168.1.13");
+		i.addLocation("192.168.1.7");
 		
 		Set<NodeInfo> ni = new HashSet<NodeInfo>();
 		ni.add(i);

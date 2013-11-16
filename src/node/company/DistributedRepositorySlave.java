@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import transaction.Vault;
-
 import communication.protocols.Protocol;
 import communication.protocols.TransactionCommitProtocol;
 import communication.protocols.TransactionCommitReplyProtocol;
@@ -28,9 +27,23 @@ public class DistributedRepositorySlave extends DistributedRepository {
 		
 		return protocols;
 	}
+
+	public void test() {
+		while (true) {
+			System.out.println("sections-check: "+sections);
+			try {
+				sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	public static void main(String[] args) {
 		DistributedRepositorySlave s = new DistributedRepositorySlave();
 		s.start();
+		s.test();
+		
 	}
 }

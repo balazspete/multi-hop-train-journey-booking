@@ -32,7 +32,7 @@ public abstract class DistributedRepository extends DataRepository {
 	
 	public static final int PORT = 8001;
 	
-	protected static final String DATA_STORE_LOCATION = "localhost";
+	protected static final String DATA_STORE_LOCATION = "192.168.1.7";
 	protected static final int DATA_STORE_PORT = 8005;
 
 	protected static Vault<Map<String, Vault<BookableSection>>> sections;

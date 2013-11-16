@@ -12,8 +12,8 @@ import data.InconsistentDataException;
  */
 public class TransactionManager<KEY, VALUE> {
 
-	private volatile Map<String, Transaction> transactionsTable;
-	private volatile Vault<Map<KEY, VALUE>> dataVault;
+	private Map<String, Transaction> transactionsTable;
+	private Vault<Map<KEY, VALUE>> dataVault;
 	
 	/**
 	 * Create a new TransactionManager
@@ -45,6 +45,7 @@ public class TransactionManager<KEY, VALUE> {
 	 */
 	public void commit(String transactionId) throws InconsistentDataException {
 		try {
+			System.out.println(transactionsTable + " " + transactionId);
 			Transaction t = getTransaction(transactionId);
 			t.commit();
 			transactionsTable.remove(transactionId);
@@ -83,6 +84,6 @@ public class TransactionManager<KEY, VALUE> {
 			throw new InvalidTransactionException("Invalid transaction ID");
 		}
 		
-		return null;
+		return t;
 	}
 }
