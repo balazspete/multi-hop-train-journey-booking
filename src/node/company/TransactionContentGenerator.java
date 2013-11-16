@@ -1,12 +1,9 @@
 package node.company;
 
-import java.util.Map;
-
-import org.joda.time.DateTime;
-
 import data.trainnetwork.BookableSection;
+import data.trainnetwork.Seat;
+import data.trainnetwork.SectionFullException;
 import transaction.FailedTransactionException;
-import transaction.LockException;
 import transaction.TransactionContent;
 import transaction.Vault;
 
@@ -23,22 +20,20 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 			private static final long serialVersionUID = -8167406104784795108L;
 			@Override
 			public void run() throws FailedTransactionException {
-				BookableSection s = new BookableSection("section", 1, DateTime.now(), 10, 10);
-				System.out.println("EXECUTING" + manager);
 				
-				Vault<Map<String, Vault<BookableSection>>> v = new Vault<Map<String, Vault<BookableSection>>>(data);
-				Map <String, Vault<BookableSection>> _data = (Map<String, Vault<BookableSection>>) manager.writeLock(v);
+				
+				Vault<BookableSection> d = data.get("---");
+				BookableSection s = (BookableSection) manager.writeLock(d);
 				
 				try {
-					System.out.println(v.getReadable(manager.getToken(v)));
-				} catch (LockException e) {
+					Seat _s = s.preReserve();
+				} catch (SectionFullException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-//				System.out.println("_data"+_data);
-//				_data.put(s.getID(), new Vault<BookableSection>(s));
-//				
-//				
+				
+				System.out.println(s);
+				
 			}
 		};
 		

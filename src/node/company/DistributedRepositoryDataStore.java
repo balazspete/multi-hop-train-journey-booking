@@ -163,6 +163,10 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		return protocols;
 	}
 	
+	/**
+	 * Run a {@link DistributedRepositoryDataStore}
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		new DistributedRepositoryDataStore().start();
 	}

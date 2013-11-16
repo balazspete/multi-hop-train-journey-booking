@@ -2,10 +2,7 @@ package node.company;
 
 import java.util.*;
 
-import transaction.TransactionCoordinatorManager;
-import transaction.TransactionManager;
-import transaction.Vault;
-import transaction.WriteOnlyLock;
+import transaction.*;
 
 import communication.CommunicationException;
 import communication.messages.DataRequestMessage;
@@ -16,8 +13,18 @@ import data.request.BookableSectionDataRequest;
 import data.trainnetwork.*;
 import node.data.DataRepository; 
 
+/**
+ * The core module of a distributed {@link DataRepository} 
+ * @author Balazs Pete
+ *
+ */
 public abstract class DistributedRepository extends DataRepository {
 	
+	/**
+	 * An exception thrown when loading data from the {@link DistributedRepositoryDataStore} fails
+	 * @author Balazs Pete
+	 *
+	 */
 	public class DataLoadException extends Exception {
 		private static final long serialVersionUID = -6869722814419718639L;
 	}

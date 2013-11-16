@@ -4,16 +4,10 @@ import java.util.*;
 
 import org.joda.time.DateTime;
 
-import transaction.FailedTransactionException;
-import transaction.TransactionContent;
-import transaction.TransactionCoordinator;
-import transaction.Vault;
+import transaction.*;
+import transaction.Lock.Token;
 
-import communication.protocols.Protocol;
-import communication.protocols.TransactionCommitProtocol;
-import communication.protocols.TransactionCommitReplyProtocol;
-import communication.protocols.TransactionExecutionProtocol;
-import communication.protocols.TransactionExecutionReplyProtocol;
+import communication.protocols.*;
 import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
 
@@ -33,6 +27,10 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	}
 
 	public void test() {
+		BookableSection s = new BookableSection("section", 1, DateTime.now(), 10, 10);
+		s.setMaxPassengers(100);
+		Vault<BookableSection> v = new Vault<BookableSection>(s);
+		sections.put("---", v);
 		TransactionContent<String, Vault<BookableSection>> c = TransactionContentGenerator.getTestContent();
 		
 		NodeInfo i = new NodeInfo("VAIO");
@@ -49,7 +47,15 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		tc.start();
 		
 		while (true) {
-			System.out.println("sections-check" + sections);
+			Token t = v.readLock();
+			try {
+				System.out.println("sections-check" + v.getReadable(t).toString());
+			} catch (LockException e) {
+				e.printStackTrace();
+			} finally {
+				v.readUnlock(t);
+			}
+			
 			try {
 				sleep(2000);
 			} catch (InterruptedException e) {
@@ -64,7 +70,6 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		DistributedRepositoryMaster r = new DistributedRepositoryMaster();
 		r.start();
 		r.test();
-		
 	}
 	
 }

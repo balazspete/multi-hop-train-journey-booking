@@ -28,13 +28,9 @@ public class DistributedRepositorySlave extends DistributedRepository {
 		
 		return protocols;
 	}
-
-	
 	
 	public static void main(String[] args) {
 		DistributedRepositorySlave s = new DistributedRepositorySlave();
 		s.start();
-		
 	}
-	
 }
