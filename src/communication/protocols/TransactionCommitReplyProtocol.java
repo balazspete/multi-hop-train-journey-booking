@@ -23,7 +23,6 @@ public class TransactionCommitReplyProtocol<KEY, VALUE> implements Protocol {
 
 	@Override
 	public Message processMessage(Message message) {
-		System.out.println("Received commit reply");
 		TransactionCommitReplyMessage msg = (TransactionCommitReplyMessage) message;
 		TransactionCoordinator<KEY, VALUE> tc = manager.get(msg.getTransactionId()); 
 		

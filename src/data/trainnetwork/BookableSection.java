@@ -98,5 +98,4 @@ public class BookableSection extends Section {
 		
 		return preReservedSeats.remove(seat);
 	}
-	
 }

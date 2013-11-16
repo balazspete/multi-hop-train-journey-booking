@@ -34,8 +34,6 @@ public class TransactionCommitProtocol<KEY, VALUE> implements Protocol {
 
 	@Override
 	public Message processMessage(Message message) {
-		System.out.println("commit message sent");
-		
 		TransactionCommitMessage msg = (TransactionCommitMessage) message;
 		CommitAction action = (CommitAction) msg.getContents();
 		

@@ -3,6 +3,8 @@ package node.company;
 import java.io.*;
 import java.util.*;
 
+import org.joda.time.DateTime;
+
 import communication.protocols.DataRequestHandlingProtocol;
 import communication.protocols.DataTransferHandlingProtocol;
 import communication.protocols.Protocol;
@@ -106,7 +108,8 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	 *
 	 */
 	public static class StoreSaver extends Thread {
-		public static final int SAVE_PERIOD = 1000;// * 60 * 5;
+		// Back up every 100 seconds (should be increased to about 5 minutes)
+		public static final int SAVE_PERIOD = 1000 * 100;
 		
 		private Store store;
 		
@@ -163,11 +166,22 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		return protocols;
 	}
 	
+	public void test() {
+		if (sections.size() == 0) {
+			BookableSection s = new BookableSection("id", 1, DateTime.now(), 20, 20);
+			s.setMaxPassengers(100);
+			sections.add(s);
+		}
+	}
+	
 	/**
 	 * Run a {@link DistributedRepositoryDataStore}
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new DistributedRepositoryDataStore().start();
+		DistributedRepositoryDataStore ds = new DistributedRepositoryDataStore();
+		ds.test();
+		ds.start();
+		
 	}
 }

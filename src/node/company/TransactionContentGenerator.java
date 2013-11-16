@@ -27,7 +27,8 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 				
 				Map<String, Vault<BookableSection>> data = dataVault.getReadable(t);
 				
-				Vault<BookableSection> d = data.get("---");
+				Vault<BookableSection> d = data.values().iterator().next();
+				System.out.println(data.keySet());
 				BookableSection s = (BookableSection) manager.writeLock(d);
 				
 				try {
@@ -35,6 +36,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 				} catch (SectionFullException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					throw new FailedTransactionException(e.getMessage());
 				}
 				
 				System.out.println(s);

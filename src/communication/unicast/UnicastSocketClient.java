@@ -77,6 +77,7 @@ public class UnicastSocketClient extends Thread implements
 	public void sendMessage(Message message) throws CommunicationException {
 		try {
 			out.writeObject(message);
+			System.out.println("UnicastSocketClient: Sent a " + message.getType() + " to " + socket.getInetAddress().toString() + " | " + message.getContents());
 		} catch (IOException e) {
 			throw CommunicationException.CANNOT_SERIALIZE_MESSAGE;
 		}
