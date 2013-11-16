@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 
 import data.trainnetwork.BookableSection;
 import transaction.FailedTransactionException;
+import transaction.LockException;
 import transaction.TransactionContent;
 import transaction.Vault;
 
@@ -23,17 +24,24 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 			@Override
 			public void run() throws FailedTransactionException {
 				BookableSection s = new BookableSection("section", 1, DateTime.now(), 10, 10);
-				System.out.println("EXECUTING");
+				System.out.println("EXECUTING" + manager);
 				
-				Map <String, Vault<BookableSection>> _data = (Map<String, Vault<BookableSection>>) manager.writeLock(new Vault(data));
-				_data.put(s.getID(), new Vault<BookableSection>(s));
+				Vault<Map<String, Vault<BookableSection>>> v = new Vault<Map<String, Vault<BookableSection>>>(data);
+				Map <String, Vault<BookableSection>> _data = (Map<String, Vault<BookableSection>>) manager.writeLock(v);
 				
-				
+				try {
+					System.out.println(v.getReadable(manager.getToken(v)));
+				} catch (LockException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//				System.out.println("_data"+_data);
+//				_data.put(s.getID(), new Vault<BookableSection>(s));
+//				
+//				
 			}
 		};
 		
 		return c;
 	}
-	
-	
 }

@@ -20,21 +20,21 @@ public class Vault<T> extends Lock<T> {
 	}
 
 	@Override
-	public T getReadable() {
+	public T getReadable(Token token) throws LockException {
 		if (lockedData == null) {
 			lockedData = cloner.deepClone(base);
 		}
 		
-		return super.getReadable();
+		return super.getReadable(token);
 	}
 	
 	@Override
-	public T getWriteable() throws LockException {
+	public T getWriteable(Token token) throws LockException {
 		if (lockedData == null) {
 			lockedData = cloner.deepClone(base);
 		}
 		
-		return super.getWriteable();
+		return super.getWriteable(token);
 	}
 	
 	/**

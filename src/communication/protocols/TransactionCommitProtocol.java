@@ -1,5 +1,6 @@
 package communication.protocols;
 
+import transaction.Lock.Token;
 import transaction.LockException;
 import transaction.TransactionManager;
 import transaction.WriteOnlyLock;
@@ -55,16 +56,16 @@ public class TransactionCommitProtocol<KEY, VALUE> implements Protocol {
 		
 		boolean success = false;
 		while (!success) {
-			monitor.writeLock();
+			Token token = monitor.writeLock();
 			try {
-				UnicastSocketClient.sendOneMessage(message.getSender().getLocation(), monitor.getWriteable(), reply, false);
+				UnicastSocketClient.sendOneMessage(message.getSender().getLocation(), monitor.getWriteable(token), reply, false);
 				success = true;
 			} catch (CommunicationException e) {
 				e.printStackTrace();
 			} catch (LockException e) {
 				e.printStackTrace();
 			} finally {
-				monitor.writeUnlock();
+				monitor.writeUnlock(token);
 			}
 		}
 		

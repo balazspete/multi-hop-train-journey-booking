@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import node.company.DistributedRepository;
+import transaction.Lock.Token;
 
 import com.rits.cloning.Cloner;
 
@@ -52,6 +52,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	private TransactionStatus status = TransactionStatus.SLEEPING;
 	
 	private Collection<NodeInfo> replies = null;
+	
 	
 	/**
 	 * Create a new {@link TransactionCoordinator}
@@ -166,45 +167,45 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	}
 	
 	private void doRemoteTransaction() {
-		monitor.writeLock();
+		Token token = monitor.writeLock();
 		try {
 			TransactionExecutionMessage<KEY, VALUE> message = new TransactionExecutionMessage<KEY, VALUE>(content.getId());
 			message.setContents(content);
-			sendMessageToAllNodes(message);
+			sendMessageToAllNodes(message, token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			monitor.writeUnlock();
+			monitor.writeUnlock(token);
 		}
 	}
 	
 	private void doRemoteCommit() {
 		TransactionCommitMessage message = new TransactionCommitMessage(content.getId());
 		message.setContents(TransactionCommitMessage.CommitAction.COMMIT);
-		monitor.writeLock();
+		Token token = monitor.writeLock();
 		try {
-			sendMessageToAllNodes(message);
+			sendMessageToAllNodes(message, token);
 		} catch (LockException e) {
 			e.printStackTrace();
 		} finally {
-			monitor.writeUnlock();
+			monitor.writeUnlock(token);
 		}
 	}
 	
 	private void doRemoteAbort() {
 		TransactionCommitMessage message = new TransactionCommitMessage(content.getId());
 		message.setContents(TransactionCommitMessage.CommitAction.ABORT);
-		monitor.writeLock();
+		Token token = monitor.writeLock();
 		try {
-			sendMessageToAllNodes(message);
+			sendMessageToAllNodes(message, token);
 		} catch (LockException e) {
 			e.printStackTrace();
 		} finally {
-			monitor.writeUnlock();
+			monitor.writeUnlock(token);
 		}
 	}
 	
-	private void sendMessageToAllNodes(Message message) throws LockException {
+	private void sendMessageToAllNodes(Message message, Token token) throws LockException {
 		Queue<NodeInfo> messageQueue = new ConcurrentLinkedQueue<NodeInfo>(nodes);
 		
 		int count = 0;
@@ -212,7 +213,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 			NodeInfo node = messageQueue.remove();
 			try {
 				System.out.println("--send message--");
-				UnicastSocketClient.sendOneMessage(node.getLocation(), monitor.getWriteable(), message, false);
+				UnicastSocketClient.sendOneMessage(node.getLocation(), monitor.getWriteable(token), message, false);
 			} catch (CommunicationException e) {
 				messageQueue.add(node);
 			}

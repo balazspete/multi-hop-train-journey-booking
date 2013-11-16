@@ -8,8 +8,9 @@ public class WriteOnlyLock<T> extends Lock<T> {
 
 	/**
 	 * Unsupported operation
+	 * @return 
 	 */
-	public void readLock() {
+	public Token readLock() {
 		throw new UnsupportedOperationException();
 	}
 	

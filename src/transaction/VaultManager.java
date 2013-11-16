@@ -2,6 +2,9 @@ package transaction;
 
 import java.util.*;
 
+import transaction.Lock.Token;
+import transaction.Lock.Token.LockType;
+
 /**
  * An object to manage multiple vault in bulk
  * @author Balazs Pete
@@ -10,11 +13,7 @@ import java.util.*;
 @SuppressWarnings("rawtypes")
 public class VaultManager {
 
-	public enum LockType {
-		READ, WRITE
-	}
-	
-	private Map<Vault, LockType> locks = new HashMap<Vault, LockType>();
+	private Map<Vault, Token> locks = new HashMap<Vault, Token>();
 	
 	/**
 	 * Request a write lock on the object contained in the input vault
@@ -24,15 +23,15 @@ public class VaultManager {
 	public Object writeLock(Vault lock) {
 		Object result = null;
 		
-		lock.writeLock();
-		locks.put(lock, LockType.WRITE);
+		Token token = lock.writeLock();
+		locks.put(lock, token);
 		
 		try {
-			result = lock.getWriteable();
+			result = lock.getWriteable(token);
 		} catch (LockException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
 	
@@ -42,10 +41,18 @@ public class VaultManager {
 	 * @return The value on which the lock was requested
 	 */
 	public Object readLock(Vault lock) {
-		lock.readLock();
-		locks.put(lock, LockType.READ);
+		Object result = null;
 		
-		return lock.getReadable();
+		Token token = lock.readLock();
+		locks.put(lock, token);
+		
+		try {
+			result = lock.getReadable(token);
+		} catch (LockException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -53,10 +60,11 @@ public class VaultManager {
 	 */
 	public void unlock() {
 		for (Vault lock : locks.keySet()) {
-			if (locks.get(lock) == LockType.WRITE) {
-				lock.writeUnlock();
+			Token token = locks.get(lock);
+			if (token.getLockType() == LockType.WRITE) {
+				lock.writeUnlock(token);
 			} else {
-				lock.readUnlock();
+				lock.readUnlock(token);
 			}
 			locks.remove(lock);
 		}
@@ -78,5 +86,14 @@ public class VaultManager {
 		for (Vault lock : locks.keySet()) {
 			lock.abort();
 		}
+	}
+	
+	/**
+	 * Return the token corresponding to the input vault
+	 * @param vault The vault which's token is requested
+	 * @return The token of the input vault
+	 */
+	public Token getToken(Vault vault) {
+		return locks.get(vault);
 	}
 }
