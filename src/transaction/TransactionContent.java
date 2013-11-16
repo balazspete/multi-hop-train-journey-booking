@@ -58,10 +58,6 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 		this.manager= manager; 
 	}
 	
-	public Map getData() {
-		return data;
-	}
-	
 	/**
 	 * Determine whether this TransactionContent is the same as the input
 	 * @param content The other object
@@ -69,5 +65,10 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	 */
 	public boolean equals(TransactionContent<KEY, VALUE> content) {
 		return id.equals(content.getId());
+	}
+	
+	@Deprecated
+	public Map<KEY, VALUE> getData() {
+		return data;
 	}
 }

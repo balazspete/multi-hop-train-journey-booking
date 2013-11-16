@@ -21,11 +21,11 @@ public class Vault<T> extends Lock<T> {
 
 	@Override
 	public T getReadable(Token token) throws LockException {
-		if (lockedData == null) {
-			lockedData = cloner.deepClone(base);
+		if (!canRead(token)) {
+			throw new LockException("You do not have a read lock on the item");
 		}
 		
-		return super.getReadable(token);
+		return cloner.deepClone(base);
 	}
 	
 	@Override

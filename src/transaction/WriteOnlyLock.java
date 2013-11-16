@@ -14,7 +14,6 @@ public class WriteOnlyLock<T> extends Lock<T> {
 		throw new UnsupportedOperationException();
 	}
 	
-	
 	/**
 	 * Unsupported operation
 	 */

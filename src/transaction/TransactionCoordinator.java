@@ -212,7 +212,6 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		while (count++ < nodes.size() || messageQueue.size() != 0) {
 			NodeInfo node = messageQueue.remove();
 			try {
-				System.out.println("--send message--");
 				UnicastSocketClient.sendOneMessage(node.getLocation(), monitor.getWriteable(token), message, false);
 			} catch (CommunicationException e) {
 				messageQueue.add(node);

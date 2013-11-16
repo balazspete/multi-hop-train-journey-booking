@@ -2,11 +2,8 @@ package transaction;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import transaction.Lock.Token.LockType;
 
@@ -20,7 +17,18 @@ import com.rits.cloning.Cloner;
  */
 public class Lock<T> {
 	
-	static public class Token {
+	/**
+	 * An object returned by a {@link Lock}, used to determine locking ownerships
+	 * @author Balazs Pete
+	 *
+	 */
+	public static class Token {
+		
+		/**
+		 * Type of a lock (READ or WRITE)
+		 * @author Balazs Pete
+		 *
+		 */
 		public enum LockType {
 			READ, WRITE
 		}
@@ -28,23 +36,41 @@ public class Lock<T> {
 		private String id;
 		private LockType type;
 		
+		/**
+		 * Create a new lock with
+		 * @param type The type of the lock
+		 */
 		public Token(LockType type) {
 			id = new BigInteger(130, new SecureRandom()).toString(32);
 			this.type = type;
 		}
 		
+		/**
+		 * Get the type of the lock
+		 * @return The {@link LockType}
+		 */
 		public LockType getLockType() {
 			return type;
 		}
 		
+		/**
+		 * Determine if the input Token is identical to this one
+		 * @param other The other token
+		 * @return True if equal, false otherwise
+		 */
 		public boolean equals(Token other) {
 			return id.equals(other.getId());
 		}
 		
+		/**
+		 * Get the ID of the token
+		 * @return The ID
+		 */
 		protected String getId() {
 			return id;
 		}
 		
+		@Override
 		public String toString() {
 			return id;
 		}
@@ -54,8 +80,6 @@ public class Lock<T> {
 	
 	private HashSet<Token> currentLocks = new HashSet<Token>();
 	private ConcurrentLinkedQueue<Token> pendingQueue = new ConcurrentLinkedQueue<Token>();
-	
-	ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
 	
 	protected T lockedData;
 	protected Cloner cloner = new Cloner();
@@ -123,9 +147,10 @@ public class Lock<T> {
 			try {
 				wait();
 			} catch (InterruptedException e) {
+				System.err.println(e.getMessage());
+				// Not that big of a problem, loop around and try again
 			}
 		}
-		
 		
 		currentLocks.add(pendingQueue.remove());
 		notifyAll();
@@ -152,6 +177,8 @@ public class Lock<T> {
 			try {
 				wait();
 			} catch (InterruptedException e) {
+				System.err.println(e.getMessage());
+				// Not that big of a problem, loop around and try again
 			}
 		}
 		
@@ -176,74 +203,12 @@ public class Lock<T> {
 			return false;
 		}
 		
-		if (writeMode) 
+		if (writeMode) {
 			writeMode = false;
+		}
 		
 		currentLocks.remove(t);
 		notifyAll();
 		return true;
-	}
-	
-	public final static Lock<Integer> lock = new Lock<Integer>(new Integer(2));
-	public static void main(String[] args) {
-		
-
-		Runnable b = new Runnable(){
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-//				try {
-//					wait(200);
-//				} catch (InterruptedException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-				
-				Token t = lock.writeLock();
-				try {
-					System.out.println(lock.getWriteable(t));
-				} catch (LockException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					System.out.println("DONE B");
-					lock.writeUnlock(t);
-				}
-				
-					
-			}
-		};
-		Runnable a = new Runnable(){
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				Token t = lock.readLock();
-				try {
-					System.out.println("b:"+lock.getReadable(t));
-				} catch (LockException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					System.out.println("DONE A");
-					lock.readUnlock(t);
-				}
-				
-				
-				//lock.readUnlock(t);
-					
-				
-			}
-		};
-		
-
-		new Thread(a).start();
-		//
-		new Thread(b).start();new Thread(b).start();new Thread(b).start();
-		new Thread(a).start();new Thread(a).start();new Thread(a).start();
-		new Thread(a).start();new Thread(a).start();new Thread(a).start();
-		//
-		
-		
-		
 	}
 }

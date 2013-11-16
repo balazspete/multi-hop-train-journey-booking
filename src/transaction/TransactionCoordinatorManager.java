@@ -2,6 +2,13 @@ package transaction;
 
 import java.util.HashMap;
 
+/**
+ * An object to manage {@link TransactionCoordinator}s
+ * @author Balazs Pete
+ *
+ * @param <KEY>
+ * @param <VALUE>
+ */
 public class TransactionCoordinatorManager<KEY, VALUE> extends HashMap<String, TransactionCoordinator<KEY, VALUE>> {
 
 	/**
@@ -12,7 +19,4 @@ public class TransactionCoordinatorManager<KEY, VALUE> extends HashMap<String, T
 	public TransactionCoordinatorManager() {
 		super();
 	}
-	
-	
-	
 }
