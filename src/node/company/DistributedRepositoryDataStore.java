@@ -149,7 +149,7 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	}
 
 	protected static Store<BookableSection> sections;
-	protected StoreSaver saver1, saver2;
+	protected StoreSaver saver;
 	protected static Store<NodeInfo> nodes;
 	
 	public DistributedRepositoryDataStore() throws RepositoryException {
@@ -161,12 +161,10 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	@Override
 	protected void initialize() {
 		sections = (Store<BookableSection>) getStore("bookablesections");
-		saver1 = new StoreSaver(sections);
-		saver1.start();
+		saver = new StoreSaver(sections);
+		saver.start();
 		
 		nodes = (Store<NodeInfo>) getStore("nodeinfos");
-		saver2 = new StoreSaver(sections);
-		saver2.start();
 	}
 	
 	@SuppressWarnings("rawtypes")
