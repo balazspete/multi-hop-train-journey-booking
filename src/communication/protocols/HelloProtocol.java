@@ -1,5 +1,6 @@
 package communication.protocols;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import communication.messages.HelloReplyMessage;
@@ -28,13 +29,13 @@ public class HelloProtocol implements Protocol {
 		
 		HelloType type = (HelloType) message.getContents();
 		if (type == HelloType.HI) {
-			if (!nodes.contains(node)) {
+			if (!containsNode(node)) {
 				nodes.add(node);
 			}
 			
 			reply.setContents(HelloType.HI);
 		} else {
-			if (!nodes.contains(node)) {
+			if (!containsNode(node)) {
 				nodes.remove(node);
 			}
 			
@@ -49,5 +50,15 @@ public class HelloProtocol implements Protocol {
 	@Override
 	public boolean hasReply() {
 		return true;
+	}
+	
+	private boolean containsNode(NodeInfo node) {
+		Iterator<NodeInfo> _nodes = nodes.iterator();
+		while (_nodes.hasNext()) {
+			if (_nodes.next().equals(node)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
