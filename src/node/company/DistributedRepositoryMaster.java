@@ -5,7 +5,6 @@ import java.util.*;
 import node.data.RepositoryException;
 import transaction.*;
 import communication.protocols.*;
-import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
 
 public class DistributedRepositoryMaster extends DistributedRepository {
@@ -18,9 +17,12 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	protected Set<Protocol> getProtocols() {
 		Set<Protocol> protocols = new HashSet<Protocol>();
 		
+		// Accept and handle `Hello` requests from other nodes
+		protocols.add(new HelloProtocol(nodes));
+		
+		// Accept and handle distributed transactions
 		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
 		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
-		
 		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
 		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
 		
@@ -31,14 +33,8 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		
 		TransactionContent<String, Vault<BookableSection>> c = TransactionContentGenerator.getTestContent();
 		
-		NodeInfo i = new NodeInfo("VAIO");
-		i.addLocation("192.168.1.7");
-		
-		Set<NodeInfo> ni = new HashSet<NodeInfo>();
-		ni.add(i);
-		
 		TransactionCoordinator<String, Vault<BookableSection>> tc
-			= new TransactionCoordinator<String, Vault<BookableSection>>(c, sections, ni, communicationLock);
+			= new TransactionCoordinator<String, Vault<BookableSection>>(c, sections, nodes, communicationLock);
 		
 		transactionCoordinators.put(tc.getTransactionId(), tc);
 		

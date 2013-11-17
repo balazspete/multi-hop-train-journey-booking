@@ -5,6 +5,7 @@ import java.util.Set;
 
 import node.data.RepositoryException;
 import transaction.Vault;
+import communication.protocols.HelloProtocol;
 import communication.protocols.Protocol;
 import communication.protocols.TransactionCommitProtocol;
 import communication.protocols.TransactionCommitReplyProtocol;
@@ -22,9 +23,12 @@ public class DistributedRepositorySlave extends DistributedRepository {
 	protected Set<Protocol> getProtocols() {
 		Set<Protocol> protocols = new HashSet<Protocol>();
 		
+		// Accept and handle `Hello` requests from other nodes
+		protocols.add(new HelloProtocol(nodes));
+		
+		// Accept and handle distributed transactions
 		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
 		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
-		
 		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
 		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
 		

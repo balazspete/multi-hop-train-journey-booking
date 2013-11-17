@@ -6,10 +6,15 @@ import transaction.*;
 import transaction.Lock.Token;
 import communication.CommunicationException;
 import communication.messages.DataRequestMessage;
+import communication.messages.DataRequestReplyMessage;
+import communication.messages.HelloMessage;
+import communication.messages.HelloReplyMessage;
 import communication.messages.Message;
 import communication.protocols.Protocol;
 import communication.unicast.UnicastSocketClient;
 import data.request.BookableSectionDataRequest;
+import data.request.NodeInfoRequest;
+import data.system.NodeInfo;
 import data.trainnetwork.*;
 import node.data.DataRepository; 
 import node.data.RepositoryException;
@@ -27,11 +32,10 @@ public abstract class DistributedRepository extends DataRepository {
 	 *
 	 */
 	public class DataLoadException extends Exception {
-		public DataLoadException(String string) {
-			// TODO Auto-generated constructor stub
-		}
-
 		private static final long serialVersionUID = -6869722814419718639L;
+		public DataLoadException(String message) {
+			super(message);
+		}
 	}
 	
 	public static final int PORT = 8001;
@@ -45,8 +49,11 @@ public abstract class DistributedRepository extends DataRepository {
 	
 	protected static WriteOnlyLock<Integer> communicationLock;
 	
+	protected static Set<NodeInfo> nodes;
+	
 	public DistributedRepository() throws RepositoryException {
 		super(PORT);
+		//sayHello();
 	}
 
 	@Override
@@ -55,11 +62,13 @@ public abstract class DistributedRepository extends DataRepository {
 		transactions = new TransactionManager<String, Vault<BookableSection>>(sections);
 		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>>();
 		communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
+		nodes = new HashSet<NodeInfo>();
 		
 		int count = 0;
 		while (count++ < 3) {
 			try {
 				restoreFromStore();
+				//discoverOtherNodes();
 				count = Integer.MAX_VALUE;
 			} catch (DataLoadException e) {
 				System.err.println(e.getMessage());
@@ -70,6 +79,27 @@ public abstract class DistributedRepository extends DataRepository {
 
 	@Override
 	protected abstract Set<Protocol> getProtocols();
+
+//	private void sayHello() {
+//		HelloMessage message = new HelloMessage();
+//		
+//		Iterator<NodeInfo> it = nodes.iterator();
+//		while (it.hasNext()) {
+//			NodeInfo node = it.next();
+//			//Token token = communicationLock.writeLock();
+//			try {
+//				//sendHello(node, PORT, message);
+//			} catch (CommunicationException e) {
+//				System.err.println(e.getMessage());
+//				
+//				// Node is unreachable, remove it...
+//				nodes.remove(node);
+//			} finally {
+//				//communicationLock.writeUnlock(token);
+//			}
+//		}
+//	}
+	
 	@SuppressWarnings("unchecked")
 	private void restoreFromStore() throws DataLoadException {
 		UnicastSocketClient client = new UnicastSocketClient(DATA_STORE_LOCATION, DATA_STORE_PORT);
@@ -79,12 +109,21 @@ public abstract class DistributedRepository extends DataRepository {
 		
 		Set<BookableSection> data = null;
 		
+		boolean error = false;
+		
 		Message msg;
+		Token token = communicationLock.writeLock();
 		try {
 			msg = UnicastSocketClient.sendOneMessage(client, requestMessage, true);
 			data = (Set<BookableSection>) msg.getContents();
 		} catch (CommunicationException e) {
 			// Failed to contact DataStore
+			error = true;
+		} finally {
+			communicationLock.writeUnlock(token);
+		}
+		
+		if (error) {
 			throw new DataLoadException("Failed to load data from `store`");
 		}
 		
@@ -106,6 +145,34 @@ public abstract class DistributedRepository extends DataRepository {
 			} finally {
 				sections.writeUnlock(t);
 			}
+		}
+		
+		token = communicationLock.writeLock();
+		try {
+			//--- begin HELLO 
+			msg = new HelloMessage();
+			HelloReplyMessage reply = (HelloReplyMessage) UnicastSocketClient.sendOneMessage(client, msg, true);
+			NodeInfo myOwn = reply.getHelloer();
+			//--- end HELLO
+			
+			//--- begin GetNodes 
+			NodeInfoRequest _request = new NodeInfoRequest(myOwn);
+			msg = new DataRequestMessage<NodeInfo>(_request, "NodeInfo");
+			
+			DataRequestReplyMessage<NodeInfo> _reply = (DataRequestReplyMessage<NodeInfo>) UnicastSocketClient.sendOneMessage(client, msg, true);
+			nodes = (Set<NodeInfo>) _reply.getContents();
+			//--- end GetNodes
+		} catch (CommunicationException e) {
+			// Failed to contact DataStore
+			error = true;
+		} finally {
+			communicationLock.writeUnlock(token);
+		}
+		
+		System.out.println(nodes);
+		
+		if (error) {
+			throw new DataLoadException("Failed to load data from `store`");
 		}
 	}
 }
