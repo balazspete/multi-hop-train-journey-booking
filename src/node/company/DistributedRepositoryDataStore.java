@@ -7,7 +7,9 @@ import org.joda.time.DateTime;
 
 import communication.protocols.DataRequestHandlingProtocol;
 import communication.protocols.DataTransferHandlingProtocol;
+import communication.protocols.HelloProtocol;
 import communication.protocols.Protocol;
+import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
 import node.data.DataRepository;
 import node.data.RepositoryException;
@@ -37,20 +39,26 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	 * @author Balazs Pete
 	 *
 	 */
-	public static class Store extends HashSet<BookableSection> implements Serializable {
+	public static class Store<DATA> extends HashSet<DATA> implements Serializable {
 
 		private static final long serialVersionUID = -5604189350057652145L;
+		private static final String
+			EXTENSION = ".cache",
+			CACHE = "/Users/balazspete/Projects/multi-hop-train-booking/distributed_datastore";
 		
-		private static final String 
-			CACHE = "/Users/balazspete/Projects/multi-hop-train-booking/distributed_datastore.cache";
+		private String name;
+		
+		public Store(String name) {
+			this.name = name;
+		}
 		
 		/**
 		 * Load a {@link Store} from the default file
 		 * @return The loaded store
 		 * @throws StoreActionException Thrown if the specified creation of load failed (may be due to file errors, etc)
 		 */
-		public static Store restore() throws StoreActionException {
-			return restore(CACHE);
+		public static Store<?> restore(String name) throws StoreActionException {
+			return restore(CACHE, name);
 		}
 		
 		/**
@@ -59,16 +67,17 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		 * @return The loaded store
 		 * @throws StoreActionException Thrown if the specified creation of load failed (may be due to file errors, etc)
 		 */
-		public static Store restore(String path) throws StoreActionException {
-			Store store = null;
+		public static Store<?> restore(String path, String name) throws StoreActionException {
+			String fullPath = getPath(path, name);
+			
+			Store<?> store = null;
 			try {
-				FileInputStream in = new FileInputStream(path);
+				FileInputStream in = new FileInputStream(fullPath);
 				ObjectInputStream input = new ObjectInputStream(in);
-				store = (Store) input.readObject();
+				store = (Store<?>) input.readObject();
 				input.close();
 				in.close();
 			} catch (Exception e) {
-				e.printStackTrace();
 				throw new StoreActionException(e.getMessage());
 			}
 			
@@ -90,15 +99,18 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		 */
 		public void save(String path) throws StoreActionException {
 			try {
-				FileOutputStream out = new FileOutputStream(path);
+				FileOutputStream out = new FileOutputStream(getPath(path, name));
 				ObjectOutputStream output = new ObjectOutputStream(out);
 				output.writeObject(this);
 				output.close();
 				out.close();
 			} catch (Exception e) {
-				e.printStackTrace();
 				throw new StoreActionException(e.getMessage());
 			}
+		}
+		
+		private static String getPath(String path, String name) {
+			return path + "_" + name + EXTENSION;
 		}
 	}
 	
@@ -111,9 +123,9 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		// Back up every 100 seconds (should be increased to about 5 minutes)
 		public static final int SAVE_PERIOD = 1000 * 100;
 		
-		private Store store;
+		private Store<?> store;
 		
-		public StoreSaver(Store store) {
+		public StoreSaver(Store<?> store) {
 			this.store = store;
 		}
 		
@@ -126,7 +138,7 @@ public class DistributedRepositoryDataStore extends DataRepository {
 					e.printStackTrace();
 				}
 				
-				final Store temp = store;
+				final Store<?> temp = store;
 				try {
 					temp.save();
 				} catch (StoreActionException e) {
@@ -136,30 +148,49 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		}
 	}
 
-	protected static Store sections;
-	protected StoreSaver saver;
+	protected static Store<BookableSection> sections;
+	protected StoreSaver saver1, saver2;
+	protected static Store<NodeInfo> nodes;
 	
 	public DistributedRepositoryDataStore() throws RepositoryException {
 		// TODO load from config
 		super(8005);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void initialize() {
+		sections = (Store<BookableSection>) getStore("bookablesections");
+		saver1 = new StoreSaver(sections);
+		saver1.start();
+		
+		nodes = (Store<NodeInfo>) getStore("nodeinfos");
+		saver2 = new StoreSaver(sections);
+		saver2.start();
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private Store<?> getStore(String name) {
 		try {
-			sections = Store.restore();
+			return Store.restore(name);
 		} catch (StoreActionException e) {
 			// No previously created cache, initiate blank Store
-			sections = new Store();
+			System.err.println("No previous cache found for `" + name + "`, creating blank data-store...");
+			return new Store(name);
 		}
-		
-		saver = new StoreSaver(sections);
-		saver.start();
 	}
 
 	@Override
 	protected Set<Protocol> getProtocols() {
 		Set<Protocol> protocols = new HashSet<Protocol>();
+		
+		// Accept and handle `Hello` requests from other nodes
+		protocols.add(new HelloProtocol(nodes));
+		
+		// Accept and handle data requests for <NodeInfo>s
+		protocols.add(new DataRequestHandlingProtocol<NodeInfo>(nodes, "NodeInfo"));
+		
+		// Accept and handle data requests for <BookableSection>s
 		protocols.add(new DataRequestHandlingProtocol<BookableSection>(sections, "BookableSection"));
 		protocols.add(new DataTransferHandlingProtocol<BookableSection>(sections, "BookableSection"));
 		
