@@ -24,7 +24,7 @@ public class HelloProtocol implements Protocol {
 	public Message processMessage(Message message) {
 		NodeInfo node = message.getSender();
 		
-		Message reply = new HelloReplyMessage();
+		HelloReplyMessage reply = new HelloReplyMessage();
 		
 		HelloType type = (HelloType) message.getContents();
 		if (type == HelloType.HI) {
@@ -40,6 +40,8 @@ public class HelloProtocol implements Protocol {
 			
 			reply.setContents(HelloType.BYE);
 		}
+		
+		reply.setHelloer(message.getSender());
 	
 		return reply;
 	}

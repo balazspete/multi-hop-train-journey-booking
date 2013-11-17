@@ -1,12 +1,18 @@
 package data.system;
 
+import java.io.Serializable;
+
 /**
  * An object containing location information regarding a system node
  * @author Balazs Pete
  *
  */
-public class NodeInfo {
+public class NodeInfo implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7378201805278309534L;
 	private String name, location;
 	
 	/**
@@ -52,6 +58,7 @@ public class NodeInfo {
 	}
 	
 	public boolean equals(NodeInfo other) {
+		if (other == null) return false;
 		return location.equalsIgnoreCase(other.getLocation());
 	}
 }
