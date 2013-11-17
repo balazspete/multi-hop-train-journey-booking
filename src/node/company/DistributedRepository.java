@@ -53,7 +53,7 @@ public abstract class DistributedRepository extends DataRepository {
 	
 	public DistributedRepository() throws RepositoryException {
 		super(PORT);
-		//sayHello();
+		sayHello();
 	}
 
 	@Override
@@ -64,41 +64,36 @@ public abstract class DistributedRepository extends DataRepository {
 		communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
 		nodes = new HashSet<NodeInfo>();
 		
-		int count = 0;
-		while (count++ < 3) {
-			try {
-				restoreFromStore();
-				//discoverOtherNodes();
-				count = Integer.MAX_VALUE;
-			} catch (DataLoadException e) {
-				System.err.println(e.getMessage());
-				throw DistributedRepositoryException.FAILED_TO_LOAD_DATA;
-			}
+		try {
+			restoreFromStore();
+		} catch (DataLoadException e) {
+			System.err.println(e.getMessage());
+			throw DistributedRepositoryException.FAILED_TO_LOAD_DATA;
 		}
 	}
 
 	@Override
 	protected abstract Set<Protocol> getProtocols();
 
-//	private void sayHello() {
-//		HelloMessage message = new HelloMessage();
-//		
-//		Iterator<NodeInfo> it = nodes.iterator();
-//		while (it.hasNext()) {
-//			NodeInfo node = it.next();
-//			//Token token = communicationLock.writeLock();
-//			try {
-//				//sendHello(node, PORT, message);
-//			} catch (CommunicationException e) {
-//				System.err.println(e.getMessage());
-//				
-//				// Node is unreachable, remove it...
-//				nodes.remove(node);
-//			} finally {
-//				//communicationLock.writeUnlock(token);
-//			}
-//		}
-//	}
+	private void sayHello() {
+		HelloMessage message = HelloMessage.getHi();
+		
+		Iterator<NodeInfo> it = nodes.iterator();
+		while (it.hasNext()) {
+			NodeInfo node = it.next();
+			Token token = communicationLock.writeLock();
+			try {
+				UnicastSocketClient.sendOneMessage(node.getLocation(), PORT, message, true);
+			} catch (CommunicationException e) {
+				System.err.println(e.getMessage());
+				
+				// Node is unreachable, remove it...
+				nodes.remove(node);
+			} finally {
+				communicationLock.writeUnlock(token);
+			}
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	private void restoreFromStore() throws DataLoadException {
