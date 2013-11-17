@@ -3,8 +3,10 @@ package communication.unicast;
 import java.io.*;
 import java.net.*;
 
+import node.company.DistributedRepository;
 import communication.CommunicationException;
 import communication.messages.*;
+import data.system.NodeInfo;
 
 /**
  * A client-to-server networking client implemented using sockets
@@ -14,6 +16,8 @@ import communication.messages.*;
 public class UnicastSocketClient extends Thread implements
 		UnicastClient {
 
+	public static final int MAX_TRIES = 3;
+	
 	private String host;
 	private int port;
 	
@@ -69,6 +73,7 @@ public class UnicastSocketClient extends Thread implements
 	public void sendMessage(Message message) throws CommunicationException {
 		try {
 			out.writeObject(message);
+			System.out.println("UnicastSocketClient: Sent a " + message.getType() + " to " + socket.getInetAddress().toString() + " | " + message.getContents());
 		} catch (IOException e) {
 			throw CommunicationException.CANNOT_SERIALIZE_MESSAGE;
 		}
@@ -98,7 +103,87 @@ public class UnicastSocketClient extends Thread implements
 			throw new InvalidMessageException("Received message is invalid");
 		}
 		
-		return (Message) object;
+		Message message = (Message) object;
+		NodeInfo node = new NodeInfo(null);
+		node.addLocation(host);
+		message.setSender(node);
+		
+		System.out.println("UnicastSocketClient: Received a " + message.getType() + " from " + message.getSender().getLocation() + " | " + message.getContents());
+		
+		return message;
+	}
+	
+	/**
+	 * Send one message to a {@link UnicastSocketServer}
+	 * @param location The address of the server
+	 * @param port The port the server is running on
+	 * @param message The message to send
+	 * @throws CommunicationException Thrown if an error occurred while sending the message
+	 */
+	public static Message sendOneMessage(String location, int port, Message message, boolean receiveReply) throws CommunicationException {
+		UnicastSocketClient client = new UnicastSocketClient(location, port);
+		return sendOneMessage(client, message, receiveReply);
+	}
+	
+	/**
+	 * Send one message to a {@link UnicastSocketServer}
+	 * @param client The {@link UnicastSocketClient} to use
+	 * @param message The message to send
+	 * @throws CommunicationException Thrown if an error occurred while sending the message
+	 */
+	public static Message sendOneMessage(UnicastSocketClient client, Message message, boolean receiveReply) throws CommunicationException {
+		int count = 0;
+		while (true) {
+			try {
+				client.createConnection();
+				break;
+			} catch (CommunicationException e) {
+				if (count++ > MAX_TRIES) {
+					throw CommunicationException.CANNOT_OPEN_CONNECTION;
+				} else {
+					System.err.println(e.getMessage() + "; Retrying...");
+				}
+			}
+		}
+		
+		count = 0;
+		while (true) {
+			try {
+				client.sendMessage(message);
+				break;
+			} catch (CommunicationException e) {
+				if (count++ > MAX_TRIES) {
+					throw CommunicationException.CANNOT_SEND_MESSAGE;
+				} else {
+					System.err.println(e.getMessage() + "; Retrying...");
+				}
+			}
+		}
+		
+		Message msg = null;
+		if (receiveReply) {
+			try {
+				msg = client.getMessage();
+			} catch (InvalidMessageException e) {
+				System.err.println(e.getMessage());
+			}
+		}
+		
+		count = 0;
+		while (true) {
+			try {
+				client.endConnection();
+				break;
+			} catch (CommunicationException e) {
+				if (count++ > MAX_TRIES) {
+					throw CommunicationException.CANNOT_CLOSE_CONNECTION;
+				} else {
+					System.err.println(e.getMessage() + "; Retrying...");
+				}
+			}
+		}
+		
+		return msg;
 	}
 
 	public static void main(String[] args) {

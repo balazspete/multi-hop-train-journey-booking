@@ -1,32 +1,25 @@
-package node.central;
+package node.data;
 
-import java.util.*;
+import java.util.Set;
 
 import communication.protocols.Protocol;
 import communication.unicast.UnicastSocketServer;
-import data.system.NodeInfo;
-import data.trainnetwork.*;
 
 /**
- * An object describing a general data repository for the static data within the system
+ * An object describing a general data repository
  * @author Balazs Pete
  *
  */
 public abstract class DataRepository extends Thread {
-
-	protected static final int MAX_TRIES = 3;
 	
 	private UnicastSocketServer server;
-
-	protected Set<Station> stations = new HashSet<Station>();
-	protected Set<SectionInfo> sections = new HashSet<SectionInfo>();
-	protected Set<NodeInfo> nodes = new HashSet<NodeInfo>();
 	
 	/**
 	 * Create a repository which listens for connection on a specified port
 	 * @param port The port on which the repository should accept connections
+	 * @throws RepositoryException 
 	 */
-	public DataRepository(int port) {
+	public DataRepository(int port) throws RepositoryException {
 		 server = new UnicastSocketServer(port);
 		 initialize();
 		 loadProtocols();
@@ -39,8 +32,9 @@ public abstract class DataRepository extends Thread {
 
 	/**
 	 * A method initialising all required components of the repository (executed at creation)
+	 * @throws RepositoryException Thrown when the node initialisation has failed
 	 */
-	protected abstract void initialize();
+	protected abstract void initialize() throws RepositoryException;
 	
 	/**
 	 * Retrieve all protocols used by the repository

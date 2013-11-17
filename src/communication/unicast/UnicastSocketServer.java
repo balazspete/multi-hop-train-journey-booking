@@ -7,6 +7,7 @@ import java.util.Map;
 import communication.CommunicationException;
 import communication.protocols.*;
 import communication.messages.*;
+import data.system.NodeInfo;
 
 /**
  * A client-to-server networking server implemented using sockets
@@ -72,6 +73,10 @@ public class UnicastSocketServer extends UnicastServer {
 		}
 		
 		public void run() {
+			tryGetSendMessage();
+		}	
+		
+		private void tryGetSendMessage() {
 			try {
 				// Pass the socket streams to writable object streams
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -82,10 +87,15 @@ public class UnicastSocketServer extends UnicastServer {
 			    	try {
 			    		object = in.readObject();
 			    	} catch (ClassNotFoundException e) {
+			    		// Sent object does not exist 
 						e.printStackTrace();
-						continue;
+						break;
+					} catch (SocketException e) {
+						// Connection has been closed
+						break;
 					} catch (EOFException e) {
-						continue;
+						// End of transferred content, just break
+						break;
 					}
 			    	
 			    	// If stream has ended, end listening and close communication
@@ -93,18 +103,29 @@ public class UnicastSocketServer extends UnicastServer {
 			    	
 			    	// Determine protocol to be used
 			    	Message input = (Message) object;
+					NodeInfo node = new NodeInfo(socket.getInetAddress().getHostName());
+					node.addLocation(socket.getInetAddress().getHostAddress());
+					input.setSender(node);
+					
+					System.out.println("UnicastSocketServer: Received a " + input.getType() + " from " + input.getSender().getLocation() + " | " + input.getContents());
+					
 			    	Protocol protocol = protocolMap.get(input.getType().intern());
 			    	
 			    	// Process message and get response
 					Message message;
 					if(protocol != null) {
 						message = protocol.processMessage(input);
+						
+						if (!protocol.hasReply() || message == null) {
+							break;
+						}
 					} else {
 						message = new ErrorMessage("Message type not supported");
 					}
 					
 					// Send message
 					out.writeObject(message);
+					System.out.println("UnicastSocketServer: Sent a " + message.getType() + " to " + input.getSender().getLocation());// + " | " + message.getContents());
 					out.flush();
 			    }
 			    	
@@ -114,7 +135,7 @@ public class UnicastSocketServer extends UnicastServer {
 			} catch (IOException e) {
 			    e.printStackTrace();
 			}
-		}	
+		}
 	}
 	
 	public static void main(String[] args) {

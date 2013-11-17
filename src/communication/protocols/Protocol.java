@@ -8,7 +8,7 @@ import communication.messages.Message;
  *
  */
 public interface Protocol {
-
+	
 	/**
 	 * Get the type of the accepted {@link Message}
 	 * @return The class name of the {@link Message}
@@ -22,4 +22,9 @@ public interface Protocol {
 	 */
 	public Message processMessage(Message message);
 	
+	/**
+	 * Determine whether the protocol creates a response message
+	 * @return True if the protocol should reply to origin
+	 */
+	public boolean hasReply();
 }

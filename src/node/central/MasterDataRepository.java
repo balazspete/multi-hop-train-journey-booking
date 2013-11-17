@@ -3,21 +3,23 @@ package node.central;
 import java.io.*;
 import java.util.*;
 
+import node.data.RepositoryException;
+
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
 import communication.protocols.*;
-
 import data.MissingParameterException;
+import data.system.ClusterInfo;
 import data.system.NodeInfo;
 import data.trainnetwork.*;
 
 /**
- * A {@link DataRepository} serving raw static data
+ * A {@link StaticDataRepository} serving raw static data
  * @author Balazs Pete
  *
  */
-public class MasterDataRepository extends DataRepository {
+public class MasterDataRepository extends StaticDataRepository {
 
 	private static final String 
 		ROUTES_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/compiled_routes.json", 
@@ -26,8 +28,9 @@ public class MasterDataRepository extends DataRepository {
 	
 	/**
 	 * Create a new {@link MasterDataRepository}
+	 * @throws RepositoryException Thrown if the initialisation failed
 	 */
-	public MasterDataRepository() {
+	public MasterDataRepository() throws RepositoryException {
 		// TODO load port# from config
 		super(8000);
 		update();
@@ -43,14 +46,15 @@ public class MasterDataRepository extends DataRepository {
 	/**
 	 * Update the repository from the source JSON files
 	 */
+	@SuppressWarnings("unchecked")
 	public void update() {
 		JSONParser parser = new JSONParser();
 		
 		try {
-			JSONArray stations = (JSONArray) parser.parse(new FileReader(STATIONS_DATA));
-			for (Object _station : stations) {
+			JSONArray _stations = (JSONArray) parser.parse(new FileReader(STATIONS_DATA));
+			for (Object _station : _stations) {
 				Station station = Station.getStationFromJSON((JSONObject) _station);
-				this.stations.add(station);
+				stations.add(station);
 			}
 
 			JSONArray routes = (JSONArray) parser.parse(new FileReader(ROUTES_DATA));
@@ -63,7 +67,7 @@ public class MasterDataRepository extends DataRepository {
 			
 			JSONArray nodes = (JSONArray) parser.parse(new FileReader(NODES_INFO));
 			for (Object _node : nodes) {
-				NodeInfo node = NodeInfo.getFromJSON((JSONObject) _node);
+				ClusterInfo node = ClusterInfo.getFromJSON((JSONObject) _node);
 				nodes.add(node);
 			}
 			
@@ -89,8 +93,19 @@ public class MasterDataRepository extends DataRepository {
 		return protocols;
 	}
 
+	public void test() {
+		System.out.println(sections.size());
+		System.out.println(stations.size());
+	}
+	
 	public static void main(String[] args) {
-		MasterDataRepository repo = new MasterDataRepository();
-		repo.start();
+		MasterDataRepository repo;
+		try {
+			repo = new MasterDataRepository();
+			repo.start();
+			repo.test();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
 	}
 }

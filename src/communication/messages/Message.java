@@ -2,6 +2,8 @@ package communication.messages;
 
 import java.io.Serializable;
 
+import data.system.NodeInfo;
+
 /**
  * A skeleton of a message wrapper of objects used for communication between two nodes
  * @author Balazs Pete
@@ -13,6 +15,8 @@ public abstract class Message implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -8221561880823153671L;
+
+	private NodeInfo from = null;
 	
 	/**
 	 * Get the type of the message
@@ -32,4 +36,19 @@ public abstract class Message implements Serializable {
 	 */
 	public abstract void setContents(Serializable content);
 	
+	/**
+	 * Get the location of the source node
+	 * @return The address of the sender
+	 */
+	public NodeInfo getSender() {
+		return from;
+	}
+	
+	/**
+	 * Set the location of the source node
+	 * @param from The address of the sender
+	 */
+	public void setSender(NodeInfo from) {
+		this.from = from;
+	}
 }

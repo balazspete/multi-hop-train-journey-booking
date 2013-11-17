@@ -51,11 +51,12 @@ public class Route extends LinkedList<SectionInfo> {
 		Route route = new Route(routeID);
 		route.setMaxPassengers(maxPassengers);
 		
+		int count = 0;
 		JSONArray rawSections = (JSONArray) JSONTools.getParameter(object, "route");
 		for(Object entry : rawSections) {
 			JSONObject rawSection = (JSONObject) entry;
 			
-			Section section = Section.getSectionFromJSON(rawSection, routeID);
+			Section section = Section.getSectionFromJSON(rawSection, routeID, count++);
 			section.setMaxPassengers(maxPassengers);
 			
 			route.add(

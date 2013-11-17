@@ -7,7 +7,7 @@ import data.system.*;
  * @author Balazs Pete
  *
  */
-public class NodeInfoDataRequest extends DataRequest<NodeInfo> {
+public class ClusterInfoRequest extends DataRequest<NodeInfo> {
 
 	/**
 	 * 

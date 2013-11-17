@@ -1,30 +1,36 @@
 package data.system;
 
-import java.util.*;
-
-import org.json.simple.*;
-
-import data.MissingParameterException;
-
-import util.JSONTools;
+import java.io.Serializable;
 
 /**
  * An object containing location information regarding a system node
  * @author Balazs Pete
  *
  */
-public class NodeInfo {
+public class NodeInfo implements Serializable {
 
-	private String name;
-	private Set<String> locations;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7378201805278309534L;
+	private String name, location;
 	
 	/**
 	 * Create a instance of {@link NodeInfo}
 	 * @param name The name of the node
 	 */
 	public NodeInfo(String name) {
+		this(name, null);
+	}
+	
+	/**
+	 * Create a instance of {@link NodeInfo}
+	 * @param name The name of the node
+	 * @param location The location (URI or IP address) of the node
+	 */
+	public NodeInfo(String name, String location) {
 		this.name = name;
-		locations = new HashSet<String>();
+		this.location = location;
 	}
 	
 	/**
@@ -38,10 +44,9 @@ public class NodeInfo {
 	/**
 	 * Add a location for a node 
 	 * @param location A URI or IP address
-	 * @return true if the location has been added, false otherwise
 	 */
-	public boolean addLocation(String location) {
-		return locations.add(location.intern());
+	public void addLocation(String location) {
+		this.location = location;
 	}
 	
 	/**
@@ -49,31 +54,20 @@ public class NodeInfo {
 	 * @return A location (URI or IP address)
 	 */
 	public String getLocation() {
-		return getRandomLocation();
+		return location;
 	}
 	
-	/**
-	 * Create a {@link NodeInfo} from a {@link JSONObject}
-	 * @param object The input {@link JSONObject} containing the node information
-	 * @return The newly created NodeInfo object
-	 * @throws MissingParameterException Thrown if the input object does not contain the `name` and `locations` parameter
-	 */
-	public static NodeInfo getFromJSON(JSONObject object) throws MissingParameterException {
-		String name = (String) JSONTools.getParameter(object, "name");
-		JSONArray locations = (JSONArray) JSONTools.getParameter(object, "locations");
-		
-		NodeInfo nodeInfo = new NodeInfo(name);
-		for (Object location : locations) {
-			nodeInfo.addLocation((String) location);
+	public boolean equals(NodeInfo other) {
+		if (other != null && other.location == location) {
+			return true;
+		} else if (other == null) {
+			return false;
+		} else {
+			return location.equals(other.getLocation());
 		}
-		
-		return nodeInfo;
 	}
-
-	private String getRandomLocation() {
-		int size = locations.size();
-		int randomIndex = (int) Math.random() * size;
-		
-		return (String) locations.toArray()[randomIndex];
+	
+	public String toString() {
+		return "<" + name + "|" + location + ">";
 	}
 }

@@ -10,20 +10,17 @@ import org.json.simple.*;
  * @author Balazs Pete
  *
  */
-public class RouteToNodeMap extends HashMap<String, NodeInfo> {
+public class RouteToNodeMap extends HashMap<String, ClusterInfo> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7866356790774985919L;
 	
-	public void addNodeInfo(NodeInfo nodeInfo) {
+	public void addClusterInfo(ClusterInfo nodeInfo) {
 		put(nodeInfo.getName(), nodeInfo);
 	}
 	
-	public void addMultipleNodeInfo(Set<NodeInfo> nodeInfos) {
-		for (NodeInfo info : nodeInfos) {
-			addNodeInfo(info);
+	public void addMultipleClusterInfo(Set<ClusterInfo> clusterInfos) {
+		for (ClusterInfo info : clusterInfos) {
+			addClusterInfo(info);
 		}
 	}
 	
@@ -37,7 +34,7 @@ public class RouteToNodeMap extends HashMap<String, NodeInfo> {
 		
 		for (Object entry : list) {
 			try {
-				rtnm.addNodeInfo(NodeInfo.getFromJSON((JSONObject) entry));
+				rtnm.addClusterInfo(ClusterInfo.getFromJSON((JSONObject) entry));
 			} catch (Exception e) {
 				continue;
 			}
