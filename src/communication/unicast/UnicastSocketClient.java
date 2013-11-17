@@ -121,7 +121,7 @@ public class UnicastSocketClient extends Thread implements
 	 * @throws CommunicationException Thrown if an error occurred while sending the message
 	 */
 	public static Message sendOneMessage(String location, int port, Message message, boolean receiveReply) throws CommunicationException {
-		UnicastSocketClient client = new UnicastSocketClient(location, DistributedRepository.PORT);
+		UnicastSocketClient client = new UnicastSocketClient(location, port);
 		return sendOneMessage(client, message, receiveReply);
 	}
 	
