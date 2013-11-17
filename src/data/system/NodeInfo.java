@@ -61,4 +61,8 @@ public class NodeInfo implements Serializable {
 		if (other == null) return false;
 		return location.equalsIgnoreCase(other.getLocation());
 	}
+	
+	public String toString() {
+		return "<" + name + "|" + location + ">";
+	}
 }
