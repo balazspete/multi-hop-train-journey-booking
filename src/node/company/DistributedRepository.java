@@ -150,7 +150,7 @@ public abstract class DistributedRepository extends DataRepository {
 		token = communicationLock.writeLock();
 		try {
 			//--- begin HELLO 
-			msg = new HelloMessage();
+			msg = HelloMessage.getHi();
 			HelloReplyMessage reply = (HelloReplyMessage) UnicastSocketClient.sendOneMessage(client, msg, true);
 			NodeInfo myOwn = reply.getHelloer();
 			//--- end HELLO

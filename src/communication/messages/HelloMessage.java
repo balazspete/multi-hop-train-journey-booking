@@ -18,6 +18,10 @@ public class HelloMessage extends Message {
 
 	private HelloType type;
 	
+	public HelloMessage(HelloType type) {
+		this.type = type;
+	}
+	
 	@Override
 	public Serializable getContents() {
 		return type;
@@ -26,5 +30,13 @@ public class HelloMessage extends Message {
 	@Override
 	public void setContents(Serializable content) {
 		type = (HelloType) content;
+	}
+	
+	public static HelloMessage getHi() {
+		return new HelloMessage(HelloType.HI);
+	}
+	
+	public static HelloMessage getBye() {
+		return new HelloMessage(HelloType.BYE);
 	}
 }
