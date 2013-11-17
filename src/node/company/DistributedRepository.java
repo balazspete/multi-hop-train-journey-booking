@@ -164,8 +164,6 @@ public abstract class DistributedRepository extends DataRepository {
 			communicationLock.writeUnlock(token);
 		}
 		
-		System.out.println("nodes" + nodes);
-		
 		if (error) {
 			throw new DataLoadException("Failed to load data from `store`");
 		}
