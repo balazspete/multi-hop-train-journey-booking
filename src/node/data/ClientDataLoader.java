@@ -4,7 +4,7 @@ import java.util.Set;
 
 import communication.messages.Message;
 
-import data.system.NodeInfo;
+import data.system.ClusterInfo;
 import data.system.RouteToNodeMap;
 import data.trainnetwork.Network;
 import data.trainnetwork.SectionInfo;
@@ -40,6 +40,6 @@ public class ClientDataLoader extends StaticDataLoader {
 		
 		network.update(stations, sections);
 		
-		map.addMultipleNodeInfo((Set<NodeInfo>) nodesMessage.getContents());
+		map.addMultipleClusterInfo((Set<ClusterInfo>) nodesMessage.getContents());
 	}
 }

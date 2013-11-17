@@ -51,7 +51,7 @@ public class StaticDataLoader implements DataLoader {
 		Message message = new DataRequestMessage<SectionInfo>(sectionRequest, "SectionInfo");
 		Message sectionsReply = trySendMessage(message, true);
 		
-		DataRequest<NodeInfo> routeMappingRequest = new NodeInfoDataRequest();
+		DataRequest<NodeInfo> routeMappingRequest = new ClusterInfoRequest();
 		message = new DataRequestMessage<NodeInfo>(routeMappingRequest, "NodeInfo");
 		Message routeMappingReply = trySendMessage(message, true);
 		

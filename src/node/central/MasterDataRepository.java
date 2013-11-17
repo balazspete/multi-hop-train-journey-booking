@@ -10,6 +10,7 @@ import org.json.simple.parser.*;
 
 import communication.protocols.*;
 import data.MissingParameterException;
+import data.system.ClusterInfo;
 import data.system.NodeInfo;
 import data.trainnetwork.*;
 
@@ -66,7 +67,7 @@ public class MasterDataRepository extends StaticDataRepository {
 			
 			JSONArray nodes = (JSONArray) parser.parse(new FileReader(NODES_INFO));
 			for (Object _node : nodes) {
-				NodeInfo node = NodeInfo.getFromJSON((JSONObject) _node);
+				ClusterInfo node = ClusterInfo.getFromJSON((JSONObject) _node);
 				nodes.add(node);
 			}
 			
