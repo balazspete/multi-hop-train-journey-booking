@@ -108,7 +108,7 @@ public class UnicastSocketClient extends Thread implements
 		node.addLocation(host);
 		message.setSender(node);
 		
-		System.out.println("UnicastSocketServer: Received a " + message.getType() + " from " + message.getSender().getLocation() + " | " + message.getContents());
+		System.out.println("UnicastSocketClient: Received a " + message.getType() + " from " + message.getSender().getLocation() + " | " + message.getContents());
 		
 		return message;
 	}
