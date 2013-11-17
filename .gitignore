@@ -12,3 +12,4 @@ jgrapht-javadoc/*
 out.json
 compiled_*.json
 distributed_datastore.cache
+distributed_datastore_bookablesections.cache
