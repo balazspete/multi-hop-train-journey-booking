@@ -164,7 +164,8 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		saver = new StoreSaver(sections);
 		saver.start();
 		
-		nodes = (Store<NodeInfo>) getStore("nodeinfos");
+		// NodeInfos should not be backed up
+		nodes = new Store<NodeInfo>("nodeinfos");
 	}
 	
 	@SuppressWarnings("rawtypes")
