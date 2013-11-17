@@ -16,23 +16,6 @@ public abstract class Message implements Serializable {
 	 */
 	private static final long serialVersionUID = -8221561880823153671L;
 
-	protected boolean important = false;
-	
-	/**
-	 * Set the important flag of the message
-	 * @param isImportant True if message should be important, false otherwise
-	 */
-	public void setImportant(boolean isImportant) {
-		important = isImportant;
-	}
-	
-	/**
-	 * Poll the important flag of the message
-	 * @return True if the message is important, false otherwise
-	 */
-	public boolean isImportant() {
-		return important;
-	}
 	private NodeInfo from = null;
 	
 	/**
