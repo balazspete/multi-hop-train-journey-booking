@@ -33,6 +33,7 @@ public class NodeInfoRequest extends DataRequest<NodeInfo> {
 	
 	@Override
 	public boolean isRequested(NodeInfo dataEntry) {
-		return dataEntry.equals(notToGet);
+		if (dataEntry == null || notToGet == null) return true;
+		return !dataEntry.equals(notToGet);
 	}
 }
