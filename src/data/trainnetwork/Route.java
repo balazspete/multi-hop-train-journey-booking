@@ -15,10 +15,10 @@ public class Route extends LinkedList<SectionInfo> {
 	 */
 	private static final long serialVersionUID = 2823284930510141078L;
 	
-	private String id;
+	private String id, company = null;
 	private int maxPassengers = -1;
 	
-	public Route(String id) {
+	public Route(String id, String company) {
 		this.id = id;
 	}
 	
@@ -39,6 +39,14 @@ public class Route extends LinkedList<SectionInfo> {
 	}
 	
 	/**
+	 * Get the company with which the route is associated with
+	 * @return The name of the company
+	 */
+	public String getCompany() {
+		return company;
+	}
+	
+	/**
 	 * Create a {@link Route} from a {@link JSONObject}
 	 * @param object The {@link JSONObject} containing the route information 
 	 * @return The created {@link Route}
@@ -47,8 +55,9 @@ public class Route extends LinkedList<SectionInfo> {
 	public static Route getRouteFromJSON(JSONObject object) throws MissingParameterException {
 		String routeID = (String) JSONTools.getParameter(object, "routeID");
 		int maxPassengers = (int)(long)(Long) JSONTools.getParameter(object, "maxPassengers");
+		String company = (String) JSONTools.getParameter(object, "company");
 		
-		Route route = new Route(routeID);
+		Route route = new Route(routeID, company);
 		route.setMaxPassengers(maxPassengers);
 		
 		int count = 0;

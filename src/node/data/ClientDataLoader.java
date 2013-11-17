@@ -1,13 +1,15 @@
 package node.data;
 
-import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+
+import transaction.WriteOnlyLock;
 
 import communication.messages.Message;
 
-import data.system.ClusterInfo;
-import data.system.RouteToNodeMap;
+import data.system.NodeInfo;
+import data.system.RouteToCompany;
 import data.trainnetwork.Network;
-import data.trainnetwork.SectionInfo;
 import data.trainnetwork.Station;
 
 /**
@@ -18,28 +20,50 @@ import data.trainnetwork.Station;
 public class ClientDataLoader extends StaticDataLoader {
 
 	private Network network;
-	private RouteToNodeMap map;
+	Map<String, NodeInfo> routeToCompanyInfo;
 	
 	/**
 	 * Create a new {@link ClientDataLoader}
 	 * @param network The {@link Network} that should be updated with the loaded data 
-	 * @param map The {@link RouteToNodeMap} that should be updated with the retrieved node data
+	 * @param map The {@link RouteToCompanyMap} that should be updated with the retrieved node data
 	 */
-	public ClientDataLoader(Network network, RouteToNodeMap map) {
-		// TODO retrieve information from config
-		super("localhost", 7000);
+	public ClientDataLoader(String address, int port, Network network, Map<String, NodeInfo> routeToCompanyInfo, WriteOnlyLock<Integer> monitor) {
+		super(address, port, monitor);
 		this.network = network;
-		this.map = map;
+		this.routeToCompanyInfo = routeToCompanyInfo;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	protected void update(Message stationsMessage, Message sectionsMessage, Message nodesMessage) {
-		Set<Station> stations = (Set<Station>) stationsMessage.getContents();
-		Set<SectionInfo> sections = (Set<SectionInfo>) sectionsMessage.getContents();
+	protected void update(Message stationsMessage, Message sectionsMessage, Message companyInfosReply, Message routeToCompanyReply) {
+		super.update(stationsMessage, sectionsMessage, companyInfosReply, routeToCompanyReply);
+		
+		if (stationsMessage == null) {
+			stations = new HashSet<Station>();
+		}
 		
 		network.update(stations, sections);
 		
-		map.addMultipleClusterInfo((Set<ClusterInfo>) nodesMessage.getContents());
+		for (RouteToCompany rtc : routeToCompanies) {
+			NodeInfo node = getNodeForCompany(rtc.getValue());
+			routeToCompanyInfo.put(rtc.getKey(), node);
+		}
+	}
+	
+	/**
+	 * Get the mappings from routeID to company {@link NodeInfo}
+	 * @return The map
+	 */
+	public Map<String, NodeInfo> getRouteToCompanyInfo() {
+		return routeToCompanyInfo;
+	}
+	
+	private NodeInfo getNodeForCompany(String company) {
+		for (NodeInfo node : nodeInfos) {
+			if (node.getName().equalsIgnoreCase(company)) {
+				return node;
+			}
+		}
+		
+		return null;
 	}
 }

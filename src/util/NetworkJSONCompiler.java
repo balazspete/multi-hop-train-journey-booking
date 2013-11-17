@@ -67,6 +67,7 @@ public class NetworkJSONCompiler {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static Vector compileRoutes(JSONArray routes, DateTime day) throws MissingParameterException, IOException {
 		Vector result = new Vector();
 		
@@ -75,6 +76,7 @@ public class NetworkJSONCompiler {
 			
 			String id = (String) JSONTools.getParameter(rawRoute, "routeID");
 			long maxPassengers = (Long) JSONTools.getParameter(rawRoute, "maxPassengers");
+			String company = (String) JSONTools.getParameter(rawRoute, "company");
 			
 			JSONArray rawSections = (JSONArray) JSONTools.getParameter(rawRoute, "route");
 			Vector<Section> sections = new Vector<Section>();
@@ -92,6 +94,7 @@ public class NetworkJSONCompiler {
 			for(int _i = 0; _i< starts.size(); _i++) {
 				LinkedHashMap route = new LinkedHashMap();
 				route.put("maxPassengers", maxPassengers);
+				route.put("company", company);
 				
 				JSONObject _start = (JSONObject) starts.get(_i);
 				JSONObject start = (JSONObject) _start.clone();

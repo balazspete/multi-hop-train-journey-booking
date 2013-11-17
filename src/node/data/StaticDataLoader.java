@@ -4,11 +4,15 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 
+import transaction.Lock.Token;
+import transaction.WriteOnlyLock;
+
 import communication.CommunicationException;
 import communication.messages.*;
 import communication.unicast.UnicastSocketClient;
 import data.request.*;
 import data.system.NodeInfo;
+import data.system.RouteToCompany;
 import data.trainnetwork.*;
 
 /**
@@ -22,28 +26,41 @@ public class StaticDataLoader implements DataLoader {
 
 	private UnicastSocketClient client;
 	
-	private volatile Set<SectionInfo> sections;
-	private volatile Set<Station> stations;
-	private volatile Set<NodeInfo> nodeInfos;
+	protected static Set<SectionInfo> sections;
+	protected static Set<Station> stations;
+	protected static Set<NodeInfo> nodeInfos;
+	protected static Set<RouteToCompany> routeToCompanies;
+	
+	protected WriteOnlyLock<Integer> monitor;
 	
 	/**
 	 * Create a {@link StaticDataLoader} with specific connection parameters
 	 * @param host The URL or IP address of the {@link DataRepository}
 	 * @param port The port the client should be connecting to the repository
 	 */
-	public StaticDataLoader(String host, int port) {
+	public StaticDataLoader(String host, int port, WriteOnlyLock<Integer> monitor) {
 		client = new UnicastSocketClient(host, port);
+		this.monitor = monitor;
 	}
 	
 	@Override
-	public void getData(DateTime from, DateTime until, boolean getStations) {
+	public void getData(DateTime from, DateTime until, boolean getStations) throws StaticDataLoadException {
+		//--- begin locked state
+		Token token = monitor.writeLock();
 		int triesCount = 0;
 		while (triesCount++ < MAX_TRIES) {
 			try {
 				client.createConnection();
-				continue;
+				break;
 			} catch (CommunicationException e) {
-				e.printStackTrace();
+				if (triesCount < MAX_TRIES) {
+					System.err.println(e.getMessage() + "; will retry soon...");
+					continue;
+				}
+				
+				// Unlock monitor before throwing the exception
+				monitor.writeUnlock(token);
+				throw new StaticDataLoadException(e.getMessage());
 			}
 		}
 		
@@ -53,7 +70,11 @@ public class StaticDataLoader implements DataLoader {
 		
 		DataRequest<NodeInfo> routeMappingRequest = new ClusterInfoRequest();
 		message = new DataRequestMessage<NodeInfo>(routeMappingRequest, "NodeInfo");
-		Message routeMappingReply = trySendMessage(message, true);
+		Message companyInfosReply = trySendMessage(message, true);
+		
+		DataRequest<RouteToCompany> companyMappingRequest = new RouteToCompanyDataRequest();
+		message = new DataRequestMessage<RouteToCompany>(companyMappingRequest, "RouteToCompany");
+		Message routeToCompanyReply = trySendMessage(message, true);
 		
 		Message stationsReply = null;
 		if (getStations) {
@@ -62,25 +83,31 @@ public class StaticDataLoader implements DataLoader {
 			stationsReply = trySendMessage(message, true);
 		}
 		
-		update(stationsReply, sectionsReply, routeMappingReply);
-		
-
 		triesCount = 0;
 		while (triesCount++ < MAX_TRIES) {
 			try {
 				client.endConnection();
-				continue;
+				break;
 			} catch (CommunicationException e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
 			}
 		}
+
+		monitor.writeUnlock(token);
+		//--- end locked state
+		
+		update(stationsReply, sectionsReply, companyInfosReply, routeToCompanyReply);
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void update(Message stationsMessage, Message sectionsMessage, Message nodesMessage) {
-		stations = (Set<Station>) stationsMessage.getContents();
+	protected void update(Message stationsMessage, Message sectionsMessage, Message companyInfosReply, Message routeToCompanyReply) {
+		if (stationsMessage != null) {
+			stations = (Set<Station>) stationsMessage.getContents();
+		}
+		
 		sections = (Set<SectionInfo>) sectionsMessage.getContents();
-		nodeInfos = (Set<NodeInfo>) nodesMessage.getContents();
+		nodeInfos = (Set<NodeInfo>) companyInfosReply.getContents();
+		routeToCompanies = (Set<RouteToCompany>) routeToCompanyReply.getContents();
 	}
 	
 	private Message trySendMessage(Message message, boolean expectReply) {
@@ -88,17 +115,25 @@ public class StaticDataLoader implements DataLoader {
 		while (tries++ < MAX_TRIES) {
 			try {
 				client.sendMessage(message);
-				continue;
+				break;
 			} catch (CommunicationException e) {
+				System.err.println(e.getMessage() + "; will retry...");
 			}
 		}
 		
 		if (expectReply) {
+			Message msg = null;
 			try {
-				return client.getMessage();
-			} catch (Exception e) {
+				msg = client.getMessage();
+			} catch (CommunicationException e) {
+				System.err.println(e.getMessage() + "; Message: " + msg);
+				return null;
+			} catch (InvalidMessageException e) {
+				System.err.println(e.getMessage() + "; Message: " + msg);
 				return null;
 			}
+			
+			return msg;
 		} else {
 			return null;
 		}
@@ -117,5 +152,10 @@ public class StaticDataLoader implements DataLoader {
 	@Override
 	public Set<NodeInfo> getNodeInfos() {
 		return nodeInfos;
+	}
+	
+	@Override
+	public Set<RouteToCompany> getRouteToCompanies() {
+		return routeToCompanies;
 	}
 }

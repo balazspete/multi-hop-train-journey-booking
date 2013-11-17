@@ -5,6 +5,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import data.system.NodeInfo;
+import data.system.RouteToCompany;
 import data.trainnetwork.SectionInfo;
 import data.trainnetwork.Station;
 
@@ -20,8 +21,9 @@ public interface DataLoader {
 	 * @param from The start date of the time-frame, or <b>null</b> to not specify 
 	 * @param until The end date of the time-frame, or <b>null</b> to not specify
 	 * @param getStations True if the list of {@link Station}s should be retrieved, false otherwise 
+	 * @throws StaticDataLoadException Thrown if data retrieval failed
 	 */
-	public void getData(DateTime from, DateTime until, boolean getStations);
+	public void getData(DateTime from, DateTime until, boolean getStations) throws StaticDataLoadException;
 	
 	/**
 	 * @return The retrieved set of {@link Sections}
@@ -37,4 +39,9 @@ public interface DataLoader {
 	 * @return The retrieved set of {@link NodeInfo}rmations
 	 */
 	public Set<NodeInfo> getNodeInfos();
+	
+	/**
+	 * @return The retrieved set of {@link RouteToCompany}s
+	 */
+	public Set<RouteToCompany> getRouteToCompanies();
 }

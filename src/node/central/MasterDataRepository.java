@@ -1,17 +1,19 @@
 package node.central;
 
 import java.io.*;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.*;
 
 import node.data.RepositoryException;
+import node.data.StaticDataLoadException;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
 import communication.protocols.*;
 import data.MissingParameterException;
-import data.system.ClusterInfo;
-import data.system.NodeInfo;
+import data.system.*;
 import data.trainnetwork.*;
 
 /**
@@ -20,11 +22,13 @@ import data.trainnetwork.*;
  *
  */
 public class MasterDataRepository extends StaticDataRepository {
-
+	
+	private static Set<NodeInfo> slaves = new HashSet<NodeInfo>();
+	
 	private static final String 
+		CLUSTER_NAME = "CENTRAL STATIC DATA CLUSTER",
 		ROUTES_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/compiled_routes.json", 
-		STATIONS_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/stations.json", 
-		NODES_INFO = "/Users/balazspete/Projects/multi-hop-train-booking/nodes.json";
+		STATIONS_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/stations.json";
 	
 	/**
 	 * Create a new {@link MasterDataRepository}
@@ -33,7 +37,11 @@ public class MasterDataRepository extends StaticDataRepository {
 	public MasterDataRepository() throws RepositoryException {
 		// TODO load port# from config
 		super(8000);
-		update();
+		try {
+			update();
+		} catch (StaticDataLoadException e) {
+			throw new RepositoryException(e.getMessage());
+		}
 	}
 	
 	@Override
@@ -41,13 +49,15 @@ public class MasterDataRepository extends StaticDataRepository {
 		sections = new HashSet<SectionInfo>();
 		stations = new HashSet<Station>();
 		nodes = new HashSet<NodeInfo>();
+		routeToCompanies = new HashSet<RouteToCompany>();
 	}
 	
 	/**
 	 * Update the repository from the source JSON files
+	 * @throws StaticDataLoadException 
 	 */
 	@SuppressWarnings("unchecked")
-	public void update() {
+	public void update() throws StaticDataLoadException {
 		JSONParser parser = new JSONParser();
 		
 		try {
@@ -65,30 +75,41 @@ public class MasterDataRepository extends StaticDataRepository {
 				}
 			}
 			
-			JSONArray nodes = (JSONArray) parser.parse(new FileReader(NODES_INFO));
-			for (Object _node : nodes) {
-				ClusterInfo node = ClusterInfo.getFromJSON((JSONObject) _node);
-				nodes.add(node);
-			}
+//			JSONArray nodes = (JSONArray) parser.parse(new FileReader(NODES_INFO));
+//			for (Object _node : nodes) {
+//				ClusterInfo node = ClusterInfo.getFromJSON((JSONObject) _node);
+//				nodes.add(node);
+//			}
 			
-		// TODO add some failure handling
+		// Failed to load data, propagate exception to higher level
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new StaticDataLoadException(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new StaticDataLoadException(e.getMessage());
 		} catch (ParseException e) {
-			e.printStackTrace();
+			throw new StaticDataLoadException(e.getMessage());
 		} catch (MissingParameterException e) {
-			e.printStackTrace();
+			throw new StaticDataLoadException(e.getMessage());
 		}
 	}
 
 	@Override
 	protected Set<Protocol> getProtocols() {
 		Set<Protocol> protocols = new HashSet<Protocol>();
+		
+		// Accept and handle `Hello` requests from slaves
+		protocols.add(new HelloProtocol(slaves));
+		
+		// Accept Cluster hello requests from clients
+		protocols.add(new ClusterHelloProtocol(CLUSTER_NAME, slaves));
+		
+		// Accept and handle static data requests
 		protocols.add(new DataRequestHandlingProtocol<Station>(stations, "Station"));
 		protocols.add(new DataRequestHandlingProtocol<SectionInfo>(sections, "SectionInfo"));
 		protocols.add(new DataRequestHandlingProtocol<NodeInfo>(nodes , "NodeInfo"));
+		
+		// Accept and handle requests for company node locations
+		protocols.add(new DataRequestHandlingProtocol<RouteToCompany>(routeToCompanies, "RouteToCompany"));
 		
 		return protocols;
 	}
@@ -96,9 +117,17 @@ public class MasterDataRepository extends StaticDataRepository {
 	public void test() {
 		System.out.println(sections.size());
 		System.out.println(stations.size());
+		System.out.println(slaves);
 	}
 	
 	public static void main(String[] args) {
+		try {
+			System.out.println(Inet4Address.getLocalHost().getHostAddress());
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		MasterDataRepository repo;
 		try {
 			repo = new MasterDataRepository();
