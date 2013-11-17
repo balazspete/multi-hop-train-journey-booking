@@ -39,8 +39,8 @@ public class DistributedRepositorySlave extends DistributedRepository {
 
 	public void test() {
 		while (true) {
-			
-			System.out.println("sections-check: "+sections);
+			//sections.debugPrint();
+			System.out.println(nodes);
 			try {
 				sleep(2000);
 			} catch (InterruptedException e) {
