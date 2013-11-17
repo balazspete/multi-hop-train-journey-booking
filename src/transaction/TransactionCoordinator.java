@@ -106,9 +106,11 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		} else if (status != TransactionStatus.DONE){ 
 			if (stage == TransactionStage.COMMIT) {
 				transaction.commit();
+				System.out.println("Transaction COMMITTED - ID: " + transaction.getId());
 				doRemoteCommit();
 			} else {
 				transaction.abort();
+				System.out.println("Transaction ABORTED - ID: " + transaction.getId());
 				doRemoteAbort();
 			}
 			
