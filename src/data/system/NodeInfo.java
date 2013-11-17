@@ -58,8 +58,13 @@ public class NodeInfo implements Serializable {
 	}
 	
 	public boolean equals(NodeInfo other) {
-		if (other == null) return false;
-		return location.equalsIgnoreCase(other.getLocation());
+		if (other != null && other.location == location) {
+			return true;
+		} else if (other == null) {
+			return false;
+		} else {
+			return location.equals(other.getLocation());
+		}
 	}
 	
 	public String toString() {
