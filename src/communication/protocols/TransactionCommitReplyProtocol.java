@@ -4,9 +4,6 @@ import transaction.TransactionCoordinator;
 import transaction.TransactionCoordinatorManager;
 import communication.messages.Message;
 import communication.messages.TransactionCommitReplyMessage;
-import communication.messages.TransactionCommitReplyMessage.Status;
-import communication.messages.TransactionExecutionReplyMessage;
-import communication.messages.TransactionExecutionReplyMessage.Reply;
 
 public class TransactionCommitReplyProtocol<KEY, VALUE> implements Protocol {
 
@@ -35,5 +32,4 @@ public class TransactionCommitReplyProtocol<KEY, VALUE> implements Protocol {
 	public boolean hasReply() {
 		return false;
 	}
-
 }

@@ -2,14 +2,11 @@ package communication.unicast;
 
 import java.io.*;
 import java.net.*;
-import java.util.Set;
 
 import node.company.DistributedRepository;
-import node.company.DistributedRepository.DataLoadException;
 import communication.CommunicationException;
 import communication.messages.*;
 import data.system.NodeInfo;
-import data.trainnetwork.BookableSection;
 
 /**
  * A client-to-server networking client implemented using sockets
