@@ -20,6 +20,7 @@ public class Route extends LinkedList<SectionInfo> {
 	
 	public Route(String id, String company) {
 		this.id = id;
+		this.company = company;
 	}
 	
 	/**
