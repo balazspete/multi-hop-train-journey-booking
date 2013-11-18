@@ -44,9 +44,12 @@ public class ClientDataLoader extends StaticDataLoader {
 		network.update(stations, sections);
 		
 		for (RouteToCompany rtc : routeToCompanies) {
+			System.out.println(rtc.getKey() + " " + rtc.getValue());
 			NodeInfo node = getNodeForCompany(rtc.getValue());
 			routeToCompanyInfo.put(rtc.getKey(), node);
 		}
+		
+		System.out.println(nodeInfos + " " + routeToCompanies);
 	}
 	
 	/**

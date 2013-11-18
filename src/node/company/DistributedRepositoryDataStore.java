@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.joda.time.DateTime;
 
+import communication.protocols.ClusterHelloProtocol;
 import communication.protocols.DataRequestHandlingProtocol;
 import communication.protocols.DataTransferHandlingProtocol;
 import communication.protocols.HelloProtocol;
@@ -154,6 +155,8 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	protected StoreSaver saver;
 	protected static Store<NodeInfo> nodes;
 	
+	protected static String CLUSTER_NAME;
+	
 	public DistributedRepositoryDataStore() throws RepositoryException {
 		super(NodeConstants.DYNAMIC_CLUSTER_STORE_PORT);
 	}
@@ -187,6 +190,9 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		// Accept and handle `Hello` requests from other nodes
 		protocols.add(new HelloProtocol(nodes));
 		
+		// Accept and handle `ClusterHello` requests
+		protocols.add(new ClusterHelloProtocol(CLUSTER_NAME, nodes));
+		
 		// Accept and handle data requests for <NodeInfo>s
 		protocols.add(new DataRequestHandlingProtocol<NodeInfo>(nodes, "NodeInfo"));
 		
@@ -210,9 +216,13 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DistributedRepositoryDataStore ds;
 		try {
-			ds = new DistributedRepositoryDataStore();
+			if (args.length < 1 || !(args[0] instanceof String)) {
+				throw new RepositoryException("Arg1 required to be the cluster's name");
+			}
+			
+			DistributedRepositoryDataStore.CLUSTER_NAME = args[0];
+			DistributedRepositoryDataStore ds = new DistributedRepositoryDataStore();
 			ds.test();
 			ds.start();
 		} catch (RepositoryException e) {

@@ -39,6 +39,7 @@ public abstract class DistributedRepository extends DataRepository {
 		}
 	}
 	
+	protected static String REPOSITORY_NAME;
 	public static final int PORT = NodeConstants.DYNAMIC_CLUSTER_PORT;
 	
 	protected static String DATA_STORE_LOCATION;

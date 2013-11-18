@@ -2,7 +2,6 @@ package node.company;
 
 import java.util.*;
 
-import node.FatalNodeException;
 import node.data.RepositoryException;
 import transaction.*;
 import transaction.Lock.Token;

@@ -61,7 +61,7 @@ public class DistributedRepositorySlave extends DistributedRepository {
 			DistributedRepositorySlave.DATA_STORE_LOCATION = args[0];
 			s = new DistributedRepositorySlave();
 			s.start();
-			s.test();
+			//s.test();
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

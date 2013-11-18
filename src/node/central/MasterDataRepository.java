@@ -89,7 +89,10 @@ public class MasterDataRepository extends StaticDataRepository {
 			
 			JSONObject companyLocations = (JSONObject) parser.parse(new FileReader(COMPANY_LOCATIONS_DATA));
 			for (Object key : companyLocations.keySet()) {
-				NodeInfo node = new NodeInfo((String) key, (String) companyLocations.get(key));
+				String route = (String) key,
+						location = (String) companyLocations.get(key);
+				
+				NodeInfo node = new NodeInfo(route, location);
 				companyClusterMaserNodes.add(node);
 			}
 			
@@ -131,10 +134,12 @@ public class MasterDataRepository extends StaticDataRepository {
 		Message message = new ClusterHelloMessage();
 		for (NodeInfo node : companyClusterMaserNodes) {
 			try {
-				Message reply = UnicastSocketClient.sendOneMessage(node.getLocation(), PORT, message, true);
+				UnicastSocketClient client = new UnicastSocketClient(node.getLocation(), NodeConstants.DYNAMIC_CLUSTER_STORE_PORT);
+				Message reply = UnicastSocketClient.sendOneMessage(client, message, true);
 				ClusterInfo info = (ClusterInfo) reply.getContents();
 				nodes.add(info);
 			} catch (CommunicationException e) {
+				System.err.println(e.getMessage());
 				new RepositoryException(e.getMessage());
 			}
 		}
@@ -145,7 +150,7 @@ public class MasterDataRepository extends StaticDataRepository {
 	public void test() {
 		System.out.println(sections.size());
 		System.out.println(stations.size());
-		System.out.println(slaves);
+		System.out.println(nodes);
 	}
 	
 	public static void main(String[] args) {
@@ -160,7 +165,7 @@ public class MasterDataRepository extends StaticDataRepository {
 		try {
 			repo = new MasterDataRepository();
 			repo.start();
-			repo.test();
+			//repo.test();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}

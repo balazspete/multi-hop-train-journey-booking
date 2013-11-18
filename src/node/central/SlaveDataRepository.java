@@ -69,6 +69,7 @@ public class SlaveDataRepository extends StaticDataRepository {
 				stations = loader.getStations();
 				sections = loader.getSections();
 				nodes = loader.getNodeInfos();
+				routeToCompanies = loader.getRouteToCompanies();
 				break;
 			} catch (StaticDataLoadException e) {
 				if (tries++ < MAX_TRIES) {
@@ -81,6 +82,7 @@ public class SlaveDataRepository extends StaticDataRepository {
 				stations = new HashSet<Station>();
 				sections = new HashSet<SectionInfo>();
 				nodes = new HashSet<NodeInfo>();
+				routeToCompanies = new HashSet<RouteToCompany>();
 				break;
 			}
 		}
@@ -116,7 +118,7 @@ public class SlaveDataRepository extends StaticDataRepository {
 			SlaveDataRepository.MASTER_LOCATION = args[0];
 			SlaveDataRepository repo = new SlaveDataRepository();
 			repo.start();
-			repo.test();
+			//repo.test();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}
