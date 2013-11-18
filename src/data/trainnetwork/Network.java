@@ -191,7 +191,7 @@ public class Network extends DirectedWeightedMultigraph<Station, Section> {
 		Network network = null;
 		
 		try {
-			obj = parser.parse(new FileReader("/Users/balazspete/Desktop/out.json"));
+			obj = parser.parse(new FileReader("/Users/balazspete/Projects/multi-hop-train-booking/out.json"));
 			network = getNetworkFromJSON((JSONObject) obj);
 			
 //			JGraph jgraph = new JGraph(new JGraphModelAdapter(network));
