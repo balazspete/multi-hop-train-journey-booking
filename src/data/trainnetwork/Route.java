@@ -23,6 +23,14 @@ public class Route extends LinkedList<SectionInfo> {
 	}
 	
 	/**
+	 * Get the ID of the route
+	 * @return The ID
+	 */
+	public String getId() {
+		return id;
+	}
+	
+	/**
 	 * Set the maximum number of passengers a train can take on this route 
 	 * @param max The maximum number of passengers
 	 */

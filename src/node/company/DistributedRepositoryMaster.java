@@ -2,6 +2,7 @@ package node.company;
 
 import java.util.*;
 
+import node.FatalNodeException;
 import node.data.RepositoryException;
 import transaction.*;
 import transaction.Lock.Token;
@@ -42,7 +43,7 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	private void scheduledBackup() {
 		while (true) {
 			try {
-				sleep(1000 * 10);//TIME_BETWEEN_BACKUPS);
+				sleep(1000 * TIME_BETWEEN_BACKUPS);
 			} catch (InterruptedException e) {
 				System.err.println("Failed to wait for backup: " + e.getMessage());
 			}
@@ -104,7 +105,6 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		} finally {
 			communicationLock.writeUnlock(t);
 		}
-		
 	}
 
 	public void test() {
@@ -131,6 +131,11 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	public static void main(String[] args) {
 		DistributedRepositoryMaster r;
 		try {
+			if (args.length < 1 || !(args[0] instanceof String)) {
+				throw new RepositoryException("Arg1 required to be the master node's location of the static data cluster");
+			}
+			
+			DistributedRepositoryMaster.DATA_STORE_LOCATION = args[0];
 			r = new DistributedRepositoryMaster();
 			r.start();
 			r.test();
@@ -138,5 +143,4 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 			e.printStackTrace();
 		}
 	}
-	
 }

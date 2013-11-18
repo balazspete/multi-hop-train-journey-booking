@@ -5,13 +5,20 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.*;
 
+import node.NodeConstants;
 import node.data.RepositoryException;
 import node.data.StaticDataLoadException;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
+import transaction.Lock.Token;
+
+import communication.CommunicationException;
+import communication.messages.ClusterHelloMessage;
+import communication.messages.Message;
 import communication.protocols.*;
+import communication.unicast.UnicastSocketClient;
 import data.MissingParameterException;
 import data.system.*;
 import data.trainnetwork.*;
@@ -23,22 +30,27 @@ import data.trainnetwork.*;
  */
 public class MasterDataRepository extends StaticDataRepository {
 	
-	private static Set<NodeInfo> slaves = new HashSet<NodeInfo>();
+	private static Set<NodeInfo>
+		companyClusterMaserNodes = new HashSet<NodeInfo>(),
+		slaves = new HashSet<NodeInfo>();
+	
+	private static final int PORT = NodeConstants.STATIC_CLUSTER_MASTER_PORT;
 	
 	private static final String 
 		CLUSTER_NAME = "CENTRAL STATIC DATA CLUSTER",
 		ROUTES_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/compiled_routes.json", 
-		STATIONS_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/stations.json";
+		STATIONS_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/stations.json",
+		COMPANY_LOCATIONS_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/companies.json";
 	
 	/**
 	 * Create a new {@link MasterDataRepository}
 	 * @throws RepositoryException Thrown if the initialisation failed
 	 */
 	public MasterDataRepository() throws RepositoryException {
-		// TODO load port# from config
-		super(8000);
+		super(PORT);
 		try {
 			update();
+			connectToCompanyDataClusters();
 		} catch (StaticDataLoadException e) {
 			throw new RepositoryException(e.getMessage());
 		}
@@ -56,7 +68,6 @@ public class MasterDataRepository extends StaticDataRepository {
 	 * Update the repository from the source JSON files
 	 * @throws StaticDataLoadException 
 	 */
-	@SuppressWarnings("unchecked")
 	public void update() throws StaticDataLoadException {
 		JSONParser parser = new JSONParser();
 		
@@ -70,16 +81,17 @@ public class MasterDataRepository extends StaticDataRepository {
 			JSONArray routes = (JSONArray) parser.parse(new FileReader(ROUTES_DATA));
 			for (Object _route : routes) {
 				Route route = Route.getRouteFromJSON((JSONObject) _route);
+				routeToCompanies.add(new RouteToCompany(route));
 				for (SectionInfo info : route) {
 					sections.add(info);
 				}
 			}
 			
-//			JSONArray nodes = (JSONArray) parser.parse(new FileReader(NODES_INFO));
-//			for (Object _node : nodes) {
-//				ClusterInfo node = ClusterInfo.getFromJSON((JSONObject) _node);
-//				nodes.add(node);
-//			}
+			JSONObject companyLocations = (JSONObject) parser.parse(new FileReader(COMPANY_LOCATIONS_DATA));
+			for (Object key : companyLocations.keySet()) {
+				NodeInfo node = new NodeInfo((String) key, (String) companyLocations.get(key));
+				companyClusterMaserNodes.add(node);
+			}
 			
 		// Failed to load data, propagate exception to higher level
 		} catch (FileNotFoundException e) {
@@ -112,6 +124,22 @@ public class MasterDataRepository extends StaticDataRepository {
 		protocols.add(new DataRequestHandlingProtocol<RouteToCompany>(routeToCompanies, "RouteToCompany"));
 		
 		return protocols;
+	}
+	
+	private void connectToCompanyDataClusters() {
+		Token token = communicationsLock.writeLock();
+		Message message = new ClusterHelloMessage();
+		for (NodeInfo node : companyClusterMaserNodes) {
+			try {
+				Message reply = UnicastSocketClient.sendOneMessage(node.getLocation(), PORT, message, true);
+				ClusterInfo info = (ClusterInfo) reply.getContents();
+				nodes.add(info);
+			} catch (CommunicationException e) {
+				new RepositoryException(e.getMessage());
+			}
+		}
+		
+		communicationsLock.writeUnlock(token);
 	}
 
 	public void test() {

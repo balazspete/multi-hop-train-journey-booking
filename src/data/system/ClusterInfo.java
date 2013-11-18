@@ -1,6 +1,7 @@
 package data.system;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
@@ -16,6 +17,8 @@ import data.MissingParameterException;
  */
 public class ClusterInfo extends NodeInfo {
 
+	private static final long serialVersionUID = -7871291182831181858L;
+	
 	private Set<String> locations;
 	
 	/**
@@ -27,19 +30,12 @@ public class ClusterInfo extends NodeInfo {
 		locations = new HashSet<String>();
 	}
 	
-	
-	/**
-	 * Add a location for a node 
-	 * @param location A URI or IP address
-	 */
+	@Override
 	public void addLocation(String location) {
 		locations.add(location.intern());
 	}
 	
-	/**
-	 * Get a location associated with the node
-	 * @return A location (URI or IP address)
-	 */
+	@Override
 	public String getLocation() {
 		return getRandomLocation();
 	}
@@ -64,8 +60,12 @@ public class ClusterInfo extends NodeInfo {
 
 	private String getRandomLocation() {
 		int size = locations.size();
-		int randomIndex = (int) Math.random() * size;
+		int randomIndex = (int) (Math.random() * size);
 		
 		return (String) locations.toArray()[randomIndex];
+	}
+	
+	public Set<String> getAllLocations() {
+		return locations;
 	}
 }

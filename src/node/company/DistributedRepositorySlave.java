@@ -3,6 +3,7 @@ package node.company;
 import java.util.HashSet;
 import java.util.Set;
 
+import node.FatalNodeException;
 import node.data.RepositoryException;
 import transaction.Vault;
 import communication.protocols.HelloProtocol;
@@ -53,6 +54,11 @@ public class DistributedRepositorySlave extends DistributedRepository {
 	public static void main(String[] args) {
 		DistributedRepositorySlave s;
 		try {
+			if (args.length < 1 || !(args[0] instanceof String)) {
+				throw new RepositoryException("Arg1 required to be the master node's location of the static data cluster");
+			}
+			
+			DistributedRepositorySlave.DATA_STORE_LOCATION = args[0];
 			s = new DistributedRepositorySlave();
 			s.start();
 			s.test();

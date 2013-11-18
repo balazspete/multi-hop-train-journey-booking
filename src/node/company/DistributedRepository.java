@@ -16,6 +16,7 @@ import data.request.BookableSectionDataRequest;
 import data.request.NodeInfoRequest;
 import data.system.NodeInfo;
 import data.trainnetwork.*;
+import node.NodeConstants;
 import node.data.DataRepository; 
 import node.data.RepositoryException;
 
@@ -38,10 +39,10 @@ public abstract class DistributedRepository extends DataRepository {
 		}
 	}
 	
-	public static final int PORT = 8001;
+	public static final int PORT = NodeConstants.DYNAMIC_CLUSTER_PORT;
 	
-	protected static final String DATA_STORE_LOCATION = "192.168.1.7";
-	protected static final int DATA_STORE_PORT = 8005;
+	protected static String DATA_STORE_LOCATION;
+	protected static final int DATA_STORE_PORT = NodeConstants.DYNAMIC_CLUSTER_STORE_PORT;
 
 	protected static Vault<Map<String, Vault<BookableSection>>> sections;
 	protected static TransactionManager<String, Vault<BookableSection>> transactions;

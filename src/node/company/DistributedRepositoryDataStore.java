@@ -11,6 +11,7 @@ import communication.protocols.HelloProtocol;
 import communication.protocols.Protocol;
 import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
+import node.NodeConstants;
 import node.data.DataRepository;
 import node.data.RepositoryException;
 
@@ -44,6 +45,7 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		private static final long serialVersionUID = -5604189350057652145L;
 		private static final String
 			EXTENSION = ".cache",
+			// TODO get this from args or something
 			CACHE = "/Users/balazspete/Projects/multi-hop-train-booking/distributed_datastore";
 		
 		private String name;
@@ -153,8 +155,7 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	protected static Store<NodeInfo> nodes;
 	
 	public DistributedRepositoryDataStore() throws RepositoryException {
-		// TODO load from config
-		super(8005);
+		super(NodeConstants.DYNAMIC_CLUSTER_STORE_PORT);
 	}
 
 	@SuppressWarnings("unchecked")

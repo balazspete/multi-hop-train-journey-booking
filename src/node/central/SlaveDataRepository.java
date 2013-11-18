@@ -4,12 +4,13 @@ import java.util.*;
 
 import transaction.Lock.Token;
 
+import node.FatalNodeException;
+import node.NodeConstants;
 import node.data.RepositoryException;
 import node.data.StaticDataLoadException;
 import node.data.StaticDataLoader;
 import communication.CommunicationException;
 import communication.messages.HelloMessage;
-import communication.messages.HelloReplyMessage;
 import communication.messages.Message;
 import communication.protocols.*;
 import communication.unicast.UnicastSocketClient;
@@ -24,18 +25,19 @@ import data.trainnetwork.*;
  */
 public class SlaveDataRepository extends StaticDataRepository {
 
+	private static final int PORT = NodeConstants.STATIC_CLUSTER_SLAVE_PORT;
+	private static final int MASTER_PORT = NodeConstants.STATIC_CLUSTER_MASTER_PORT;
+	
 	private Network network;
 	
-	private String master_location;
-	private int master_port;
+	private static String MASTER_LOCATION;
 	
 	/**
 	 * Create a {@link SlaveDataRepository}
 	 * @throws RepositoryException Thrown if the initialisation failed
 	 */
 	public SlaveDataRepository() throws RepositoryException {
-		// TODO load port# from config
-		super(7000);
+		super(PORT);
 		helloToMaster();
 	}
 	
@@ -58,10 +60,7 @@ public class SlaveDataRepository extends StaticDataRepository {
 	
 	private void getDataFromMaster() {
 		// TODO load connection info from config
-		master_location = "localhost";
-		master_port = 8000;
-		
-		StaticDataLoader loader = new StaticDataLoader(master_location, master_port, communicationsLock);
+		StaticDataLoader loader = new StaticDataLoader(MASTER_LOCATION, MASTER_PORT, communicationsLock);
 		int tries = 0;
 		while (true) {
 			try {
@@ -94,7 +93,7 @@ public class SlaveDataRepository extends StaticDataRepository {
 		Token token = communicationsLock.writeLock();
 		try {
 			Message msg = HelloMessage.getHi();
-			UnicastSocketClient.sendOneMessage(master_location, master_port, msg, true);
+			UnicastSocketClient.sendOneMessage(MASTER_LOCATION, MASTER_PORT, msg, true);
 		} catch (CommunicationException e) {
 			throw new RepositoryException("Failed to HELLO master: " + e.getMessage());
 		} finally {
@@ -109,9 +108,13 @@ public class SlaveDataRepository extends StaticDataRepository {
 	}
 
 	public static void main(String[] args) {
-		SlaveDataRepository repo;
 		try {
-			repo = new SlaveDataRepository();
+			if (args.length < 1 || !(args[0] instanceof String)) {
+				throw new RepositoryException("Arg1 required to be the master node's location of the static data cluster");
+			}
+			
+			SlaveDataRepository.MASTER_LOCATION = args[0];
+			SlaveDataRepository repo = new SlaveDataRepository();
 			repo.start();
 			repo.test();
 		} catch (RepositoryException e) {

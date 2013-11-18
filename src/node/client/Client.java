@@ -12,6 +12,7 @@ import transaction.Lock.Token;
 import transaction.WriteOnlyLock;
 
 import node.FatalNodeException;
+import node.NodeConstants;
 import node.data.ClientDataLoader;
 import node.data.StaticDataLoadException;
 import data.system.ClusterInfo;
@@ -33,12 +34,16 @@ public class Client extends Thread {
 	private ClusterInfo info;
 	
 	private ClientDataLoader loader;
-	private final int MASTER_PORT = 8000, CLUSTER_PORT = 7000;
-	private String staticServerAddress = "localhost";
+	private final int 
+		MASTER_PORT = NodeConstants.STATIC_CLUSTER_MASTER_PORT, 
+		CLUSTER_PORT = NodeConstants.STATIC_CLUSTER_SLAVE_PORT;
+	private String staticServerLocation;
 	
-	public Client() throws FatalNodeException {
+	public Client(String location) throws FatalNodeException {
+		staticServerLocation = location;
+		
 		try {
-			connectToStaticDataCluster(staticServerAddress, MASTER_PORT);
+			connectToStaticDataCluster(staticServerLocation, MASTER_PORT);
 		} catch (CommunicationException e) {
 			throw new FatalNodeException(e.getMessage());
 		}
@@ -65,7 +70,6 @@ public class Client extends Thread {
 		Message reply = UnicastSocketClient.sendOneMessage(masterLocation, masterPort, message, true);
 		
 		info = (ClusterInfo) reply.getContents();
-		
 		communicationsLock.writeUnlock(token);
 		
 	}
@@ -90,7 +94,11 @@ public class Client extends Thread {
 	 */
 	public static void main(String[] args) {
 		try {
-			Client c = new Client();
+			if (args.length < 1 || !(args[0] instanceof String)) {
+				throw new FatalNodeException("Arg1 required to be the master node's location of the static data cluster");
+			}
+			
+			Client c = new Client(args[0]);
 			c.start();
 			c.test();
 		} catch (FatalNodeException e) {
