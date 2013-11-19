@@ -1,10 +1,13 @@
 package data.trainnetwork;
 
+import java.util.Arrays;
+
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.json.simple.JSONObject;
 
+import sun.misc.Regexp;
 import util.JSONTools;
 
 import data.MissingParameterException;
@@ -189,7 +192,7 @@ public class Section extends DefaultWeightedEdge {
 	
 	@Override
 	public String toString() {
-		return "<" + routeID + ":" + sectionNumber + ">";
+		return "" + routeID + "=" + sectionNumber + "=" + maxPassengers + "=" + cost + "=" + journeyLength + "=" + startTime.toString();
 	}
 
 	/**
@@ -226,7 +229,11 @@ public class Section extends DefaultWeightedEdge {
 	}
 	
 	public String getID() {
-		return "" + routeID + "|" + sectionNumber + "|" + startTime.toString();
+		return "" + routeID + "=" + sectionNumber + "=" + maxPassengers + "=" + startTime.toString();
+	}
+	
+	public static String getRouteIDFromID(String id) {
+		return id.split("=")[0];
 	}
 	
 //	public static boolean isValidIdentifier(String id) {
