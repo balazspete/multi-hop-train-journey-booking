@@ -10,7 +10,7 @@ import java.security.SecureRandom;
  */
 public class Seat {
 	
-	private String id;
+	private String id, sectionId = null;
 	
 	/**
 	 * Create a new Seat
@@ -26,6 +26,22 @@ public class Seat {
 	 */
 	public String getId() {
 		return id;
+	}
+	
+	/**
+	 * Add the corresponding {@link Section} (will be stored as an ID reference)
+	 * @param section The section the seat belongs to
+	 */
+	public void addSection(Section section) {
+		sectionId = section.getID();
+	}
+	
+	/**
+	 * Get the ID of the corresponding {@link Section}
+	 * @return The id of the section
+	 */
+	public String getSectionId() {
+		return sectionId;
 	}
 	
 	/**
