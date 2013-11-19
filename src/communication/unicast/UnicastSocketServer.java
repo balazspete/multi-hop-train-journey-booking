@@ -38,9 +38,10 @@ public class UnicastSocketServer extends UnicastServer {
 			// We can't get our IP address, oh well displaying less info...
 		}
         
-        System.out.println("UnicastSocketServer: Listening to connections" +
-        		(location == null ? "" : " at " + location) + 
-        		" on port "+port);
+        System.out.println("*******************************************************************************\n" + 
+        		"* UnicastSocketServer: Listening to connections" +
+        		(location == null ? "" : " at " + location) + " on port "+port + 
+        		"\n*******************************************************************************");
 
         try {
             serverSocket = new ServerSocket(port);
