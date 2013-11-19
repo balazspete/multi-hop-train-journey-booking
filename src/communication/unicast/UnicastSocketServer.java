@@ -30,6 +30,17 @@ public class UnicastSocketServer extends UnicastServer {
 	public void acceptConnections() throws CommunicationException {
 		ServerSocket serverSocket = null;
         boolean listening = true;
+        
+        String location = null;
+        try {
+			location = Inet4Address.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e1) {
+			// We can't get our IP address, oh well displaying less info...
+		}
+        
+        System.out.println("UnicastSocketServer: Listening to connections" +
+        		(location == null ? "" : " at " + location) + 
+        		" on port "+port);
 
         try {
             serverSocket = new ServerSocket(port);
