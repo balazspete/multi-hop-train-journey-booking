@@ -1,7 +1,12 @@
 package node.client;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import algorithm.graph.AppliedDijkstraShortestPath;
 
 import communication.CommunicationException;
 import communication.messages.ClusterHelloMessage;
@@ -18,6 +23,9 @@ import node.data.StaticDataLoadException;
 import data.system.ClusterInfo;
 import data.system.NodeInfo;
 import data.trainnetwork.Network;
+import data.trainnetwork.Seat;
+import data.trainnetwork.Section;
+import data.trainnetwork.Station;
 
 /**
  * The main class, managing all threads on the client
@@ -61,6 +69,8 @@ public class Client extends Thread {
 		loader = new ClientDataLoader(info.getLocation(), CLUSTER_PORT, network, routeToCompanies, communicationsLock);
 		try {
 			loader.getData(null, null, true);
+			
+			loader.getStations();
 		} catch (StaticDataLoadException e) {
 			throw new FatalNodeException(e.getMessage());
 		}
@@ -80,24 +90,53 @@ public class Client extends Thread {
 	
 	@Override
 	public void run() {
-
+		System.out.println("running");
+		test();
 		
 		
 	}
 	
+	public Set<Seat> bookJourney(String source, String target) throws BookingException {
+		AppliedDijkstraShortestPath dijkstra = new AppliedDijkstraShortestPath(network, getStation(source), getStation(target));
+		HashSet<Section> path = new HashSet<Section>(dijkstra.getPath());
+		
+		System.out.println(network.edgeSet());
+		System.out.println("path:" + path);
+		
+		return companyInterface.bookJourney(path);
+	}
+	
 	public void test() {
-		while (true) {
-			try {
-				sleep(2000);
-			} catch (InterruptedException e) {
-				// Just loop around
-			}
-			
-			System.out.println(network.edgeSet().size());
-			System.out.println(network.vertexSet().size());
-			
-			System.out.println(routeToCompanies);
+		try {
+			sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		
+		String
+			source = "DUBPS",
+			target = "GALWY";
+		
+		try {
+			Set<Seat> seats = bookJourney(source, target);
+			
+			for (Seat seat : seats) {
+				System.out.println(seat.toString());
+			}
+		} catch (BookingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private Station getStation(String stationId) {
+		for (Station station : network.vertexSet()) {
+			if (station.getID().equalsIgnoreCase(stationId)) {
+				return station;
+			}
+		}
+		
+		return null;
 	}
 	
 	/**
