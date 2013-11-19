@@ -234,8 +234,11 @@ public class Section extends DefaultWeightedEdge {
 //		return false;
 //	}
 //	
-//	public static Section getSectionFromId(String id) {
-//		// TODO implement
-//		return null;
-//	}
+	public static Section getSectionFromId(String id) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(getRouteIDFromID("fwfwe=cewcwef=vwv"));
+	}
 }

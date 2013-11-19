@@ -68,6 +68,7 @@ public class BookableSection extends Section {
 			throw new SectionFullException("No more free seats available, cannot pre-reseve more seats");
 		
 		Seat seat = new Seat();
+		seat.addSection(this);
 		preReservedSeats.add(seat);
 		
 		return seat;
@@ -98,4 +99,30 @@ public class BookableSection extends Section {
 		
 		return preReservedSeats.remove(seat);
 	}
+	
+	/**
+	 * 
+	 * @param string
+	 * @return
+	 */
+	public static BookableSection getSectionFromString(String string) {
+		String[] parts = string.split("=");
+		
+		BookableSection section;
+		try {
+			section = new BookableSection(
+				parts[0], 
+				Integer.parseInt(parts[1]), 
+				DateTime.parse(parts[5]), 
+				Integer.parseInt(parts[4]), 
+				Integer.parseInt(parts[3]));
+			section.setMaxPassengers(Integer.parseInt(parts[2]));
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			section = null;
+		}
+		
+		return section;
+	}
+	
 }
