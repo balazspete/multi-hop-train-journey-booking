@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import data.trainnetwork.BookableSection;
+import data.trainnetwork.NoSuchSeatException;
 import data.trainnetwork.Seat;
 import data.trainnetwork.Section;
 import data.trainnetwork.SectionFullException;
@@ -36,8 +37,10 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 	}
 	
 	public static SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>> getSeatPreBookingContent(final HashSet<Section> sections) {
-		SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>> content = new SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>>() {
-			private static final long serialVersionUID = 1L;
+		SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>> content 
+				= new SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>>() {
+			/**/
+			private static final long serialVersionUID = 4315165970519232479L;
 
 			@Override
 			public void script(Token t) throws FailedTransactionException, LockException {
@@ -72,6 +75,38 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 			}
 		};
 				
+		return content;
+	}
+	
+	public static TransactionContent<String, Vault<BookableSection>, Set<Seat>> getSeatReservingContent(final HashSet<Seat> seats) {
+		TransactionContent<String, Vault<BookableSection>, Set<Seat>> content 
+				= new TransactionContent<String, Vault<BookableSection>, Set<Seat>>() {
+			/**/
+			private static final long serialVersionUID = -5015419185790185115L;
+
+			@Override
+			public void script(Token t) throws FailedTransactionException, LockException {
+				Map<String, Vault<BookableSection>> data = dataVault.getReadable(t);
+				
+				for (Seat seat : seats) {
+					String sectionId = seat.getSectionId();
+					
+					Vault<BookableSection> vault = data.get(sectionId);
+					manager.writeLock(vault);
+					
+					try {
+						vault.getWriteable(manager.getToken(vault)).reserve(seat);
+					} catch (NoSuchSeatException e) {
+						// This should not be happening as seats have been already pre-reserved, but just in case...
+						throw new FailedTransactionException("Failed to book seat (id:" + seat.getId() + "):" + e.getMessage());
+					}
+				}
+				
+				// Just return the input, if transaction has failed we won't get to this point
+				dataToReturn = seats;
+			}
+		};
+		
 		return content;
 	}
 }
