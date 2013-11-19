@@ -21,7 +21,6 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	
 	public DistributedRepositoryMaster() throws RepositoryException {
 		super();
-		scheduledBackup();
 	}
 
 	@Override
@@ -107,33 +106,6 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		}
 	}
 
-	public void test() {
-		try {
-			sleep(5000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-		
-		TransactionContent<String, Vault<BookableSection>, Set<Seat>> c = TransactionContentGenerator.getTestContent();
-		
-		TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>> tc
-			= new TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>>(c, sections, nodes, communicationLock);
-		
-		transactionCoordinators.put(tc.getTransactionId(), tc);
-		
-		tc.start();
-		
-		while (true) {
-			System.out.println(nodes);
-			try {
-				sleep(2000);
-			} catch (InterruptedException e) {
-				// Just loop around, no biggie
-			}
-		}
-	}
-	
-	
 	public static void main(String[] args) {
 		DistributedRepositoryMaster r;
 		try {
@@ -144,7 +116,7 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 			DistributedRepositoryMaster.DATA_STORE_LOCATION = args[0];
 			r = new DistributedRepositoryMaster();
 			r.start();
-			r.test();
+			r.scheduledBackup();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}
