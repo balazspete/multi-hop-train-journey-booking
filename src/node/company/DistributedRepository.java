@@ -46,8 +46,8 @@ public abstract class DistributedRepository extends DataRepository {
 	protected static final int DATA_STORE_PORT = NodeConstants.DYNAMIC_CLUSTER_STORE_PORT;
 
 	protected static Vault<Map<String, Vault<BookableSection>>> sections;
-	protected static TransactionManager<String, Vault<BookableSection>> transactions;
-	protected static TransactionCoordinatorManager<String, Vault<BookableSection>> transactionCoordinators;
+	protected static TransactionManager<String, Vault<BookableSection>, Set<Seat>> transactions;
+	protected static TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators;
 	
 	protected static WriteOnlyLock<Integer> communicationLock;
 	
@@ -61,8 +61,8 @@ public abstract class DistributedRepository extends DataRepository {
 	@Override
 	protected void initialize() throws DistributedRepositoryException {
 		sections = new Vault<Map<String, Vault<BookableSection>>>(new HashMap<String, Vault<BookableSection>>());
-		transactions = new TransactionManager<String, Vault<BookableSection>>(sections);
-		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>>();
+		transactions = new TransactionManager<String, Vault<BookableSection>, Set<Seat>>(sections);
+		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>>();
 		communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
 		nodes = new HashSet<NodeInfo>();
 		

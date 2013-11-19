@@ -12,6 +12,7 @@ import communication.protocols.*;
 import communication.unicast.UnicastSocketClient;
 import data.request.DataTransfer;
 import data.trainnetwork.BookableSection;
+import data.trainnetwork.Seat;
 
 public class DistributedRepositoryMaster extends DistributedRepository {
 
@@ -31,10 +32,10 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		protocols.add(new HelloProtocol(nodes));
 		
 		// Accept and handle distributed transactions
-		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
-		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
-		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
-		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
+		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
+		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
 		
 		return protocols;
 	}
@@ -107,10 +108,16 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	}
 
 	public void test() {
-		TransactionContent<String, Vault<BookableSection>> c = TransactionContentGenerator.getTestContent();
+		try {
+			sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		
-		TransactionCoordinator<String, Vault<BookableSection>> tc
-			= new TransactionCoordinator<String, Vault<BookableSection>>(c, sections, nodes, communicationLock);
+		TransactionContent<String, Vault<BookableSection>, Set<Seat>> c = TransactionContentGenerator.getTestContent();
+		
+		TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>> tc
+			= new TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>>(c, sections, nodes, communicationLock);
 		
 		transactionCoordinators.put(tc.getTransactionId(), tc);
 		

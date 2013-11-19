@@ -13,6 +13,7 @@ import communication.protocols.TransactionCommitReplyProtocol;
 import communication.protocols.TransactionExecutionProtocol;
 import communication.protocols.TransactionExecutionReplyProtocol;
 import data.trainnetwork.BookableSection;
+import data.trainnetwork.Seat;
 
 public class DistributedRepositorySlave extends DistributedRepository {
 
@@ -28,10 +29,10 @@ public class DistributedRepositorySlave extends DistributedRepository {
 		protocols.add(new HelloProtocol(nodes));
 		
 		// Accept and handle distributed transactions
-		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
-		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
-		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
-		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
+		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
+		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
 		
 		// TODO add client handling
 		

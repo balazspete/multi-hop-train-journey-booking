@@ -17,12 +17,12 @@ import data.InconsistentDataException;
  * @author Balazs Pete
  *
  */
-public class TransactionCommitProtocol<KEY, VALUE> implements Protocol {
+public class TransactionCommitProtocol<KEY, VALUE, RETURN> implements Protocol {
 
-	private TransactionManager<KEY, VALUE> manager;
+	private TransactionManager<KEY, VALUE, RETURN> manager;
 	private WriteOnlyLock<Integer> monitor;
 	
-	public TransactionCommitProtocol(TransactionManager<KEY, VALUE> manager, WriteOnlyLock<Integer> monitor) {
+	public TransactionCommitProtocol(TransactionManager<KEY, VALUE, RETURN> manager, WriteOnlyLock<Integer> monitor) {
 		this.manager = manager;
 		this.monitor = monitor;
 	}

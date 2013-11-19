@@ -12,7 +12,7 @@ import transaction.Lock.Token;
  * @author Balazs Pete
  *
  */
-public abstract class TransactionContent<KEY, VALUE> implements Serializable {
+public abstract class TransactionContent<KEY, VALUE, RETURN> implements Serializable {
 	
 	/**
 	 * 
@@ -22,6 +22,8 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	private String id;
 	protected transient VaultManager manager;
 	protected transient Vault<Map<KEY, VALUE>> dataVault;
+	
+	protected RETURN dataToReturn = null;
 	
 	/**
 	 * Create a new TransactionContent
@@ -63,6 +65,10 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 		this.dataVault = data;
 	}
 	
+	public RETURN getReturnedData() {
+		return dataToReturn;
+	}
+	
 	/**
 	 * Set the vault manager
 	 * @param manager The vault manager to use
@@ -76,7 +82,7 @@ public abstract class TransactionContent<KEY, VALUE> implements Serializable {
 	 * @param content The other object
 	 * @return True if the two objects are the same
 	 */
-	public boolean equals(TransactionContent<KEY, VALUE> content) {
+	public boolean equals(TransactionContent<KEY, VALUE, RETURN> content) {
 		return id.equals(content.getId());
 	}
 }

@@ -5,11 +5,11 @@ import transaction.TransactionCoordinatorManager;
 import communication.messages.Message;
 import communication.messages.TransactionCommitReplyMessage;
 
-public class TransactionCommitReplyProtocol<KEY, VALUE> implements Protocol {
+public class TransactionCommitReplyProtocol<KEY, VALUE, RETURN> implements Protocol {
 
-	private TransactionCoordinatorManager<KEY, VALUE> manager;
+	private TransactionCoordinatorManager<KEY, VALUE, RETURN> manager;
 
-	public TransactionCommitReplyProtocol(TransactionCoordinatorManager<KEY, VALUE> manager) {
+	public TransactionCommitReplyProtocol(TransactionCoordinatorManager<KEY, VALUE, RETURN> manager) {
 		this.manager = manager;
 	}
 	
@@ -21,7 +21,7 @@ public class TransactionCommitReplyProtocol<KEY, VALUE> implements Protocol {
 	@Override
 	public Message processMessage(Message message) {
 		TransactionCommitReplyMessage msg = (TransactionCommitReplyMessage) message;
-		TransactionCoordinator<KEY, VALUE> tc = manager.get(msg.getTransactionId()); 
+		TransactionCoordinator<KEY, VALUE, RETURN> tc = manager.get(msg.getTransactionId()); 
 		
 		tc.logReply(msg.getSender().getLocation(), null);
 		

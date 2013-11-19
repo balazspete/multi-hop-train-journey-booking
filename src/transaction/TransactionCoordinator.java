@@ -26,9 +26,9 @@ import data.system.NodeInfo;
  * @param <KEY>
  * @param <VALUE>
  */
-public class TransactionCoordinator<KEY, VALUE> extends Thread {
+public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 	
-	protected enum TransactionStage {
+	public enum TransactionStage {
 		INITIAL, COMMIT, ABORT
 	}
 	
@@ -41,7 +41,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		ALIVE, DEAD, SLEEPING, DONE
 	}
 	
-	private TransactionContent<KEY, VALUE> content;
+	private TransactionContent<KEY, VALUE, RETURN> content;
 	private Vault<Map<KEY, VALUE>> dataVault;
 	private Collection<NodeInfo> nodes;
 	private WriteOnlyLock<Integer> monitor;
@@ -62,7 +62,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	 * @param monitor The monitor used to control communication
 	 */
 	public TransactionCoordinator(
-		TransactionContent<KEY, VALUE> content, 
+		TransactionContent<KEY, VALUE, RETURN> content, 
 		Vault<Map<KEY, VALUE>> data, 
 		Collection<NodeInfo> nodes, 
 		WriteOnlyLock<Integer> monitor
@@ -79,6 +79,14 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	 */
 	public TransactionStatus getStatus() {
 		return status;
+	}
+	
+	/**
+	 * Get the stage of the wrapper {@link Transaction}
+	 * @return The stage the transaction is in
+	 */
+	public TransactionStage getStage() {
+		return stage;
 	}
 	
 	/**
@@ -101,6 +109,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 				stage = TransactionStage.COMMIT;
 			} catch (FailedTransactionException e) {
 				status = TransactionStatus.DEAD;
+				notifyAll();
 				return;
 			}
 		} else if (status != TransactionStatus.DONE){ 
@@ -115,9 +124,11 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 			}
 			
 			status = TransactionStatus.DONE;
+			notifyAll();
 			return;
 		} else {
 			status = TransactionStatus.DEAD;
+			notifyAll();
 			return;
 		}
 		
@@ -161,7 +172,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	}
 	
 	private void doLocalTransaction() throws FailedTransactionException {
-		TransactionContent<KEY, VALUE> _content = new Cloner().deepClone(content);
+		TransactionContent<KEY, VALUE, RETURN> _content = new Cloner().deepClone(content);
 		_content.setData(dataVault);
 		
 		transaction = new Transaction(_content);
@@ -171,7 +182,7 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	private void doRemoteTransaction() {
 		Token token = monitor.writeLock();
 		try {
-			TransactionExecutionMessage<KEY, VALUE> message = new TransactionExecutionMessage<KEY, VALUE>(content.getId());
+			TransactionExecutionMessage<KEY, VALUE, RETURN> message = new TransactionExecutionMessage<KEY, VALUE, RETURN>(content.getId());
 			message.setContents(content);
 			sendMessageToAllNodes(message, token);
 		} catch (Exception e) {
