@@ -14,6 +14,7 @@ import transaction.TransactionCoordinatorManager;
 import transaction.Vault;
 import transaction.WriteOnlyLock;
 import communication.messages.BookingMessage;
+import communication.messages.BookingReplyMessage;
 import communication.messages.Message;
 import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
@@ -51,10 +52,9 @@ public class PreBookingProtocol implements Protocol {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Message processMessage(Message message) {
-		// TODO Auto-generated method stub
-		
 		HashSet<Section> sections = (HashSet<Section>) message.getContents();
-		SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>> content = TransactionContentGenerator.getSeatPreBookingContent(sections);
+		SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>> content 
+			= TransactionContentGenerator.getSeatPreBookingContent(sections);
 		TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>> coordinator 
 			= new TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>>(content, this.sections, nodes, monitor);
 		
@@ -65,13 +65,20 @@ public class PreBookingProtocol implements Protocol {
 		while ((stage = coordinator.getStage()) == TransactionStage.COMMIT || stage == TransactionStage.ABORT) {
 			try {
 				// Wait until notified or timed out
+				System.out.println("gonna wait for transaction end");
 				coordinator.wait(5000);
 			} catch (InterruptedException e) {
 				System.err.println(e.getMessage());
 			}
 		}
 		
-		return null;
+		HashSet<Seat> returnedData = new HashSet<Seat>(content.getReturnedData());
+		BookingReplyMessage reply = new BookingReplyMessage();
+		reply.setContents(returnedData);
+		
+		System.out.println("content: " + returnedData);
+		
+		return reply;
 	}
 
 	@Override
