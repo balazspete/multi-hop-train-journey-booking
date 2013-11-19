@@ -109,7 +109,9 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 				stage = TransactionStage.COMMIT;
 			} catch (FailedTransactionException e) {
 				status = TransactionStatus.DEAD;
-				notifyAll();
+				synchronized (this) {
+					notifyAll();
+				}
 				return;
 			}
 		} else if (status != TransactionStatus.DONE){ 
@@ -124,11 +126,15 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 			}
 			
 			status = TransactionStatus.DONE;
-			notifyAll();
+			synchronized (this) {
+				notifyAll();
+			}
 			return;
 		} else {
 			status = TransactionStatus.DEAD;
-			notifyAll();
+			synchronized (this) {
+				notifyAll();
+			}
 			return;
 		}
 		
