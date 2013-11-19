@@ -39,6 +39,8 @@ public class Client extends Thread {
 		CLUSTER_PORT = NodeConstants.STATIC_CLUSTER_SLAVE_PORT;
 	private String staticServerLocation;
 	
+	private CompanyRepositoryInterface companyInterface;
+	
 	public Client(String location) throws FatalNodeException {
 		staticServerLocation = location;
 		
@@ -49,6 +51,7 @@ public class Client extends Thread {
 		}
 		
 		loadData();
+		companyInterface = new CompanyRepositoryInterface(routeToCompanies, communicationsLock);
 	}
 	
 	public void loadData() throws FatalNodeException {
@@ -71,6 +74,14 @@ public class Client extends Thread {
 		
 		info = (ClusterInfo) reply.getContents();
 		communicationsLock.writeUnlock(token);
+	}
+	
+	
+	
+	@Override
+	public void run() {
+
+		
 		
 	}
 	
@@ -100,7 +111,7 @@ public class Client extends Thread {
 			
 			Client c = new Client(args[0]);
 			c.start();
-			c.test();
+			//c.test();
 		} catch (FatalNodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
