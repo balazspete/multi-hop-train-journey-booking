@@ -59,7 +59,7 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 	 * @param content The {@link TransactionContent} to forward to other nodes
 	 * @param data The {@link Map<KEY, VALUE>} to work on 
 	 * @param nodes The collection of nodes to correspond with
-	 * @param monitor The monitor used to control communication
+	 * @param monitor The monitor used to control communication, its value is the port number used fro communication
 	 */
 	public TransactionCoordinator(
 		TransactionContent<KEY, VALUE, RETURN> content, 

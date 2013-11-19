@@ -54,7 +54,7 @@ public abstract class DistributedRepository extends DataRepository {
 	protected static Set<NodeInfo> nodes;
 	
 	public DistributedRepository() throws RepositoryException {
-		super(PORT);
+		super(NodeConstants.DYNAMIC_CLUSTER_PORT);
 		sayHello();
 	}
 
@@ -63,7 +63,7 @@ public abstract class DistributedRepository extends DataRepository {
 		sections = new Vault<Map<String, Vault<BookableSection>>>(new HashMap<String, Vault<BookableSection>>());
 		transactions = new TransactionManager<String, Vault<BookableSection>, Set<Seat>>(sections);
 		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>>();
-		communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
+		communicationLock = new WriteOnlyLock<Integer>(new Integer(NodeConstants.DYNAMIC_CLUSTER_PORT));
 		nodes = new HashSet<NodeInfo>();
 		
 		try {
