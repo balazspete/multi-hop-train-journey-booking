@@ -5,6 +5,8 @@ import java.util.Set;
 
 import node.FatalNodeException;
 import node.data.RepositoryException;
+import transaction.TransactionContent;
+import transaction.TransactionCoordinator;
 import transaction.Vault;
 import communication.protocols.HelloProtocol;
 import communication.protocols.Protocol;
@@ -40,16 +42,20 @@ public class DistributedRepositorySlave extends DistributedRepository {
 	}
 
 	public void test() {
-		while (true) {
-			//sections.debugPrint();
-			System.out.println(nodes);
-			try {
-				sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		try {
+			sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
 		}
+		
+		TransactionContent<String, Vault<BookableSection>, Set<Seat>> c = TransactionContentGenerator.getTestContent();
+		
+		TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>> tc
+			= new TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>>(c, sections, nodes, communicationLock);
+		
+		transactionCoordinators.put(tc.getTransactionId(), tc);
+		
+		tc.start();
 	}
 	
 	public static void main(String[] args) {
@@ -62,7 +68,7 @@ public class DistributedRepositorySlave extends DistributedRepository {
 			DistributedRepositorySlave.DATA_STORE_LOCATION = args[0];
 			s = new DistributedRepositorySlave();
 			s.start();
-			//s.test();
+			s.test();
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
