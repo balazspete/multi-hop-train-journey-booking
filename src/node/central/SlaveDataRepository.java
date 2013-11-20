@@ -59,7 +59,6 @@ public class SlaveDataRepository extends StaticDataRepository {
 	}
 	
 	private void getDataFromMaster() {
-		// TODO load connection info from config
 		StaticDataLoader loader = new StaticDataLoader(MASTER_LOCATION, MASTER_PORT, communicationsLock);
 		int tries = 0;
 		while (true) {

@@ -3,13 +3,13 @@ package communication.protocols;
 import transaction.TransactionCoordinator;
 import transaction.TransactionCoordinatorManager;
 import communication.messages.Message;
-import communication.messages.TransactionCommitReplyMessage;
+import communication.messages.TransactionTerminationReplyMessage;
 
-public class TransactionCommitReplyProtocol<KEY, VALUE, RETURN> implements Protocol {
+public class TransactionTerminationReplyProtocol<KEY, VALUE, RETURN> implements Protocol {
 
 	private TransactionCoordinatorManager<KEY, VALUE, RETURN> manager;
 
-	public TransactionCommitReplyProtocol(TransactionCoordinatorManager<KEY, VALUE, RETURN> manager) {
+	public TransactionTerminationReplyProtocol(TransactionCoordinatorManager<KEY, VALUE, RETURN> manager) {
 		this.manager = manager;
 	}
 	
@@ -20,7 +20,7 @@ public class TransactionCommitReplyProtocol<KEY, VALUE, RETURN> implements Proto
 
 	@Override
 	public Message processMessage(Message message) {
-		TransactionCommitReplyMessage msg = (TransactionCommitReplyMessage) message;
+		TransactionTerminationReplyMessage msg = (TransactionTerminationReplyMessage) message;
 		TransactionCoordinator<KEY, VALUE, RETURN> tc = manager.get(msg.getTransactionId()); 
 		
 		tc.logReply(msg.getSender().getLocation(), null);

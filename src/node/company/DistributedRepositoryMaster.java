@@ -33,8 +33,8 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		// Accept and handle distributed transactions
 		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
 		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
-		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
-		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
+		protocols.add(new TransactionTerminationProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionTerminationReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
 		
 		return protocols;
 	}

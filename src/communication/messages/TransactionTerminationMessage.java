@@ -2,7 +2,7 @@ package communication.messages;
 
 import java.io.Serializable;
 
-public class TransactionCommitMessage extends TransactionMessage {
+public class TransactionTerminationMessage extends TransactionMessage {
 
 	/**
 	 * 
@@ -15,7 +15,7 @@ public class TransactionCommitMessage extends TransactionMessage {
 	
 	private CommitAction action;
 	
-	public TransactionCommitMessage(String transactionId) {
+	public TransactionTerminationMessage(String transactionId) {
 		super(transactionId);
 	}
 	

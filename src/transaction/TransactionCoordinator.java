@@ -12,7 +12,7 @@ import com.rits.cloning.Cloner;
 
 import communication.CommunicationException;
 import communication.messages.Message;
-import communication.messages.TransactionCommitMessage;
+import communication.messages.TransactionTerminationMessage;
 import communication.messages.TransactionExecutionMessage;
 import communication.messages.TransactionExecutionReplyMessage.Reply;
 import communication.unicast.UnicastSocketClient;
@@ -193,8 +193,8 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 	}
 	
 	private void doRemoteCommit() {
-		TransactionCommitMessage message = new TransactionCommitMessage(content.getId());
-		message.setContents(TransactionCommitMessage.CommitAction.COMMIT);
+		TransactionTerminationMessage message = new TransactionTerminationMessage(content.getId());
+		message.setContents(TransactionTerminationMessage.CommitAction.COMMIT);
 		Token token = monitor.writeLock();
 		try {
 			sendMessageToAllNodes(message, token);
@@ -206,8 +206,8 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 	}
 	
 	private void doRemoteAbort() {
-		TransactionCommitMessage message = new TransactionCommitMessage(content.getId());
-		message.setContents(TransactionCommitMessage.CommitAction.ABORT);
+		TransactionTerminationMessage message = new TransactionTerminationMessage(content.getId());
+		message.setContents(TransactionTerminationMessage.CommitAction.ABORT);
 		Token token = monitor.writeLock();
 		try {
 			sendMessageToAllNodes(message, token);

@@ -8,8 +8,8 @@ import node.data.RepositoryException;
 import transaction.Vault;
 import communication.protocols.HelloProtocol;
 import communication.protocols.Protocol;
-import communication.protocols.TransactionCommitProtocol;
-import communication.protocols.TransactionCommitReplyProtocol;
+import communication.protocols.TransactionTerminationProtocol;
+import communication.protocols.TransactionTerminationReplyProtocol;
 import communication.protocols.TransactionExecutionProtocol;
 import communication.protocols.TransactionExecutionReplyProtocol;
 import data.trainnetwork.BookableSection;
@@ -31,8 +31,8 @@ public class DistributedRepositorySlave extends DistributedRepository {
 		// Accept and handle distributed transactions
 		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
 		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
-		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
-		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
+		protocols.add(new TransactionTerminationProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionTerminationReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
 		
 		// TODO add client handling
 		

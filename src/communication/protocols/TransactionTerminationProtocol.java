@@ -6,9 +6,9 @@ import transaction.TransactionManager;
 import transaction.WriteOnlyLock;
 import communication.CommunicationException;
 import communication.messages.Message;
-import communication.messages.TransactionCommitMessage;
-import communication.messages.TransactionCommitMessage.CommitAction;
-import communication.messages.TransactionCommitReplyMessage;
+import communication.messages.TransactionTerminationMessage;
+import communication.messages.TransactionTerminationMessage.CommitAction;
+import communication.messages.TransactionTerminationReplyMessage;
 import communication.unicast.UnicastSocketClient;
 import data.InconsistentDataException;
 
@@ -17,12 +17,12 @@ import data.InconsistentDataException;
  * @author Balazs Pete
  *
  */
-public class TransactionCommitProtocol<KEY, VALUE, RETURN> implements Protocol {
+public class TransactionTerminationProtocol<KEY, VALUE, RETURN> implements Protocol {
 
 	private TransactionManager<KEY, VALUE, RETURN> manager;
 	private WriteOnlyLock<Integer> monitor;
 	
-	public TransactionCommitProtocol(TransactionManager<KEY, VALUE, RETURN> manager, WriteOnlyLock<Integer> monitor) {
+	public TransactionTerminationProtocol(TransactionManager<KEY, VALUE, RETURN> manager, WriteOnlyLock<Integer> monitor) {
 		this.manager = manager;
 		this.monitor = monitor;
 	}
@@ -34,10 +34,10 @@ public class TransactionCommitProtocol<KEY, VALUE, RETURN> implements Protocol {
 
 	@Override
 	public Message processMessage(Message message) {
-		TransactionCommitMessage msg = (TransactionCommitMessage) message;
+		TransactionTerminationMessage msg = (TransactionTerminationMessage) message;
 		CommitAction action = (CommitAction) msg.getContents();
 		
-		TransactionCommitReplyMessage reply = null;
+		TransactionTerminationReplyMessage reply = null;
 		if (action == CommitAction.COMMIT) {
 			try {
 				manager.commit(msg.getTransactionId());
@@ -46,10 +46,10 @@ public class TransactionCommitProtocol<KEY, VALUE, RETURN> implements Protocol {
 				e.printStackTrace();
 				return null;
 			}
-			reply = TransactionCommitReplyMessage.committedMessage(msg.getTransactionId());
+			reply = TransactionTerminationReplyMessage.committedMessage(msg.getTransactionId());
 		} else {
 			manager.abort(msg.getTransactionId());
-			reply = TransactionCommitReplyMessage.abortedMessage(msg.getTransactionId());
+			reply = TransactionTerminationReplyMessage.abortedMessage(msg.getTransactionId());
 		}
 		
 		boolean success = false;

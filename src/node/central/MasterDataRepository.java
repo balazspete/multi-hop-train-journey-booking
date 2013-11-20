@@ -121,10 +121,8 @@ public class MasterDataRepository extends StaticDataRepository {
 		// Accept and handle static data requests
 		protocols.add(new DataRequestHandlingProtocol<Station>(stations, "Station"));
 		protocols.add(new DataRequestHandlingProtocol<SectionInfo>(sections, "SectionInfo"));
-		protocols.add(new DataRequestHandlingProtocol<NodeInfo>(nodes , "NodeInfo"));
-		
-		// Accept and handle requests for company node locations
 		protocols.add(new DataRequestHandlingProtocol<RouteToCompany>(routeToCompanies, "RouteToCompany"));
+		protocols.add(new DataRequestHandlingProtocol<NodeInfo>(nodes , "NodeInfo"));
 		
 		return protocols;
 	}
