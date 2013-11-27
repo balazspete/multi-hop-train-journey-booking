@@ -24,13 +24,13 @@ public class BookingProtocol implements Protocol {
 
 	private TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators;
 	private Vault<Map<String, Vault<BookableSection>>> sections;
-	private HashSet<NodeInfo> nodes;
+	private Set<NodeInfo> nodes;
 	private WriteOnlyLock<Integer> monitor;
 	
 	public BookingProtocol(
 			TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators, 
 			Vault<Map<String, Vault<BookableSection>>> sections,
-			HashSet<NodeInfo> nodes,
+			Set<NodeInfo> nodes,
 			WriteOnlyLock<Integer> monitor) {
 		this.transactionCoordinators = transactionCoordinators;
 		this.sections = sections;
