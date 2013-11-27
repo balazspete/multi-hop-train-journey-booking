@@ -207,8 +207,17 @@ public class Lock<T> {
 			writeMode = false;
 		}
 		
-		currentLocks.remove(t);
+		boolean result = currentLocks.remove(t);
 		notifyAll();
-		return true;
+		return result;
+	}
+	
+	public boolean isWriteLocked() {
+		System.out.println(currentLocks);
+		return writeMode && currentLocks.size() == 1;
+	}
+	
+	public boolean isReadLocked() {
+		return !writeMode && currentLocks.size() > 0;
 	}
 }
