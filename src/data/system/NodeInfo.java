@@ -13,7 +13,7 @@ public class NodeInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7378201805278309534L;
-	private String name, location;
+	protected String name, location;
 	
 	/**
 	 * Create a instance of {@link NodeInfo}
