@@ -109,6 +109,7 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 				stage = TransactionStage.COMMIT;
 			} catch (FailedTransactionException e) {
 				status = TransactionStatus.DEAD;
+				stage = TransactionStage.ABORT;
 				synchronized (this) {
 					notifyAll();
 				}
@@ -120,6 +121,7 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 				System.out.println("Transaction COMMITTED - ID: " + transaction.getId());
 				doRemoteCommit();
 			} else {
+				stage = TransactionStage.ABORT;
 				transaction.abort();
 				System.out.println("Transaction ABORTED - ID: " + transaction.getId());
 				doRemoteAbort();
