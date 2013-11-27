@@ -61,12 +61,4 @@ public class Vault<T> extends Lock<T> {
 	public String toString() {
 		return "vault["+base.toString()+"]";
 	}
-	
-	public void debugPrint() {
-		System.out.println("--- BEGIN VAULT DEBUG ---");
-		System.out.println("Base: " + base);
-		System.out.println("LockedData: " + lockedData);
-		System.out.println("Is `base` and `locked` the same? " + (base == lockedData));
-		System.out.println("--- END VAULT DEBUG ---");
-	}
 }

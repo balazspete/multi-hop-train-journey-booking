@@ -162,7 +162,6 @@ public class Lock<T> {
 	 * @throws LockException 
 	 */
 	public boolean readUnlock(Token token) {
-		//rwl.readLock().unlock();
 		return removeLock(token);
 	}
 	
@@ -196,6 +195,13 @@ public class Lock<T> {
 	 */
 	public boolean writeUnlock(Token token) {
 		return removeLock(token);
+	}
+
+	public void debugPrint() {
+		System.out.println("--- BEGIN VAULT DEBUG ---");
+		System.out.println(currentLocks);
+		System.out.println(writeMode + " " + currentLocks);
+		System.out.println("--- END VAULT DEBUG ---");
 	}
 	
 	private synchronized boolean removeLock(Token t) {
