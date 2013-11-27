@@ -43,7 +43,6 @@ public class Client extends Thread {
 	
 	private ClientDataLoader loader;
 	private final int 
-		MASTER_PORT = NodeConstants.STATIC_CLUSTER_MASTER_PORT, 
 		CLUSTER_PORT = NodeConstants.STATIC_CLUSTER_SLAVE_PORT;
 	private String staticServerLocation;
 	
@@ -53,7 +52,7 @@ public class Client extends Thread {
 		staticServerLocation = location;
 		
 		try {
-			connectToStaticDataCluster(staticServerLocation, MASTER_PORT);
+			connectToStaticDataCluster(staticServerLocation, NodeConstants.STATIC_CLUSTER_MASTER_PORT);
 		} catch (CommunicationException e) {
 			throw new FatalNodeException(e.getMessage());
 		}
@@ -100,10 +99,9 @@ public class Client extends Thread {
 		AppliedDijkstraShortestPath dijkstra = new AppliedDijkstraShortestPath(network, getStation(source), getStation(target));
 		HashSet<Section> path = new HashSet<Section>(dijkstra.getPath());
 		
-		System.out.println(network.edgeSet());
-		System.out.println("path:" + path);
-		
-		return companyInterface.bookJourney(path);
+		Set<Seat> seats = companyInterface.bookJourney(path);
+		System.out.println(seats);
+		return seats;
 	}
 	
 	public void test() {
@@ -127,6 +125,8 @@ public class Client extends Thread {
 		} catch (BookingException e) {
 			e.printStackTrace();
 		}
+		
+		while(true);
 	}
 	
 	private Station getStation(String stationId) {

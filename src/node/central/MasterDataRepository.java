@@ -132,7 +132,7 @@ public class MasterDataRepository extends StaticDataRepository {
 		Message message = new ClusterHelloMessage();
 		for (NodeInfo node : companyClusterMaserNodes) {
 			try {
-				UnicastSocketClient client = new UnicastSocketClient(node.getLocation(), NodeConstants.DYNAMIC_CLUSTER_STORE_PORT);
+				UnicastSocketClient client = new UnicastSocketClient(node.getLocation(), NodeConstants.DYNAMIC_CLUSTER_PORT);
 				Message reply = UnicastSocketClient.sendOneMessage(client, message, true);
 				ClusterInfo info = (ClusterInfo) reply.getContents();
 				nodes.add(info);

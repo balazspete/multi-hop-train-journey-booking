@@ -19,6 +19,8 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	// Time between backups (in seconds)
 	private final int TIME_BETWEEN_BACKUPS = 100;
 	
+	protected static String CLUSTER_NAME;
+	
 	public DistributedRepositoryMaster() throws RepositoryException {
 		super();
 	}
@@ -29,6 +31,9 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		
 		// Accept and handle `Hello` requests from other nodes
 		protocols.add(new HelloProtocol(nodes));
+		
+		// Accept and handle `ClusterHello` requests
+		protocols.add(new ClusterHelloProtocol(CLUSTER_NAME, nodes));
 		
 		// Accept and handle distributed transactions
 		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
@@ -113,7 +118,12 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 				throw new RepositoryException("Arg1 required to be the master node's location of the static data cluster");
 			}
 			
+			if (args.length < 2 || !(args[1] instanceof String)) {
+				throw new RepositoryException("Arg1 required to be the name of the static data cluster");
+			}
+
 			DistributedRepositoryMaster.DATA_STORE_LOCATION = args[0];
+			DistributedRepositoryMaster.CLUSTER_NAME = args[1];
 			r = new DistributedRepositoryMaster();
 			r.start();
 			r.scheduledBackup();
