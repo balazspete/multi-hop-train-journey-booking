@@ -8,7 +8,6 @@ package transaction;
 @SuppressWarnings("rawtypes")
 public class Transaction {
 
-	private VaultManager lockManager = new VaultManager();
 	private TransactionContent content;
 	
 	/**
@@ -24,7 +23,6 @@ public class Transaction {
 	 * @throws FailedTransactionException Throws if the execution failed
 	 */
 	public void execute() throws FailedTransactionException {
-		content.setVaultManager(lockManager);
 		content.run();
 	}
 	
@@ -32,16 +30,16 @@ public class Transaction {
 	 * Commit the transaction by applying all changes
 	 */
 	public void commit() {
-		lockManager.commit();
-		lockManager.unlock();
+		content.commit();
+		System.out.println("Transaction COMMITTED - ID: " + getId());
 	}
 	
 	/**
 	 * Abort the current transaction and discard all changes
 	 */
 	public void abort() {
-		lockManager.abort();
-		lockManager.unlock();
+		content.abort();
+		System.out.println("Transaction ABORTED - ID: " + getId());
 	}
 	
 	/**

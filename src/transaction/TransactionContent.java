@@ -20,7 +20,7 @@ public abstract class TransactionContent<KEY, VALUE, RETURN> implements Serializ
 	private static final long serialVersionUID = -4571149016161551365L;
 	
 	private String id;
-	protected transient VaultManager manager;
+	protected transient VaultManager manager = new VaultManager();
 	protected transient Vault<Map<KEY, VALUE>> dataVault;
 	
 	protected RETURN dataToReturn = null;
@@ -74,7 +74,17 @@ public abstract class TransactionContent<KEY, VALUE, RETURN> implements Serializ
 	 * @param manager The vault manager to use
 	 */
 	public void setVaultManager(VaultManager manager) {
-		this.manager= manager; 
+		this.manager = manager; 
+	}
+	
+	public void commit() {
+		manager.commit();
+		manager.unlock();
+	}
+	
+	public void abort() {
+		manager.abort();
+		manager.unlock();
 	}
 	
 	/**
