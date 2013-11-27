@@ -16,21 +16,39 @@ public abstract class SudoTransactionContent<KEY, VALUE, RETURN> extends Transac
 	 */
 	private static final long serialVersionUID = 3125515031068969990L;
 
+	private Token dataVaultToken; 
+	
 	@Override
 	public void run() throws FailedTransactionException {
 		FailedTransactionException ex = null;
 		
-		manager.writeLock(dataVault);
-		Token t = manager.getToken(dataVault);
+		
+		dataVaultToken = dataVault.writeLock();
 		try {
-			script(t);
-		} catch (LockException e) {	
+			script(dataVaultToken);
+		} catch (LockException e) {
 			ex = new FailedTransactionException(e.getMessage());
 		}
 		
 		if (ex != null) {
 			throw ex;
 		}
+	}
+	
+	@Override
+	public void commit() {
+		manager.commit();
+		manager.unlock();
+		dataVault.commit(dataVaultToken);
+		dataVault.writeUnlock(dataVaultToken);
+	}
+	
+	@Override
+	public void abort() {
+		manager.abort();
+		manager.unlock();
+		dataVault.abort(dataVaultToken);
+		dataVault.writeUnlock(dataVaultToken);
 	}
 	
 	@Override
