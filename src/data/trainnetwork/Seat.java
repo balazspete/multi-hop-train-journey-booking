@@ -1,5 +1,6 @@
 package data.trainnetwork;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -8,7 +9,7 @@ import java.security.SecureRandom;
  * @author Balazs Pete
  *
  */
-public class Seat {
+public class Seat implements Serializable {
 	
 	private String id, sectionId = null;
 	
