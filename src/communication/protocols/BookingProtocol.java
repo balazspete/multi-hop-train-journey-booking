@@ -56,6 +56,7 @@ public class BookingProtocol implements Protocol {
 			= new TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>>(content, this.sections, nodes, monitor);	
 
 		transactionCoordinators.put(coordinator.getTransactionId(), coordinator);
+		coordinator.start();
 		
 		TransactionStatus status;
 		while ((status = coordinator.getStatus()) !=TransactionStatus.DEAD && status != TransactionStatus.DONE) {
