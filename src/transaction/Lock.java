@@ -2,7 +2,9 @@ package transaction;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import transaction.Lock.Token.LockType;
@@ -78,8 +80,8 @@ public class Lock<T> {
 	
 	private boolean writeMode = false; 
 	
-	private HashSet<Token> currentLocks = new HashSet<Token>();
-	private ConcurrentLinkedQueue<Token> pendingQueue = new ConcurrentLinkedQueue<Token>();
+	private volatile Set<Token> currentLocks = new HashSet<Token>();
+	private volatile ConcurrentLinkedQueue<Token> pendingQueue = new ConcurrentLinkedQueue<Token>();
 	
 	protected T lockedData;
 	protected Cloner cloner = new Cloner();
