@@ -8,7 +8,9 @@ import node.data.RepositoryException;
 import transaction.TransactionContent;
 import transaction.TransactionCoordinator;
 import transaction.Vault;
+import communication.protocols.BookingProtocol;
 import communication.protocols.HelloProtocol;
+import communication.protocols.PreBookingProtocol;
 import communication.protocols.Protocol;
 import communication.protocols.TransactionTerminationProtocol;
 import communication.protocols.TransactionTerminationReplyProtocol;
@@ -36,7 +38,9 @@ public class DistributedRepositorySlave extends DistributedRepository {
 		protocols.add(new TransactionTerminationProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
 		protocols.add(new TransactionTerminationReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
 		
-		// TODO add client handling
+		// Client booking/cancelling handling
+		protocols.add(new PreBookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
+		protocols.add(new BookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
 		
 		return protocols;
 	}
