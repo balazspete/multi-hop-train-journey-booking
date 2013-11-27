@@ -179,6 +179,14 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 		return true;
 	}
 	
+	/**
+	 * Get the returned data by the local transaction
+	 * @return The returned data
+	 */
+	public Object getReturnedData() {
+		return transaction.getReturnedContent();
+	}
+	
 	private void doLocalTransaction() throws FailedTransactionException {
 		TransactionContent<KEY, VALUE, RETURN> _content = new Cloner().deepClone(content);
 		_content.setData(dataVault);

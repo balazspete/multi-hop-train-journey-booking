@@ -64,13 +64,10 @@ public class PreBookingProtocol implements Protocol {
 		
 		
 		TransactionStatus status;
-		// No need to wait for TransactionStatus.DONE, it's okay to reply when the transaction is in COMMIT or ABORT stage
 		while ((status = coordinator.getStatus()) !=TransactionStatus.DEAD && status != TransactionStatus.DONE) {
 			System.out.println(status);
 			try {
 				// Wait until notified or timed out
-				System.out.println("gonna wait for transaction end");
-
 				synchronized (coordinator) {
 					coordinator.wait(5000);
 				}
@@ -81,13 +78,15 @@ public class PreBookingProtocol implements Protocol {
 		
 		Message reply;
 		if (coordinator.getStage() != TransactionStage.ABORT) {
-			HashSet<Seat> returnedData = new HashSet<Seat>(content.getReturnedData());
+			Set<Seat> data = (Set<Seat>) coordinator.getReturnedData();
+			HashSet<Seat> returnedData = new HashSet<Seat>(data);
 			reply = new BookingReplyMessage();
 			reply.setContents(returnedData);
 		} else {
 			reply = new ErrorMessage("Transaction aborted");
 		}
 		
+		System.out.println(reply);
 		return reply;
 	}
 

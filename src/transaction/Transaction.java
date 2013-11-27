@@ -60,4 +60,12 @@ public class Transaction {
 	public boolean equals(Transaction other) {
 		return getId().equals(other.getId());
 	}
+	
+	/**
+	 * Get the returned data by the transaction
+	 * @return The data returned by the transaction
+	 */
+	public Object getReturnedContent() {
+		return content.getReturnedData();
+	}
 }
