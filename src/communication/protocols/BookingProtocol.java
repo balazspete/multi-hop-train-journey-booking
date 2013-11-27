@@ -9,12 +9,14 @@ import node.company.TransactionContentGenerator;
 import transaction.TransactionContent;
 import transaction.TransactionCoordinator;
 import transaction.TransactionCoordinator.TransactionStage;
+import transaction.TransactionCoordinator.TransactionStatus;
 import transaction.TransactionCoordinatorManager;
 import transaction.Vault;
 import transaction.WriteOnlyLock;
 
 import communication.messages.BookingMessage;
 import communication.messages.BookingReplyMessage;
+import communication.messages.ErrorMessage;
 import communication.messages.Message;
 import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
@@ -55,23 +57,29 @@ public class BookingProtocol implements Protocol {
 
 		transactionCoordinators.put(coordinator.getTransactionId(), coordinator);
 		
-		TransactionStage stage;
-		// No need to wait for TransactionStatus.DONE, it's okay to reply when the transaction is in COMMIT or ABORT stage
-		while ((stage = coordinator.getStage()) == TransactionStage.COMMIT || stage == TransactionStage.ABORT) {
+		TransactionStatus status;
+		while ((status = coordinator.getStatus()) !=TransactionStatus.DEAD && status != TransactionStatus.DONE) {
+			System.out.println(status);
 			try {
 				// Wait until notified or timed out
-				System.out.println("gonna wait for transaction end");
-				coordinator.wait(5000);
+				synchronized (coordinator) {
+					coordinator.wait(5000);
+				}
 			} catch (InterruptedException e) {
 				System.err.println(e.getMessage());
 			}
 		}
 		
-		HashSet<Seat> returnedData = new HashSet<Seat>(content.getReturnedData());
-		BookingReplyMessage reply = new BookingReplyMessage();
-		reply.setContents(returnedData);
-		
-		System.out.println("content: " + returnedData);
+		Message reply;
+		if (coordinator.getStage() != TransactionStage.ABORT) {
+			Set<Seat> data = (Set<Seat>) coordinator.getReturnedData();
+			HashSet<Seat> returnedData = new HashSet<Seat>(data);
+			reply = new BookingReplyMessage();
+			reply.setContents(returnedData);
+		} else {
+			// This shouldn't really happen...
+			reply = new ErrorMessage("Transaction aborted");
+		}
 		
 		return reply;
 	}

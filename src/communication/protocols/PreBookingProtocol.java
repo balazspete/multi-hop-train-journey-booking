@@ -86,7 +86,6 @@ public class PreBookingProtocol implements Protocol {
 			reply = new ErrorMessage("Transaction aborted");
 		}
 		
-		System.out.println(reply);
 		return reply;
 	}
 
