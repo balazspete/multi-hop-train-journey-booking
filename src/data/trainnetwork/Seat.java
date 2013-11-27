@@ -11,6 +11,11 @@ import java.security.SecureRandom;
  */
 public class Seat implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3197202742981022435L;
+	
 	private String id, sectionId = null;
 	
 	/**
