@@ -5,16 +5,17 @@ import java.util.Map;
 import java.util.Set;
 
 import node.company.TransactionContentGenerator;
-
 import transaction.SudoTransactionContent;
 import transaction.TransactionContent;
 import transaction.TransactionCoordinator;
 import transaction.TransactionCoordinator.TransactionStage;
+import transaction.TransactionCoordinator.TransactionStatus;
 import transaction.TransactionCoordinatorManager;
 import transaction.Vault;
 import transaction.WriteOnlyLock;
 import communication.messages.BookingMessage;
 import communication.messages.BookingReplyMessage;
+import communication.messages.ErrorMessage;
 import communication.messages.Message;
 import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
@@ -59,24 +60,33 @@ public class PreBookingProtocol implements Protocol {
 			= new TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>>(content, this.sections, nodes, monitor);
 		
 		transactionCoordinators.put(coordinator.getTransactionId(), coordinator);
+		coordinator.start();
 		
-		TransactionStage stage;
+		
+		TransactionStatus status;
 		// No need to wait for TransactionStatus.DONE, it's okay to reply when the transaction is in COMMIT or ABORT stage
-		while ((stage = coordinator.getStage()) == TransactionStage.COMMIT || stage == TransactionStage.ABORT) {
+		while ((status = coordinator.getStatus()) !=TransactionStatus.DEAD && status != TransactionStatus.DONE) {
+			System.out.println(status);
 			try {
 				// Wait until notified or timed out
 				System.out.println("gonna wait for transaction end");
-				coordinator.wait(5000);
+
+				synchronized (coordinator) {
+					coordinator.wait(5000);
+				}
 			} catch (InterruptedException e) {
 				System.err.println(e.getMessage());
 			}
 		}
 		
-		HashSet<Seat> returnedData = new HashSet<Seat>(content.getReturnedData());
-		BookingReplyMessage reply = new BookingReplyMessage();
-		reply.setContents(returnedData);
-		
-		System.out.println("content: " + returnedData);
+		Message reply;
+		if (coordinator.getStage() != TransactionStage.ABORT) {
+			HashSet<Seat> returnedData = new HashSet<Seat>(content.getReturnedData());
+			reply = new BookingReplyMessage();
+			reply.setContents(returnedData);
+		} else {
+			reply = new ErrorMessage("Transaction aborted");
+		}
 		
 		return reply;
 	}

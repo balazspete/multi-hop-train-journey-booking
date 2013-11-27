@@ -44,6 +44,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 
 			@Override
 			public void script(Token t) throws FailedTransactionException, LockException {
+				System.out.println("starting....");
 				Map<String, Vault<BookableSection>> data = dataVault.getWriteable(t);
 				
 				HashSet<Vault<BookableSection>> vaults = new HashSet<Vault<BookableSection>>();
@@ -57,6 +58,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 						data.put(_section.getID(), section);
 					}
 					
+					System.out.println(section);
 					manager.writeLock(section);
 					vaults.add(section);
 				}
@@ -66,11 +68,13 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 					BookableSection section = vault.getWriteable(manager.getToken(vault));
 					
 					try {
+						System.out.println("max:"+section);
 						Seat seat = section.preReserve();
 						dataToReturn.add(seat);
 					} catch (SectionFullException e) {
 						throw new FailedTransactionException(e.getMessage());
 					}
+					System.out.println("data to return");
 				}
 			}
 		};
