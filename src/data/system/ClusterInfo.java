@@ -68,4 +68,8 @@ public class ClusterInfo extends NodeInfo {
 	public Set<String> getAllLocations() {
 		return locations;
 	}
+	
+	public String toString() {
+		return "<" + name + "|" + locations + ">";
+	}
 }
