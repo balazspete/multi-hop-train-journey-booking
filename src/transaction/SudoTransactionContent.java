@@ -20,15 +20,12 @@ public abstract class SudoTransactionContent<KEY, VALUE, RETURN> extends Transac
 	public void run() throws FailedTransactionException {
 		FailedTransactionException ex = null;
 		
-		Token t = dataVault.writeLock();
+		manager.writeLock(dataVault);
+		Token t = manager.getToken(dataVault);
 		try {
 			script(t);
-			dataVault.commit(t);
-		} catch (LockException e) {
-			dataVault.abort(t);
+		} catch (LockException e) {	
 			ex = new FailedTransactionException(e.getMessage());
-		} finally {
-			dataVault.writeUnlock(t);
 		}
 		
 		if (ex != null) {
