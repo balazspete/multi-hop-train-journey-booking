@@ -1890,7 +1890,7 @@
     },{
         "routeID": "TEST-DUBPS-DUBHS",
         "company": "theCompany",
-        "maxPassengers": 0,
+        "maxPassengers": 60,
         "startTimes": [{
                 "from": "DUBHS",
                 "time": "08:00:00"
