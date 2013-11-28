@@ -43,20 +43,25 @@ public class CompanyRepositoryInterface {
 	public Set<Seat> bookJourney(Set<Section> sections) throws BookingException {
 		HashMap<NodeInfo, HashSet<Section>> nodeToSections = sortSectionsByCompany(sections);
 		
-		HashMap<NodeInfo, HashSet<Seat>> prebookedSeats = new HashMap<NodeInfo, HashSet<Seat>>();
+		HashMap<NodeInfo, HashSet<Seat>> prebookedSeats;
 		try {
-			prebookHelper(nodeToSections, prebookedSeats);
+			prebookedSeats = prebookHelper(nodeToSections);
 		} catch (BookingException e) {
-			cancelBooking(prebookedSeats, Action.PREBOOK_DETELE);
+			// Server side exception handling was done in prebookHelper
+			System.err.println("Failed to pre-book tickets: " + e.getMessage());
+			prebookedSeats = null;
 			throw e;
 		}
 		
-		HashSet<Seat> seats = new HashSet<Seat>();
-		try {
-			reserveHelper(prebookedSeats, seats);
-		} catch (BookingException e) {
-			cancelBooking(seats);
-			throw e;
+		HashSet<Seat> seats = null;
+		if (prebookedSeats != null) {
+			try {
+				seats = reserveHelper(prebookedSeats);
+			} catch (BookingException e) {
+				// Server side exception handling was done in prebookHelper
+				System.err.println("Failed to book tickets: " + e.getMessage());
+				throw e;
+			}
 		}
 		
 		return seats;
@@ -72,52 +77,66 @@ public class CompanyRepositoryInterface {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void prebookHelper(HashMap<NodeInfo, HashSet<Section>> nodeToSections, HashMap<NodeInfo, HashSet<Seat>> prebookedSeats) throws BookingException {
+	private HashMap<NodeInfo, HashSet<Seat>> prebookHelper(HashMap<NodeInfo, HashSet<Section>> nodeToSections) throws BookingException {
+		HashMap<NodeInfo, HashSet<Seat>> prebookedSeats = new HashMap<NodeInfo, HashSet<Seat>>();
+		
 		for (NodeInfo company : nodeToSections.keySet()) {
 			BookingMessage message = new BookingMessage(Action.PREBOOK);
 			message.setContents(nodeToSections.get(company));
 		
 			Message reply = sendMessageToCompany(company, message);
 			if (reply.getType().equals("ErrorMessage")) {
+				cancelBooking(prebookedSeats, Action.PREBOOK_DETELE);
 				throw new BookingException("Prebooking tickets failed: " + reply.getContents());
 			}
 		
 			HashSet<Seat> seats = (HashSet<Seat>) reply.getContents();
 			prebookedSeats.put(company, seats);
 		}
+		
+		return prebookedSeats;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void reserveHelper(HashMap<NodeInfo, HashSet<Seat>> companyToSeats, HashSet<Seat> seats) throws BookingException {
+	private HashSet<Seat> reserveHelper(HashMap<NodeInfo, HashSet<Seat>> companyToSeats) throws BookingException {
+		HashSet<Seat> seats = new HashSet<Seat>();
+		
 		for (NodeInfo company : companyToSeats.keySet()) {
 			BookingMessage message = new BookingMessage(Action.RESERVE);
 			message.setContents(companyToSeats.get(company));
 		
 			Message reply = sendMessageToCompany(company, message);
 			if (reply == null || reply.getType().equals("ErrorMessage")) {
+				cancelBooking(seats);
 				throw new BookingException("Booking tickets failed:" + reply.getContents());
 			}
 		
-			seats = (HashSet<Seat>) reply.getContents();
+			seats.addAll((HashSet<Seat>) reply.getContents());
 		}
+		
+		return seats;
 	}
 	
-	private void cancelBooking(HashSet<Seat> seats) {
+	public void cancelBooking(HashSet<Seat> seats) {
 		HashMap<NodeInfo, HashSet<Seat>> companyToSeats = new HashMap<NodeInfo, HashSet<Seat>>();
+		
 		for (Seat seat : seats) {
-			String sectionId = seat.getSectionId();
+			String sectionId = seat.getAbstractSectionId();
 			NodeInfo company = routeToCompanies.get(sectionId);
+			
+			System.out.println(company);
 			
 			HashSet<Seat> _seats;
 			if (!companyToSeats.containsKey(company)) {
 				_seats = new HashSet<Seat>();
+				companyToSeats.put(company, _seats);
 			} else {
 				_seats = companyToSeats.get(company);
 			}
 			
 			_seats.add(seat);
 		}
-		
+		System.out.println(companyToSeats);
 		cancelBooking(companyToSeats, Action.CANCEL);
 	}
 	
@@ -130,8 +149,7 @@ public class CompanyRepositoryInterface {
 		}
 	}
 	
-	
-	// Private method, we will no return interfaces to avoid unnecessary casting 
+	// Private method, we will not return interfaces to avoid unnecessary casting 
 	private HashMap<NodeInfo, HashSet<Section>> sortSectionsByCompany(Set<Section> sections) {
 		HashMap<NodeInfo, HashSet<Section>> nodeToSections = new HashMap<NodeInfo, HashSet<Section>>();
 		
