@@ -13,6 +13,7 @@ import communication.protocols.CancelPreBookingProtocol;
 import communication.protocols.HelloProtocol;
 import communication.protocols.PreBookingProtocol;
 import communication.protocols.Protocol;
+import communication.protocols.SectionStatusUpdateRequestHandlingProtocol;
 import communication.protocols.TransactionTerminationProtocol;
 import communication.protocols.TransactionTerminationReplyProtocol;
 import communication.protocols.TransactionExecutionProtocol;
@@ -44,6 +45,8 @@ public class DistributedRepositorySlave extends DistributedRepository {
 		protocols.add(new BookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
 		protocols.add(new CancelPreBookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
 		protocols.add(new CancelBookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
+		
+		protocols.add(new SectionStatusUpdateRequestHandlingProtocol(sections));
 		
 		return protocols;
 	}
