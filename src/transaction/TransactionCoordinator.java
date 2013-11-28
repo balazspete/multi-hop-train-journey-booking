@@ -202,7 +202,8 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 			message.setContents(content);
 			sendMessageToAllNodes(message, token);
 		} catch (Exception e) {
-			e.printStackTrace();
+			// Just print out a message, the exception will be handled elsewhere...
+			System.out.println("An error occurred while executing the transaction remotely: " + e.getMessage());
 		} finally {
 			monitor.writeUnlock(token);
 		}
@@ -215,7 +216,8 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 		try {
 			sendMessageToAllNodes(message, token);
 		} catch (LockException e) {
-			e.printStackTrace();
+			// Just print out a message, the exception will be handled elsewhere...
+			System.out.println("An error occurred while remote committing: " + e.getMessage());
 		} finally {
 			monitor.writeUnlock(token);
 		}
@@ -228,7 +230,8 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 		try {
 			sendMessageToAllNodes(message, token);
 		} catch (LockException e) {
-			e.printStackTrace();
+			// Just print out a message, the exception will be handled elsewhere...
+			System.out.println("An error occurred while remote aborting: " + e.getMessage());
 		} finally {
 			monitor.writeUnlock(token);
 		}
@@ -251,6 +254,5 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 		for (NodeInfo node : messageQueue) {
 			nodes.remove(node);
 		}
-		
 	}
 }

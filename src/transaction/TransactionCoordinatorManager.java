@@ -20,5 +20,5 @@ public class TransactionCoordinatorManager<KEY, VALUE, RETURN> extends HashMap<S
 		super();
 	}
 	
-	// TODO periodically scan Coordinators and discard the ones in the DONE stage
+	// TODO periodically scan Coordinators and discard the ones in the DEAD stage
 }

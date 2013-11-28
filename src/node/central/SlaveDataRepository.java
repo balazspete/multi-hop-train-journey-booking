@@ -4,7 +4,6 @@ import java.util.*;
 
 import transaction.Lock.Token;
 
-import node.FatalNodeException;
 import node.NodeConstants;
 import node.data.RepositoryException;
 import node.data.StaticDataLoadException;

@@ -132,6 +132,7 @@ public class UnicastSocketServer extends UnicastServer {
 							break;
 						}
 					} else {
+						System.err.println("UnicastSocketServer: Received an incompatible message. Replying with an ErrorMessage...");
 						message = new ErrorMessage("Message type not supported");
 					}
 					
@@ -150,6 +151,7 @@ public class UnicastSocketServer extends UnicastServer {
 		}
 	}
 	
+	@Deprecated
 	public static void main(String[] args) {
 		UnicastSocketServer i = new UnicastSocketServer(8000);
 		i.putProtocol(new LoopbackProtocol());

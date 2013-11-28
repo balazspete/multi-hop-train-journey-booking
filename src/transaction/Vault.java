@@ -58,6 +58,7 @@ public class Vault<T> extends Lock<T> {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		return "vault["+base.toString()+"]";
 	}

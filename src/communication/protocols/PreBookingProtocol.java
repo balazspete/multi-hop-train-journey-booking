@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import node.company.TransactionContentGenerator;
-import transaction.Lock.Token;
-import transaction.LockException;
 import transaction.ShallowLock;
 import transaction.SudoTransactionContent;
 import transaction.TransactionCoordinator;
@@ -64,22 +62,8 @@ public class PreBookingProtocol implements Protocol {
 		transactionCoordinators.put(coordinator.getTransactionId(), coordinator);
 		coordinator.start();
 		
-		Object test= null;
-		Token t = this.sections.readLock();
-		try {
-			test =  this.sections.getReadable(t).values();
-		} catch (LockException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			this.sections.readUnlock(t);
-		}
-		
-		
 		TransactionStatus status;
 		while ((status = coordinator.getStatus()) !=TransactionStatus.DEAD && status != TransactionStatus.DONE) {
-			System.out.println(status);
-			System.out.println(sections);
 			try {
 				// Wait until notified or timed out
 				synchronized (coordinator) {
@@ -89,22 +73,6 @@ public class PreBookingProtocol implements Protocol {
 				System.err.println(e.getMessage());
 			}
 		}
-		
-		
-		System.out.println("######################################################################");
-		t = this.sections.readLock();
-		try {
-			System.out.println(this.sections.getReadable(t) == test);
-			for( Vault<BookableSection> s : this.sections.getReadable(t).values()) {
-				s.debugPrint();
-			}
-		} catch (LockException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			this.sections.readUnlock(t);
-		}
-		
 		
 		Message reply;
 		if (coordinator.getStage() != TransactionStage.ABORT) {
@@ -123,5 +91,4 @@ public class PreBookingProtocol implements Protocol {
 	public boolean hasReply() {
 		return true;
 	}
-
 }

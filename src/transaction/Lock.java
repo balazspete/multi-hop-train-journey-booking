@@ -2,7 +2,6 @@ package transaction;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -198,13 +197,6 @@ public class Lock<T> {
 	public boolean writeUnlock(Token token) {
 		return removeLock(token);
 	}
-
-	public void debugPrint() {
-		System.out.println("--- BEGIN VAULT DEBUG ---");
-		System.out.println(currentLocks);
-		System.out.println(writeMode + " " + currentLocks);
-		System.out.println("--- END VAULT DEBUG ---");
-	}
 	
 	private synchronized boolean removeLock(Token t) {
 		if (!currentLocks.contains(t)) {
@@ -220,11 +212,19 @@ public class Lock<T> {
 		return result;
 	}
 	
+	/**
+	 * Determine if the lock is write locked by someone
+	 * @return True if the lock is write locked, false otherwise
+	 */
 	public boolean isWriteLocked() {
 		System.out.println(currentLocks);
 		return writeMode && currentLocks.size() == 1;
 	}
 	
+	/**
+	 * Determine if the lock is read locked by someone
+	 * @return True if the lock is read locked, false otherwise
+	 */
 	public boolean isReadLocked() {
 		return !writeMode && currentLocks.size() > 0;
 	}

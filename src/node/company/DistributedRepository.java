@@ -143,10 +143,21 @@ public abstract class DistributedRepository extends DataRepository {
 			}
 		}
 		
-		token = communicationLock.writeLock();
+		error = getNodeInfo(client);
+		
+		if (error) {
+			throw new DataLoadException("Failed to load data from `store`");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected boolean getNodeInfo(UnicastSocketClient client) {
+		boolean error = false;
+		
+		Token token = communicationLock.writeLock();
 		try {
 			//--- begin HELLO 
-			msg = HelloMessage.getHi();
+			Message msg = HelloMessage.getHi();
 			HelloReplyMessage reply = (HelloReplyMessage) UnicastSocketClient.sendOneMessage(client, msg, true);
 			NodeInfo myOwn = reply.getHelloer();
 			//--- end HELLO
@@ -165,8 +176,6 @@ public abstract class DistributedRepository extends DataRepository {
 			communicationLock.writeUnlock(token);
 		}
 		
-		if (error) {
-			throw new DataLoadException("Failed to load data from `store`");
-		}
+		return error;
 	}
 }

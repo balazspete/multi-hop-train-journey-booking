@@ -126,7 +126,8 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 			DistributedRepositoryMaster.CLUSTER_NAME = args[1];
 			r = new DistributedRepositoryMaster();
 			r.start();
-			r.scheduledBackup();
+			// TODO re-enable backups
+			//r.scheduledBackup();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}

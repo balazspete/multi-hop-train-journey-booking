@@ -8,6 +8,11 @@ import util.JSONTools;
 
 import data.MissingParameterException;
 
+/**
+ * An object describing a train route
+ * @author Balazs Pete
+ *
+ */
 public class Route extends LinkedList<SectionInfo> {
 	
 	/**

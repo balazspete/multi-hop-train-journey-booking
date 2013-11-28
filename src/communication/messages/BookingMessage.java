@@ -25,6 +25,7 @@ public class BookingMessage extends Message {
 	}
 	
 	private Action action = null;
+	@SuppressWarnings("rawtypes")
 	private Collection content = null;
 	
 	public BookingMessage(Action action) {
@@ -41,6 +42,7 @@ public class BookingMessage extends Message {
 		return (Serializable) content;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setContents(Serializable content) {
 		this.content = (Collection) content;

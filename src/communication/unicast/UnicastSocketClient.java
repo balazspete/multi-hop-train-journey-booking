@@ -185,6 +185,7 @@ public class UnicastSocketClient extends Thread implements
 		return msg;
 	}
 
+	@Deprecated
 	public static void main(String[] args) {
 		UnicastSocketClient i=new UnicastSocketClient("localhost", 8000);
 		try {

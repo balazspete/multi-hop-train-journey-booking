@@ -2,6 +2,11 @@ package node.company;
 
 import node.data.RepositoryException;
 
+/**
+ * An exception thrown when an error occurs that cannot be handled
+ * @author Balazs Pete
+ *
+ */
 public class DistributedRepositoryException extends RepositoryException {
 
 	/**

@@ -48,7 +48,6 @@ public class TransactionManager<KEY, VALUE, RETURN> {
 			Transaction t = getTransaction(transactionId);
 			t.commit();
 			transactionsTable.remove(transactionId);
-			System.out.println("Transaction COMMITTED - ID: " + transactionId);
 		} catch (InvalidTransactionException e) {
 			throw new InconsistentDataException("Transaction with id {" + transactionId + "} does not exist while it should");
 		}
@@ -63,7 +62,6 @@ public class TransactionManager<KEY, VALUE, RETURN> {
 			Transaction t = getTransaction(transactionId);
 			t.abort();
 			transactionsTable.remove(transactionId);
-			System.out.println("Transaction ABORTED - ID: " + transactionId);
 		} catch (InvalidTransactionException e) {
 			// Do nothing, no harm will be caused
 		}

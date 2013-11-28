@@ -3,7 +3,6 @@ package node.company;
 import java.util.HashSet;
 import java.util.Set;
 
-import node.FatalNodeException;
 import node.data.RepositoryException;
 import transaction.TransactionContent;
 import transaction.TransactionCoordinator;
@@ -76,7 +75,7 @@ public class DistributedRepositorySlave extends DistributedRepository {
 			DistributedRepositorySlave.DATA_STORE_LOCATION = args[0];
 			s = new DistributedRepositorySlave();
 			s.start();
-			s.test();
+			//s.test();
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -87,6 +87,11 @@ public class BookingProtocol implements Protocol {
 		return reply;
 	}
 	
+	/**
+	 * Get the content used by the protocol
+	 * @param seats The seats to book
+	 * @return The transaction content
+	 */
 	protected TransactionContent<String, Vault<BookableSection>, Set<Seat>> getTransactionContent(HashSet<Seat> seats) {
 		return TransactionContentGenerator.getSeatReservingContent(seats);
 	}

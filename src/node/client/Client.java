@@ -2,7 +2,6 @@ package node.client;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -147,7 +146,6 @@ public class Client extends Thread {
 			
 			Client c = new Client(args[0]);
 			c.start();
-			//c.test();
 		} catch (FatalNodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,5 +1,10 @@
 package data.trainnetwork;
 
+/**
+ * Exception thrown when trying to access a {@link Seat} in a {@link BookableSection} that does not exist
+ * @author Balazs Pete
+ *
+ */
 public class NoSuchSectionException extends Exception {
 
 	/**

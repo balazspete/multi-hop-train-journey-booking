@@ -63,6 +63,13 @@ public class Station implements Vertex, Serializable {
 		return "<" + id + "> " + name;
 	}
 	
+	/**
+	 * Get a station from a JSON Object
+	 * @param object The JSON object
+	 * @return The station
+	 * @throws IllegalArgumentException
+	 * @throws MissingParameterException
+	 */
 	public static Station getStationFromJSON(JSONObject object) throws IllegalArgumentException, MissingParameterException {
 		return new Station(
 			(String) JSONTools.getParameter(object, "name"),

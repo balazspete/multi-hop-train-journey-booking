@@ -59,19 +59,16 @@ public class VaultManager {
 	 * Unlock all locks
 	 */
 	public void unlock() {
-		System.out.println("#locks: " + locks.size());
 		Set<Vault> toRemove = new HashSet<Vault>();
 		
 		for (Vault lock : locks.keySet()) {
 			Token token = locks.get(lock);
-			boolean result;
 			if (token.getLockType() == LockType.WRITE) {
-				result = lock.writeUnlock(token);
+				lock.writeUnlock(token);
 			} else {
-				result = lock.readUnlock(token);
+				lock.readUnlock(token);
 			}
 			
-			System.out.println("Unlocking " + token + " " + result);
 			toRemove.add(lock);
 		}
 

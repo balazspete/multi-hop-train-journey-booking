@@ -5,7 +5,6 @@ import java.util.*;
 
 import org.joda.time.DateTime;
 
-import communication.protocols.ClusterHelloProtocol;
 import communication.protocols.DataRequestHandlingProtocol;
 import communication.protocols.DataTransferHandlingProtocol;
 import communication.protocols.HelloProtocol;
@@ -49,10 +48,15 @@ public class DistributedRepositoryDataStore extends DataRepository {
 			// TODO get this from args or something
 			CACHE = "/Users/balazspete/Projects/multi-hop-train-booking/distributed_datastore";
 		
-		private String name;
+		private String name, cache;
 		
 		public Store(String name) {
+			this(name, CACHE);
+		}
+		
+		public Store(String name, String cache) {
 			this.name = name;
+			this.cache = cache;
 		}
 		
 		/**
@@ -92,7 +96,7 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		 * @throws StoreActionException Thrown if an error occurred
 		 */
 		public void save() throws StoreActionException {
-			save(CACHE);
+			save(cache);
 		}
 		
 		/**

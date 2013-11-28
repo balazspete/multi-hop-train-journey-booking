@@ -1,5 +1,10 @@
 package transaction;
 
+/**
+ * An exception thrown when an error occurs in a lock
+ * @author Balazs Pete
+ *
+ */
 public class LockException extends Exception {
 
 	/**

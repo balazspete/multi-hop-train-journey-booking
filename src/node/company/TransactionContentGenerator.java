@@ -23,6 +23,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 	 */
 	private static final long serialVersionUID = 3685066724312335230L;
 
+	@Deprecated
 	public static TransactionContent<String, Vault<BookableSection>, Set<Seat>> getTestContent() {
 		TransactionContent<String, Vault<BookableSection>, Set<Seat>> c 
 			= new TransactionContent<String, Vault<BookableSection>, Set<Seat>>() {
@@ -57,7 +58,6 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 						data.put(_section.getID(), section);
 					}
 					
-					System.out.println(manager);
 					manager.writeLock(section);
 					vaults.add(section);
 				}

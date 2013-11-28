@@ -1,5 +1,10 @@
 package data;
 
+/**
+ * An exception thrown when a data error cannot be handled
+ * @author Balazs Pete
+ *
+ */
 public class InconsistentDataException extends Exception {
 
 	/**

@@ -1,7 +1,6 @@
 package data.system;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
@@ -58,18 +57,23 @@ public class ClusterInfo extends NodeInfo {
 		return nodeInfo;
 	}
 
+	/**
+	 * Get all locations contained by the object
+	 * @return The set of all node locations
+	 */
+	public Set<String> getAllLocations() {
+		return locations;
+	}
+	
+	@Override
+	public String toString() {
+		return "<" + name + "|" + locations + ">";
+	}
+	
 	private String getRandomLocation() {
 		int size = locations.size();
 		int randomIndex = (int) (Math.random() * size);
 		
 		return (String) locations.toArray()[randomIndex];
-	}
-	
-	public Set<String> getAllLocations() {
-		return locations;
-	}
-	
-	public String toString() {
-		return "<" + name + "|" + locations + ">";
 	}
 }
