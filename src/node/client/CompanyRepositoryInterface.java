@@ -11,6 +11,7 @@ import communication.CommunicationException;
 import communication.messages.BookingMessage;
 import communication.messages.BookingMessage.Action;
 import communication.messages.Message;
+import communication.messages.SectionStatusUpdateRequestMessage;
 import communication.unicast.UnicastSocketClient;
 
 import transaction.Lock.Token;
@@ -68,7 +69,7 @@ public class CompanyRepositoryInterface {
 	}
 	
 	/**
-	 * 
+	 * Cancel a journey
 	 * @param seats
 	 */
 	public void unbookJourney(Set<Seat> seats) {
@@ -147,6 +148,27 @@ public class CompanyRepositoryInterface {
 			
 			sendMessageToCompany(company, message);
 		}
+	}
+	
+	/**
+	 * Get a status update on the input Sections
+	 * @param sections The sections to request a status update on
+	 * @return The updated sections
+	 */
+	public Set<Section> getStatusUpdate(Set<Section> sections) {
+		HashMap<NodeInfo, HashSet<Section>> companyToSections = sortSectionsByCompany(sections);
+		HashSet<Section> replied = new HashSet<Section>();
+		
+		for (NodeInfo company : companyToSections.keySet()) {
+			
+			SectionStatusUpdateRequestMessage message = new SectionStatusUpdateRequestMessage();
+			message.setContents(companyToSections.get(company));
+		
+			Message reply = sendMessageToCompany(company, message);
+			replied.addAll((HashSet<Section>) reply.getContents());
+		}
+		
+		return replied;
 	}
 	
 	// Private method, we will not return interfaces to avoid unnecessary casting 

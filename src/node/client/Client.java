@@ -94,10 +94,12 @@ public class Client extends Thread {
 		
 	}
 	
-	public Set<Seat> bookJourney(String source, String target) throws BookingException {
+	public HashSet<Section> findJourney(String source, String target) {
 		AppliedDijkstraShortestPath dijkstra = new AppliedDijkstraShortestPath(network, getStation(source), getStation(target));
-		HashSet<Section> path = new HashSet<Section>(dijkstra.getPath());
-		
+		return new HashSet<Section>(dijkstra.getPath());
+	}
+	
+	public Set<Seat> bookJourney(HashSet<Section> path) throws BookingException {
 		Set<Seat> seats = companyInterface.bookJourney(path);
 		System.out.println(seats);
 		return seats;
@@ -107,19 +109,27 @@ public class Client extends Thread {
 		companyInterface.cancelBooking(new HashSet<Seat>(seats));
 	}
 	
+	public Set<Section> getStatusUpdate(Set<Section> sections) {
+		return companyInterface.getStatusUpdate(sections);
+	}
+	
 	public void test() {
 		String
 			source = "DUBPS",
 			target = "GALWY";
 		
 		try {
-			Set<Seat> seats = bookJourney(source, target);
+			HashSet<Section> sections = findJourney(source, target);
+			Set<Seat> seats = bookJourney(sections);
 			
 			for (Seat seat : seats) {
 				System.out.println(seat.toString());
 			}
 			
-			cancelJourney(seats);
+			System.out.println(getStatusUpdate(sections));
+			
+			
+//			cancelJourney(seats);
 		} catch (BookingException e) {
 			e.printStackTrace();
 		}
