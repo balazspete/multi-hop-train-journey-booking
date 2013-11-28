@@ -51,6 +51,14 @@ public class Seat implements Serializable {
 	}
 	
 	/**
+	 * Get the abstract ID of the section (format: <station>-<station>-<id>)
+	 * @return The abstract id of the section
+	 */
+	public String getAbstractSectionId() {
+		return sectionId.split("=")[0];
+	}
+	
+	/**
 	 * Compare another seat with this one
 	 * @param seat The other seat to compare with
 	 * @return True if the two seats are identical
