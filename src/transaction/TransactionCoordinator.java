@@ -29,7 +29,7 @@ import data.system.NodeInfo;
 public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 	
 	public enum TransactionStage {
-		INITIAL, COMMIT, ABORT
+		INITIAL, COMMIT, ABORT, COMMITTED, ABORTED
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 	 * @param content The {@link TransactionContent} to forward to other nodes
 	 * @param data The {@link Map<KEY, VALUE>} to work on 
 	 * @param nodes The collection of nodes to correspond with
-	 * @param monitor The monitor used to control communication, its value is the port number used fro communication
+	 * @param monitor The monitor used to control communication, its value is the port number used from communication
 	 */
 	public TransactionCoordinator(
 		TransactionContent<KEY, VALUE, RETURN> content, 
@@ -115,16 +115,16 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 				}
 				return;
 			}
-		} else if (status != TransactionStatus.DONE){ 
+		} else if (stage == TransactionStage.COMMIT || stage == TransactionStage.ABORT){ 
 			if (stage == TransactionStage.COMMIT) {
 				transaction.commit();
-				System.out.println("Transaction COMMITTED - ID: " + transaction.getId());
 				doRemoteCommit();
+				stage = TransactionStage.COMMITTED;
 			} else {
 				stage = TransactionStage.ABORT;
 				transaction.abort();
-				System.out.println("Transaction ABORTED - ID: " + transaction.getId());
 				doRemoteAbort();
+				stage = TransactionStage.ABORTED;
 			}
 			
 			status = TransactionStatus.DONE;
@@ -170,10 +170,10 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 			if (reply == null || reply == Reply.FAILED) {
 				stage = TransactionStage.ABORT;
 			}
-			
-			if (replies.size() == nodes.size()) {
-				new Thread(this).start();
-			}
+		}
+		
+		if (replies.size() == nodes.size()) {
+			new Thread(this).start();
 		}
 		
 		return true;

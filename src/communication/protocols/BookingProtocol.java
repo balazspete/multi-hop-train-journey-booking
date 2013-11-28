@@ -70,7 +70,8 @@ public class BookingProtocol implements Protocol {
 		}
 		
 		Message reply;
-		if (coordinator.getStage() != TransactionStage.ABORT) {
+		TransactionStage stage = coordinator.getStage();
+		if (stage != TransactionStage.ABORT && stage != TransactionStage.ABORTED) {
 			reply = new BookingReplyMessage();
 			
 			Object data = coordinator.getReturnedData(); 
