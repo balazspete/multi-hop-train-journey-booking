@@ -21,7 +21,7 @@ public abstract class TransactionContent<KEY, VALUE, RETURN> implements Serializ
 	
 	private String id = new BigInteger(130, new SecureRandom()).toString(32).intern();
 	protected volatile VaultManager manager;
-	protected volatile Vault<Map<KEY, VALUE>> dataVault;
+	protected volatile ShallowLock<Map<KEY, VALUE>> dataLock;
 	
 	protected volatile RETURN dataToReturn = null;
 	
@@ -32,13 +32,13 @@ public abstract class TransactionContent<KEY, VALUE, RETURN> implements Serializ
 	public void run() throws FailedTransactionException {
 		manager = new VaultManager();
 		
-		Token t = dataVault.readLock();
+		Token t = dataLock.readLock();
 		try {
 			script(t);
 		} catch (LockException e) {
 			throw new FailedTransactionException(e.getMessage());
 		} finally {
-			dataVault.readUnlock(t);
+			dataLock.readUnlock(t);
 		}
 	}
 
@@ -56,8 +56,8 @@ public abstract class TransactionContent<KEY, VALUE, RETURN> implements Serializ
 	 * Set the map to work with
 	 * @param data The data map
 	 */
-	public void setData(Vault<Map<KEY, VALUE>> data) {
-		this.dataVault = data;
+	public void setData(ShallowLock<Map<KEY, VALUE>> data) {
+		this.dataLock = data;
 	}
 	
 	public RETURN getReturnedData() {

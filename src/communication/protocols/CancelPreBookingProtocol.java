@@ -5,9 +5,8 @@ import java.util.Map;
 import java.util.Set;
 
 import node.company.TransactionContentGenerator;
-
 import communication.messages.BookingMessage;
-
+import transaction.ShallowLock;
 import transaction.TransactionContent;
 import transaction.TransactionCoordinatorManager;
 import transaction.Vault;
@@ -20,7 +19,7 @@ public class CancelPreBookingProtocol extends BookingProtocol {
 
 	public CancelPreBookingProtocol(
 			TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators,
-			Vault<Map<String, Vault<BookableSection>>> sections,
+			ShallowLock<Map<String, Vault<BookableSection>>> sections,
 			Set<NodeInfo> nodes, WriteOnlyLock<Integer> monitor) {
 		super(transactionCoordinators, sections, nodes, monitor);
 	}

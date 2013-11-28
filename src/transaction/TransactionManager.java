@@ -13,12 +13,12 @@ import data.InconsistentDataException;
 public class TransactionManager<KEY, VALUE, RETURN> {
 
 	private Map<String, Transaction> transactionsTable;
-	private Vault<Map<KEY, VALUE>> dataVault;
+	private ShallowLock<Map<KEY, VALUE>> dataVault;
 	
 	/**
 	 * Create a new TransactionManager
 	 */
-	public TransactionManager(Vault<Map<KEY, VALUE>> data) {
+	public TransactionManager(ShallowLock<Map<KEY, VALUE>> data) {
 		this.dataVault = data;
 		transactionsTable = new HashMap<String, Transaction>();
 	}

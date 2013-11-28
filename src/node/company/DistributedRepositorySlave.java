@@ -9,6 +9,8 @@ import transaction.TransactionContent;
 import transaction.TransactionCoordinator;
 import transaction.Vault;
 import communication.protocols.BookingProtocol;
+import communication.protocols.CancelBookingProtocol;
+import communication.protocols.CancelPreBookingProtocol;
 import communication.protocols.HelloProtocol;
 import communication.protocols.PreBookingProtocol;
 import communication.protocols.Protocol;
@@ -41,6 +43,8 @@ public class DistributedRepositorySlave extends DistributedRepository {
 		// Client booking/cancelling handling
 		protocols.add(new PreBookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
 		protocols.add(new BookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
+		protocols.add(new CancelPreBookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
+		protocols.add(new CancelBookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
 		
 		return protocols;
 	}

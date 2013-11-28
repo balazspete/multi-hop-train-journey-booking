@@ -41,7 +41,7 @@ public class Vault<T> extends Lock<T> {
 	 * Commit the changes 
 	 * @param token The lock token
 	 */
-	public void commit(Token token) {
+	public synchronized void commit(Token token) {
 		if (canWrite(token)) {
 			base = cloner.deepClone(lockedData);
 			lockedData = null;
@@ -52,7 +52,7 @@ public class Vault<T> extends Lock<T> {
 	 * Discard the changes
 	 * @param token The lock token
 	 */
-	public void abort(Token token) {
+	public synchronized void abort(Token token) {
 		if (canWrite(token)) {
 			lockedData = null;
 		}

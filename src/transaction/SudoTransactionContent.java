@@ -22,7 +22,7 @@ public abstract class SudoTransactionContent<KEY, VALUE, RETURN> extends Transac
 	public void run() throws FailedTransactionException {
 		manager = new VaultManager();
 		
-		dataVaultToken = dataVault.writeLock();
+		dataVaultToken = dataLock.writeLock();
 		try {
 			script(dataVaultToken);
 		} catch (LockException e) {
@@ -34,16 +34,14 @@ public abstract class SudoTransactionContent<KEY, VALUE, RETURN> extends Transac
 	public void commit() {
 		manager.commit();
 		manager.unlock();
-		dataVault.commit(dataVaultToken);
-		dataVault.writeUnlock(dataVaultToken);
+		dataLock.writeUnlock(dataVaultToken);
 	}
 	
 	@Override
 	public void abort() {
 		manager.abort();
 		manager.unlock();
-		dataVault.abort(dataVaultToken);
-		dataVault.writeUnlock(dataVaultToken);
+		dataLock.writeUnlock(dataVaultToken);
 	}
 	
 	@Override

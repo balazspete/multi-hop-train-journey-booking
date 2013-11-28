@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import node.company.TransactionContentGenerator;
-
+import transaction.ShallowLock;
 import transaction.TransactionContent;
 import transaction.TransactionCoordinator;
 import transaction.TransactionCoordinator.TransactionStage;
@@ -13,7 +13,6 @@ import transaction.TransactionCoordinator.TransactionStatus;
 import transaction.TransactionCoordinatorManager;
 import transaction.Vault;
 import transaction.WriteOnlyLock;
-
 import communication.messages.BookingMessage;
 import communication.messages.BookingReplyMessage;
 import communication.messages.ErrorMessage;
@@ -25,13 +24,13 @@ import data.trainnetwork.Seat;
 public class BookingProtocol implements Protocol {
 
 	private TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators;
-	private Vault<Map<String, Vault<BookableSection>>> sections;
+	private ShallowLock<Map<String, Vault<BookableSection>>> sections;
 	private Set<NodeInfo> nodes;
 	private WriteOnlyLock<Integer> monitor;
 	
 	public BookingProtocol(
 			TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators, 
-			Vault<Map<String, Vault<BookableSection>>> sections,
+			ShallowLock<Map<String, Vault<BookableSection>>> sections,
 			Set<NodeInfo> nodes,
 			WriteOnlyLock<Integer> monitor) {
 		this.transactionCoordinators = transactionCoordinators;

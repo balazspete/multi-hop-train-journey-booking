@@ -44,7 +44,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 
 			@Override
 			public void script(Token t) throws FailedTransactionException, LockException {
-				Map<String, Vault<BookableSection>> data = dataVault.getWriteable(t);
+				Map<String, Vault<BookableSection>> data = dataLock.getWriteable(t);
 				
 				HashSet<Vault<BookableSection>> vaults = new HashSet<Vault<BookableSection>>();
 				for (Section s : sections) {
@@ -73,7 +73,6 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 						throw new FailedTransactionException(e.getMessage());
 					}
 				}
-				System.out.println("data to return: " + dataToReturn);
 			}
 		};
 				
@@ -88,7 +87,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 
 			@Override
 			public void script(Token t) throws FailedTransactionException, LockException {
-				Map<String, Vault<BookableSection>> data = dataVault.getReadable(t);
+				Map<String, Vault<BookableSection>> data = dataLock.getReadable(t);
 				
 				for (Seat seat : seats) {
 					String sectionId = seat.getSectionId();
@@ -120,7 +119,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 
 			@Override
 			public void script(Token t) throws FailedTransactionException, LockException {
-				Map<String, Vault<BookableSection>> data = dataVault.getReadable(t);
+				Map<String, Vault<BookableSection>> data = dataLock.getReadable(t);
 				
 				for (Seat seat : seats) {
 					String sectionId = seat.getSectionId();
@@ -131,6 +130,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 					try {
 						vault.getWriteable(manager.getToken(vault)).undoReserve(seat);
 					} catch (NoSuchSeatException e) {
+						e.printStackTrace();
 						// This should not be happening as seats have been already reserved, but just in case...
 						throw new FailedTransactionException("Failed to cancel seat (id:" + seat.getId() + "):" + e.getMessage());
 					}
@@ -152,7 +152,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 
 			@Override
 			public void script(Token t) throws FailedTransactionException, LockException {
-				Map<String, Vault<BookableSection>> data = dataVault.getReadable(t);
+				Map<String, Vault<BookableSection>> data = dataLock.getReadable(t);
 				
 				for (Seat seat : seats) {
 					String sectionId = seat.getSectionId();
@@ -163,6 +163,7 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 					try {
 						vault.getWriteable(manager.getToken(vault)).undoPreReserve(seat);
 					} catch (NoSuchSeatException e) {
+						e.printStackTrace();
 						// This should not be happening as seats have been already pre-reserved, but just in case...
 						throw new FailedTransactionException("Failed to delete pre-reserved seat (id:" + seat.getId() + "):" + e.getMessage());
 					}
