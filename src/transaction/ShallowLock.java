@@ -12,6 +12,7 @@ public class ShallowLock<T> extends Lock<T> {
 			throw new LockException("You do not have a read lock on the item");
 		}
 		
-		return cloner.shallowClone(lockedData);
+		// TODO only copy map structure, keep references to vaults
+		return lockedData;
 	}
 }
