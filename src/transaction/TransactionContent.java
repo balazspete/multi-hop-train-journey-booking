@@ -19,24 +19,19 @@ public abstract class TransactionContent<KEY, VALUE, RETURN> implements Serializ
 	 */
 	private static final long serialVersionUID = -4571149016161551365L;
 	
-	private String id;
-	protected transient VaultManager manager = new VaultManager();
-	protected transient Vault<Map<KEY, VALUE>> dataVault;
+	private String id = new BigInteger(130, new SecureRandom()).toString(32).intern();
+	protected volatile VaultManager manager;
+	protected volatile Vault<Map<KEY, VALUE>> dataVault;
 	
-	protected RETURN dataToReturn = null;
-	
-	/**
-	 * Create a new TransactionContent
-	 */
-	public TransactionContent() {
-		id = new BigInteger(130, new SecureRandom()).toString(32).intern();
-	}
+	protected volatile RETURN dataToReturn = null;
 	
 	/**
 	 * Contains the logic to execute by a transaction
 	 * @throws FailedTransactionException Thrown if execution failed
 	 */
 	public void run() throws FailedTransactionException {
+		manager = new VaultManager();
+		
 		Token t = dataVault.readLock();
 		try {
 			script(t);
@@ -67,14 +62,6 @@ public abstract class TransactionContent<KEY, VALUE, RETURN> implements Serializ
 	
 	public RETURN getReturnedData() {
 		return dataToReturn;
-	}
-	
-	/**
-	 * Set the vault manager
-	 * @param manager The vault manager to use
-	 */
-	public void setVaultManager(VaultManager manager) {
-		this.manager = manager; 
 	}
 	
 	public void commit() {
