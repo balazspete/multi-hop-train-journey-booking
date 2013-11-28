@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import node.company.TransactionContentGenerator;
+import transaction.ShallowLock;
 import transaction.SudoTransactionContent;
 import transaction.TransactionContent;
 import transaction.TransactionCoordinator;
@@ -30,13 +31,13 @@ import data.trainnetwork.Section;
 public class PreBookingProtocol implements Protocol {
 
 	private TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators;
-	private Vault<Map<String, Vault<BookableSection>>> sections;
+	private ShallowLock<Map<String, Vault<BookableSection>>> sections;
 	private Set<NodeInfo> nodes;
 	private WriteOnlyLock<Integer> monitor;
 	
 	public PreBookingProtocol(
 			TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators, 
-			Vault<Map<String, Vault<BookableSection>>> sections,
+			ShallowLock<Map<String, Vault<BookableSection>>> sections,
 			Set<NodeInfo> nodes,
 			WriteOnlyLock<Integer> monitor) {
 		this.transactionCoordinators = transactionCoordinators;

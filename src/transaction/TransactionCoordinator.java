@@ -42,7 +42,7 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 	}
 	
 	private TransactionContent<KEY, VALUE, RETURN> content;
-	private Vault<Map<KEY, VALUE>> dataVault;
+	private ShallowLock<Map<KEY, VALUE>> dataVault;
 	private Collection<NodeInfo> nodes;
 	private WriteOnlyLock<Integer> monitor;
 	
@@ -63,7 +63,7 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 	 */
 	public TransactionCoordinator(
 		TransactionContent<KEY, VALUE, RETURN> content, 
-		Vault<Map<KEY, VALUE>> data, 
+		ShallowLock<Map<KEY, VALUE>> data, 
 		Collection<NodeInfo> nodes, 
 		WriteOnlyLock<Integer> monitor
 	) {
