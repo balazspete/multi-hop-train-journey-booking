@@ -15,8 +15,6 @@ public abstract class SudoTransactionContent<KEY, VALUE, RETURN> extends Transac
 	 * 
 	 */
 	private static final long serialVersionUID = 3125515031068969990L;
-
-	private Token dataVaultToken; 
 	
 	@Override
 	public void run() throws FailedTransactionException {
