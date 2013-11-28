@@ -52,8 +52,7 @@ public class BookableSection extends Section {
 			new NoSuchSeatException("No seat with id {" + seat.getId() + "} has been pre-booked");
 		
 		reservedSeats.add(seat);
-		
-		return reservedSeats.contains(seat);
+		return true;
 	}
 	
 	/**
