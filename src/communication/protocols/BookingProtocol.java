@@ -50,8 +50,7 @@ public class BookingProtocol implements Protocol {
 	public Message processMessage(Message message) {
 		HashSet<Seat> seats = (HashSet<Seat>) message.getContents();
 		
-		TransactionContent<String, Vault<BookableSection>, Set<Seat>> content
-			= TransactionContentGenerator.getSeatReservingContent(seats);
+		TransactionContent<String, Vault<BookableSection>, Set<Seat>> content = getTransactionContent(seats);
 		TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>> coordinator 
 			= new TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>>(content, this.sections, nodes, monitor);	
 
@@ -73,16 +72,23 @@ public class BookingProtocol implements Protocol {
 		
 		Message reply;
 		if (coordinator.getStage() != TransactionStage.ABORT) {
-			Set<Seat> data = (Set<Seat>) coordinator.getReturnedData();
-			HashSet<Seat> returnedData = new HashSet<Seat>(data);
 			reply = new BookingReplyMessage();
-			reply.setContents(returnedData);
+			
+			Object data = coordinator.getReturnedData(); 
+			if (data != null) {
+				HashSet<Seat> returnedData = new HashSet<Seat>((Set<Seat>) data);
+				reply.setContents(returnedData);
+			}
 		} else {
 			// This shouldn't really happen...
 			reply = new ErrorMessage("Transaction aborted");
 		}
 		
 		return reply;
+	}
+	
+	protected TransactionContent<String, Vault<BookableSection>, Set<Seat>> getTransactionContent(HashSet<Seat> seats) {
+		return TransactionContentGenerator.getSeatReservingContent(seats);
 	}
 
 	@Override
