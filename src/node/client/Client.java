@@ -104,14 +104,11 @@ public class Client extends Thread {
 		return seats;
 	}
 	
+	public void cancelJourney(Set<Seat> seats) {
+		companyInterface.cancelBooking(new HashSet<Seat>(seats));
+	}
+	
 	public void test() {
-		try {
-			sleep(5000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
 		String
 			source = "DUBPS",
 			target = "GALWY";
@@ -122,11 +119,11 @@ public class Client extends Thread {
 			for (Seat seat : seats) {
 				System.out.println(seat.toString());
 			}
+			
+			cancelJourney(seats);
 		} catch (BookingException e) {
 			e.printStackTrace();
 		}
-		
-		while(true);
 	}
 	
 	private Station getStation(String stationId) {
