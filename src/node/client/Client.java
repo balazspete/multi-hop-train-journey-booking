@@ -184,14 +184,17 @@ public class Client extends Thread {
 		
 		HashSet<Section> sections = findJourney(originID, destinationID, from);
 		System.out.println("Client: Search ended");
+		
 		searching = false;
-
 		if (sections.size() == 0) {
 			String message = "Your search returned no results";
 			bookingWindow.printStatus(message);
 			JOptionPane.showMessageDialog(bookingWindow, message);
+			bookingWindow.printStatus(message);
 			return;
 		}
+		
+		bookingWindow.printStatus("Found a journey...");
 		
 		// TODO display result & book
 	}
