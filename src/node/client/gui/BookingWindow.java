@@ -23,7 +23,6 @@ import node.client.Client;
 
 import java.awt.Color;
 import java.util.Set;
-import javax.swing.JCheckBox;
 
 public class BookingWindow extends JFrame {
 

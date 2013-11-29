@@ -4,6 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -121,14 +122,13 @@ public class Client extends Thread {
 		mainWindow.setVisible(true);
 	}
 	
-	public HashSet<Section> findJourney(String source, String target, DateTime from) {
+	public List<Section> findJourney(String source, String target, DateTime from) {
 		AppliedDijkstraShortestPath dijkstra = new AppliedDijkstraShortestPath(network, getStation(source), getStation(target), from);
-		return new HashSet<Section>(dijkstra.getPath());
+		return dijkstra.getPath();
 	}
 	
 	public Set<Seat> bookJourney(HashSet<Section> path) throws BookingException {
 		Set<Seat> seats = companyInterface.bookJourney(path);
-		System.out.println(seats);
 		return seats;
 	}
 	
@@ -182,7 +182,7 @@ public class Client extends Thread {
 		System.out.println("Client: Starting path search with parameters {source:'" + originID + 
 				"', target:'" + destinationID + "', time:'" + from + "'");
 		
-		HashSet<Section> sections = findJourney(originID, destinationID, from);
+		final List<Section> sections = findJourney(originID, destinationID, from);
 		System.out.println("Client: Search ended");
 		
 		searching = false;
@@ -196,6 +196,25 @@ public class Client extends Thread {
 		
 		bookingWindow.printStatus("Found a journey...");
 		
+		final PathWindow window = new PathWindow(network, sections, originID, destinationID);
+		window.getBookingButton().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					Set<Seat> journey = bookJourney(new HashSet<Section>(sections));
+					window.dispose();
+					
+					// TODO display journey information in a new screen
+					
+				} catch (BookingException ex) {
+					String message = "Failed to book journey: " + ex.getMessage();
+					System.err.println(message);
+					JOptionPane.showMessageDialog(window, message, "Failed to book journey", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		
+		window.setVisible(true);
 		// TODO display result & book
 	}
 }
