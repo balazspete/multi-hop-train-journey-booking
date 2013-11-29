@@ -220,6 +220,7 @@ public class Client extends Thread {
 				public void mouseClicked(MouseEvent e) {
 					cancelJourney(tickets.get(index).getSeats());
 					ticketsWindow.dispose();
+					tickets.remove(index);
 					JOptionPane.showMessageDialog(null, "Ticket cancelled");
 				}
 			});
