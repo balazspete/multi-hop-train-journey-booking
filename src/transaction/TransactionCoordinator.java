@@ -12,7 +12,7 @@ import com.rits.cloning.Cloner;
 
 import communication.CommunicationException;
 import communication.messages.Message;
-import communication.messages.TransactionCommitMessage;
+import communication.messages.TransactionTerminationMessage;
 import communication.messages.TransactionExecutionMessage;
 import communication.messages.TransactionExecutionReplyMessage.Reply;
 import communication.unicast.UnicastSocketClient;
@@ -26,10 +26,10 @@ import data.system.NodeInfo;
  * @param <KEY>
  * @param <VALUE>
  */
-public class TransactionCoordinator<KEY, VALUE> extends Thread {
+public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 	
-	protected enum TransactionStage {
-		INITIAL, COMMIT, ABORT
+	public enum TransactionStage {
+		INITIAL, COMMIT, ABORT, COMMITTED, ABORTED
 	}
 	
 	/**
@@ -41,8 +41,8 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		ALIVE, DEAD, SLEEPING, DONE
 	}
 	
-	private TransactionContent<KEY, VALUE> content;
-	private Vault<Map<KEY, VALUE>> dataVault;
+	private TransactionContent<KEY, VALUE, RETURN> content;
+	private ShallowLock<Map<KEY, VALUE>> dataVault;
 	private Collection<NodeInfo> nodes;
 	private WriteOnlyLock<Integer> monitor;
 	
@@ -59,11 +59,11 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	 * @param content The {@link TransactionContent} to forward to other nodes
 	 * @param data The {@link Map<KEY, VALUE>} to work on 
 	 * @param nodes The collection of nodes to correspond with
-	 * @param monitor The monitor used to control communication
+	 * @param monitor The monitor used to control communication, its value is the port number used from communication
 	 */
 	public TransactionCoordinator(
-		TransactionContent<KEY, VALUE> content, 
-		Vault<Map<KEY, VALUE>> data, 
+		TransactionContent<KEY, VALUE, RETURN> content, 
+		ShallowLock<Map<KEY, VALUE>> data, 
 		Collection<NodeInfo> nodes, 
 		WriteOnlyLock<Integer> monitor
 	) {
@@ -79,6 +79,14 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	 */
 	public TransactionStatus getStatus() {
 		return status;
+	}
+	
+	/**
+	 * Get the stage of the wrapper {@link Transaction}
+	 * @return The stage the transaction is in
+	 */
+	public TransactionStage getStage() {
+		return stage;
 	}
 	
 	/**
@@ -101,23 +109,34 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 				stage = TransactionStage.COMMIT;
 			} catch (FailedTransactionException e) {
 				status = TransactionStatus.DEAD;
+				stage = TransactionStage.ABORT;
+				synchronized (this) {
+					notifyAll();
+				}
 				return;
 			}
-		} else if (status != TransactionStatus.DONE){ 
+		} else if (stage == TransactionStage.COMMIT || stage == TransactionStage.ABORT){ 
 			if (stage == TransactionStage.COMMIT) {
 				transaction.commit();
-				System.out.println("Transaction COMMITTED - ID: " + transaction.getId());
 				doRemoteCommit();
+				stage = TransactionStage.COMMITTED;
 			} else {
+				stage = TransactionStage.ABORT;
 				transaction.abort();
-				System.out.println("Transaction ABORTED - ID: " + transaction.getId());
 				doRemoteAbort();
+				stage = TransactionStage.ABORTED;
 			}
 			
 			status = TransactionStatus.DONE;
+			synchronized (this) {
+				notifyAll();
+			}
 			return;
 		} else {
 			status = TransactionStatus.DEAD;
+			synchronized (this) {
+				notifyAll();
+			}
 			return;
 		}
 		
@@ -151,17 +170,25 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 			if (reply == null || reply == Reply.FAILED) {
 				stage = TransactionStage.ABORT;
 			}
-			
-			if (replies.size() == nodes.size()) {
-				new Thread(this).start();
-			}
+		}
+		
+		if (replies.size() == nodes.size()) {
+			new Thread(this).start();
 		}
 		
 		return true;
 	}
 	
+	/**
+	 * Get the returned data by the local transaction
+	 * @return The returned data
+	 */
+	public Object getReturnedData() {
+		return transaction.getReturnedContent();
+	}
+	
 	private void doLocalTransaction() throws FailedTransactionException {
-		TransactionContent<KEY, VALUE> _content = new Cloner().deepClone(content);
+		TransactionContent<KEY, VALUE, RETURN> _content = new Cloner().deepClone(content);
 		_content.setData(dataVault);
 		
 		transaction = new Transaction(_content);
@@ -171,37 +198,40 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 	private void doRemoteTransaction() {
 		Token token = monitor.writeLock();
 		try {
-			TransactionExecutionMessage<KEY, VALUE> message = new TransactionExecutionMessage<KEY, VALUE>(content.getId());
+			TransactionExecutionMessage<KEY, VALUE, RETURN> message = new TransactionExecutionMessage<KEY, VALUE, RETURN>(content.getId());
 			message.setContents(content);
 			sendMessageToAllNodes(message, token);
 		} catch (Exception e) {
-			e.printStackTrace();
+			// Just print out a message, the exception will be handled elsewhere...
+			System.out.println("An error occurred while executing the transaction remotely: " + e.getMessage());
 		} finally {
 			monitor.writeUnlock(token);
 		}
 	}
 	
 	private void doRemoteCommit() {
-		TransactionCommitMessage message = new TransactionCommitMessage(content.getId());
-		message.setContents(TransactionCommitMessage.CommitAction.COMMIT);
+		TransactionTerminationMessage message = new TransactionTerminationMessage(content.getId());
+		message.setContents(TransactionTerminationMessage.CommitAction.COMMIT);
 		Token token = monitor.writeLock();
 		try {
 			sendMessageToAllNodes(message, token);
 		} catch (LockException e) {
-			e.printStackTrace();
+			// Just print out a message, the exception will be handled elsewhere...
+			System.out.println("An error occurred while remote committing: " + e.getMessage());
 		} finally {
 			monitor.writeUnlock(token);
 		}
 	}
 	
 	private void doRemoteAbort() {
-		TransactionCommitMessage message = new TransactionCommitMessage(content.getId());
-		message.setContents(TransactionCommitMessage.CommitAction.ABORT);
+		TransactionTerminationMessage message = new TransactionTerminationMessage(content.getId());
+		message.setContents(TransactionTerminationMessage.CommitAction.ABORT);
 		Token token = monitor.writeLock();
 		try {
 			sendMessageToAllNodes(message, token);
 		} catch (LockException e) {
-			e.printStackTrace();
+			// Just print out a message, the exception will be handled elsewhere...
+			System.out.println("An error occurred while remote aborting: " + e.getMessage());
 		} finally {
 			monitor.writeUnlock(token);
 		}
@@ -224,6 +254,5 @@ public class TransactionCoordinator<KEY, VALUE> extends Thread {
 		for (NodeInfo node : messageQueue) {
 			nodes.remove(node);
 		}
-		
 	}
 }

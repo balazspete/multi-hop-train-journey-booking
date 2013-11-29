@@ -13,7 +13,7 @@ public class NodeInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7378201805278309534L;
-	private String name, location;
+	protected String name, location;
 	
 	/**
 	 * Create a instance of {@link NodeInfo}
@@ -57,6 +57,11 @@ public class NodeInfo implements Serializable {
 		return location;
 	}
 	
+	/**
+	 * Determine whether the input NodeInfo equals this one
+	 * @param other The other NodeInfo
+	 * @return True if the two objects are the same, false otherwise
+	 */
 	public boolean equals(NodeInfo other) {
 		if (other != null && other.location == location) {
 			return true;
@@ -67,6 +72,7 @@ public class NodeInfo implements Serializable {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		return "<" + name + "|" + location + ">";
 	}

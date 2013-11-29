@@ -3,6 +3,7 @@ package transaction;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import transaction.Lock.Token.LockType;
@@ -78,8 +79,8 @@ public class Lock<T> {
 	
 	private boolean writeMode = false; 
 	
-	private HashSet<Token> currentLocks = new HashSet<Token>();
-	private ConcurrentLinkedQueue<Token> pendingQueue = new ConcurrentLinkedQueue<Token>();
+	private volatile Set<Token> currentLocks = new HashSet<Token>();
+	private volatile ConcurrentLinkedQueue<Token> pendingQueue = new ConcurrentLinkedQueue<Token>();
 	
 	protected T lockedData;
 	protected Cloner cloner = new Cloner();
@@ -162,7 +163,6 @@ public class Lock<T> {
 	 * @throws LockException 
 	 */
 	public boolean readUnlock(Token token) {
-		//rwl.readLock().unlock();
 		return removeLock(token);
 	}
 	
@@ -207,8 +207,25 @@ public class Lock<T> {
 			writeMode = false;
 		}
 		
-		currentLocks.remove(t);
+		boolean result = currentLocks.remove(t);
 		notifyAll();
-		return true;
+		return result;
+	}
+	
+	/**
+	 * Determine if the lock is write locked by someone
+	 * @return True if the lock is write locked, false otherwise
+	 */
+	public boolean isWriteLocked() {
+		System.out.println(currentLocks);
+		return writeMode && currentLocks.size() == 1;
+	}
+	
+	/**
+	 * Determine if the lock is read locked by someone
+	 * @return True if the lock is read locked, false otherwise
+	 */
+	public boolean isReadLocked() {
+		return !writeMode && currentLocks.size() > 0;
 	}
 }

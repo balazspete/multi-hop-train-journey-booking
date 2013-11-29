@@ -9,7 +9,7 @@ import java.util.HashMap;
  * @param <KEY>
  * @param <VALUE>
  */
-public class TransactionCoordinatorManager<KEY, VALUE> extends HashMap<String, TransactionCoordinator<KEY, VALUE>> {
+public class TransactionCoordinatorManager<KEY, VALUE, RETURN> extends HashMap<String, TransactionCoordinator<KEY, VALUE, RETURN>> {
 
 	/**
 	 * 
@@ -19,4 +19,6 @@ public class TransactionCoordinatorManager<KEY, VALUE> extends HashMap<String, T
 	public TransactionCoordinatorManager() {
 		super();
 	}
+	
+	// TODO periodically scan Coordinators and discard the ones in the DEAD stage
 }

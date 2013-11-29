@@ -48,14 +48,11 @@ public class BookableSection extends Section {
 	 * @throws NoSuchSeatException Thrown if input seat has not been pre-reserved or does not exist
 	 */
 	public synchronized boolean reserve(Seat seat) throws NoSuchSeatException {
-		if (!preReservedSeats.contains(seat))
+		if (!removeSeatFromSet(preReservedSeats, seat))
 			new NoSuchSeatException("No seat with id {" + seat.getId() + "} has been pre-booked");
 		
-		if (preReservedSeats.remove(seat)) {
-			reservedSeats.add(seat);
-		}
-		
-		return reservedSeats.contains(seat);
+		reservedSeats.add(seat);
+		return true;
 	}
 	
 	/**
@@ -68,8 +65,8 @@ public class BookableSection extends Section {
 			throw new SectionFullException("No more free seats available, cannot pre-reseve more seats");
 		
 		Seat seat = new Seat();
+		seat.addSection(this);
 		preReservedSeats.add(seat);
-		
 		return seat;
 	}
 	
@@ -80,10 +77,10 @@ public class BookableSection extends Section {
 	 * @throws NoSuchSeatException Thrown if there is no such seat reserved
 	 */
 	public synchronized boolean undoReserve(Seat seat) throws NoSuchSeatException {
-		if (!reservedSeats.contains(seat))
+		if (!removeSeatFromSet(reservedSeats, seat))
 			throw new NoSuchSeatException("No reserved seat with id {" + seat.getId() + "} exists");
 		
-		return reservedSeats.remove(seat);
+		return true;
 	}
 	
 	/**
@@ -93,9 +90,45 @@ public class BookableSection extends Section {
 	 * @throws NoSuchSeatException Thrown if there is no such seat pre-reserved
 	 */
 	public synchronized boolean undoPreReserve(Seat seat) throws NoSuchSeatException {
-		if (!preReservedSeats.contains(seat))
+		if (!removeSeatFromSet(preReservedSeats, seat))
 			throw new NoSuchSeatException("No pre-reserved seat with id {" + seat.getId() + "} exists");
 		
-		return preReservedSeats.remove(seat);
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @param string
+	 * @return
+	 */
+	public static BookableSection getSectionFromString(String string) {
+		String[] parts = string.split("=");
+		
+		BookableSection section;
+		try {
+			section = new BookableSection(
+				parts[0], 
+				Integer.parseInt(parts[1]), 
+				DateTime.parse(parts[5]), 
+				Integer.parseInt(parts[4]), 
+				Integer.parseInt(parts[3]));
+			section.setMaxPassengers(Integer.parseInt(parts[2]));
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			section = null;
+		}
+		
+		return section;
+	}
+	
+	private boolean removeSeatFromSet(Set<Seat> set, Seat seat) {
+		for (Seat s : set) {
+			if (s.equals(seat)) {
+				set.remove(s);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

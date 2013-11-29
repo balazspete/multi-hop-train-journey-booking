@@ -30,6 +30,18 @@ public class UnicastSocketServer extends UnicastServer {
 	public void acceptConnections() throws CommunicationException {
 		ServerSocket serverSocket = null;
         boolean listening = true;
+        
+        String location = null;
+        try {
+			location = Inet4Address.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e1) {
+			// We can't get our IP address, oh well displaying less info...
+		}
+        
+        System.out.println("*******************************************************************************\n" + 
+        		"* UnicastSocketServer: Listening to connections" +
+        		(location == null ? "" : " at " + location) + " on port "+port + 
+        		"\n*******************************************************************************");
 
         try {
             serverSocket = new ServerSocket(port);
@@ -120,6 +132,7 @@ public class UnicastSocketServer extends UnicastServer {
 							break;
 						}
 					} else {
+						System.err.println("UnicastSocketServer: Received an incompatible message. Replying with an ErrorMessage...");
 						message = new ErrorMessage("Message type not supported");
 					}
 					
@@ -138,6 +151,7 @@ public class UnicastSocketServer extends UnicastServer {
 		}
 	}
 	
+	@Deprecated
 	public static void main(String[] args) {
 		UnicastSocketServer i = new UnicastSocketServer(8000);
 		i.putProtocol(new LoopbackProtocol());

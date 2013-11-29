@@ -1,5 +1,10 @@
 package transaction;
 
+/**
+ * An exception thrown when a transaction has failed
+ * @author Balazs Pete
+ *
+ */
 public class FailedTransactionException extends Exception {
 
 	/**

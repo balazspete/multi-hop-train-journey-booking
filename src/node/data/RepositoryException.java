@@ -1,11 +1,13 @@
 package node.data;
 
+import node.FatalNodeException;
+
 /**
  * Exception thrown when a major error occurs in a {@link DataRepository}
  * @author Balazs Pete
  *
  */
-public class RepositoryException extends Exception {
+public class RepositoryException extends FatalNodeException {
 
 	/**
 	 * 

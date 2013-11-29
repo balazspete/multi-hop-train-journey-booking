@@ -1,5 +1,7 @@
 package communication.protocols;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -24,6 +26,19 @@ public class HelloProtocol implements Protocol {
 	@Override
 	public Message processMessage(Message message) {
 		NodeInfo node = message.getSender();
+		if (node.getLocation().equals("127.0.0.1")) {
+			try {
+				String addr = Inet4Address.getLocalHost().getHostAddress();
+				node.addLocation(addr);
+			} catch (UnknownHostException e) {
+				/*
+				 * If this fails, the node might become unreachable 
+				 * to other machines on the network
+				 * It's not a fatal error anyways...
+				 */
+				System.err.println(e.getMessage());
+			}
+		}
 		
 		HelloReplyMessage reply = new HelloReplyMessage();
 		

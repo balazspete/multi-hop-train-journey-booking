@@ -6,11 +6,11 @@ import communication.messages.Message;
 import communication.messages.TransactionExecutionReplyMessage;
 import communication.messages.TransactionExecutionReplyMessage.Reply;
 
-public class TransactionExecutionReplyProtocol<KEY, VALUE> implements Protocol {
+public class TransactionExecutionReplyProtocol<KEY, VALUE, RETURN> implements Protocol {
 	
-	private TransactionCoordinatorManager<KEY, VALUE> manager;
+	private TransactionCoordinatorManager<KEY, VALUE, RETURN> manager;
 
-	public TransactionExecutionReplyProtocol(TransactionCoordinatorManager<KEY, VALUE> manager) {
+	public TransactionExecutionReplyProtocol(TransactionCoordinatorManager<KEY, VALUE, RETURN> manager) {
 		this.manager = manager;
 	}
 	
@@ -22,7 +22,7 @@ public class TransactionExecutionReplyProtocol<KEY, VALUE> implements Protocol {
 	@Override
 	public Message processMessage(Message message) {
 		TransactionExecutionReplyMessage msg = (TransactionExecutionReplyMessage) message;
-		TransactionCoordinator<KEY, VALUE> tc = manager.get(msg.getTransactionId()); 
+		TransactionCoordinator<KEY, VALUE, RETURN> tc = manager.get(msg.getTransactionId()); 
 		
 		tc.logReply(msg.getSender().getLocation(), (Reply) msg.getContents());
 		

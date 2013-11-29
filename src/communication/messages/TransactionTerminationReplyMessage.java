@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author Balazs Pete
  *
  */
-public class TransactionCommitReplyMessage extends TransactionMessage {
+public class TransactionTerminationReplyMessage extends TransactionMessage {
 
 	/**
 	 * Represents the final status of a {@link Transaction}
@@ -25,7 +25,7 @@ public class TransactionCommitReplyMessage extends TransactionMessage {
 
 	private Status status;
 	
-	public TransactionCommitReplyMessage(String transactionId) {
+	public TransactionTerminationReplyMessage(String transactionId) {
 		super(transactionId);
 	}
 	
@@ -49,8 +49,8 @@ public class TransactionCommitReplyMessage extends TransactionMessage {
 	 * @param transactionId The id of the corresponding message
 	 * @return The message
 	 */
-	public static TransactionCommitReplyMessage committedMessage(String transactionId) {
-		TransactionCommitReplyMessage msg = new TransactionCommitReplyMessage(transactionId);
+	public static TransactionTerminationReplyMessage committedMessage(String transactionId) {
+		TransactionTerminationReplyMessage msg = new TransactionTerminationReplyMessage(transactionId);
 		msg.setContents(Status.COMMITTED);
 		return msg;
 	}
@@ -60,8 +60,8 @@ public class TransactionCommitReplyMessage extends TransactionMessage {
 	 * @param transactionId The id of the corresponding message
 	 * @return The message
 	 */
-	public static TransactionCommitReplyMessage abortedMessage(String transactionId) {
-		TransactionCommitReplyMessage msg = new TransactionCommitReplyMessage(transactionId);
+	public static TransactionTerminationReplyMessage abortedMessage(String transactionId) {
+		TransactionTerminationReplyMessage msg = new TransactionTerminationReplyMessage(transactionId);
 		msg.setContents(Status.ABORTED);
 		return msg;
 	}

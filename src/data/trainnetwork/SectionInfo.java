@@ -2,6 +2,11 @@ package data.trainnetwork;
 
 import java.io.Serializable;
 
+/**
+ * An object containing a section and some additional detail
+ * @author Balazs Pete
+ *
+ */
 public class SectionInfo implements Serializable {
 
 	/**

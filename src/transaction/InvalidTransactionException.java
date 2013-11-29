@@ -1,5 +1,10 @@
 package transaction;
 
+/**
+ * An exception thrown when a transaction is invalid for some reason
+ * @author Balazs Pete
+ *
+ */
 public class InvalidTransactionException extends Exception {
 
 	/**

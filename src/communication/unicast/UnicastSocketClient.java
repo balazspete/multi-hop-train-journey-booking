@@ -3,7 +3,6 @@ package communication.unicast;
 import java.io.*;
 import java.net.*;
 
-import node.company.DistributedRepository;
 import communication.CommunicationException;
 import communication.messages.*;
 import data.system.NodeInfo;
@@ -186,6 +185,7 @@ public class UnicastSocketClient extends Thread implements
 		return msg;
 	}
 
+	@Deprecated
 	public static void main(String[] args) {
 		UnicastSocketClient i=new UnicastSocketClient("localhost", 8000);
 		try {

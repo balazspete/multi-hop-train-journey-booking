@@ -16,6 +16,7 @@ import data.request.BookableSectionDataRequest;
 import data.request.NodeInfoRequest;
 import data.system.NodeInfo;
 import data.trainnetwork.*;
+import node.NodeConstants;
 import node.data.DataRepository; 
 import node.data.RepositoryException;
 
@@ -38,31 +39,50 @@ public abstract class DistributedRepository extends DataRepository {
 		}
 	}
 	
-	public static final int PORT = 8001;
+	protected static String REPOSITORY_NAME;
+	public static final int 
+		PORT = NodeConstants.DYNAMIC_CLUSTER_PORT,
+		HELLO_RATE = 60;
 	
-	protected static final String DATA_STORE_LOCATION = "192.168.1.7";
-	protected static final int DATA_STORE_PORT = 8005;
+	public static String DATA_STORE_LOCATION;
+	protected static final int DATA_STORE_PORT = NodeConstants.DYNAMIC_CLUSTER_STORE_PORT;
 
-	protected static Vault<Map<String, Vault<BookableSection>>> sections;
-	protected static TransactionManager<String, Vault<BookableSection>> transactions;
-	protected static TransactionCoordinatorManager<String, Vault<BookableSection>> transactionCoordinators;
+	protected static ShallowLock<Map<String, Vault<BookableSection>>> sections;
+	protected static TransactionManager<String, Vault<BookableSection>, Set<Seat>> transactions;
+	protected static TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators;
 	
 	protected static WriteOnlyLock<Integer> communicationLock;
 	
 	protected static Set<NodeInfo> nodes;
 	
 	public DistributedRepository() throws RepositoryException {
-		super(PORT);
+		super(NodeConstants.DYNAMIC_CLUSTER_PORT);
 		sayHello();
 	}
 
+	public void run() {
+		super.run();
+		
+		UnicastSocketClient client = new UnicastSocketClient(DATA_STORE_LOCATION, DATA_STORE_PORT);
+		while (true) {
+			try {
+				sleep(1000 * HELLO_RATE);
+				getNodeInfo(client);
+				sayHello();
+			} catch (InterruptedException e) {
+				// Just loop around...
+				System.err.println("Failed to wait the minimum HELLO time: " + e.getMessage());
+			}
+		}
+	}
+	
 	@Override
 	protected void initialize() throws DistributedRepositoryException {
-		sections = new Vault<Map<String, Vault<BookableSection>>>(new HashMap<String, Vault<BookableSection>>());
-		transactions = new TransactionManager<String, Vault<BookableSection>>(sections);
-		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>>();
-		communicationLock = new WriteOnlyLock<Integer>(new Integer(PORT));
-		nodes = new HashSet<NodeInfo>();
+		sections = new ShallowLock<Map<String, Vault<BookableSection>>>(new HashMap<String, Vault<BookableSection>>());
+		transactions = new TransactionManager<String, Vault<BookableSection>, Set<Seat>>(sections);
+		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>>();
+		communicationLock = new WriteOnlyLock<Integer>(new Integer(NodeConstants.DYNAMIC_CLUSTER_PORT));
+		nodes = Collections.synchronizedSet(new HashSet<NodeInfo>());
 		
 		try {
 			restoreFromStore();
@@ -132,7 +152,6 @@ public abstract class DistributedRepository extends DataRepository {
 					Vault<BookableSection> vault = new Vault<BookableSection>(entry);
 					_sections.put(entry.getID().intern(), vault);
 				}
-				sections.commit(t);
 				committed = true;
 			} catch (LockException e) {
 				System.err.println(e.getMessage());
@@ -142,10 +161,21 @@ public abstract class DistributedRepository extends DataRepository {
 			}
 		}
 		
-		token = communicationLock.writeLock();
+		error = getNodeInfo(client);
+		
+		if (error) {
+			throw new DataLoadException("Failed to load data from `store`");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected boolean getNodeInfo(UnicastSocketClient client) {
+		boolean error = false;
+		
+		Token token = communicationLock.writeLock();
 		try {
 			//--- begin HELLO 
-			msg = HelloMessage.getHi();
+			Message msg = HelloMessage.getHi();
 			HelloReplyMessage reply = (HelloReplyMessage) UnicastSocketClient.sendOneMessage(client, msg, true);
 			NodeInfo myOwn = reply.getHelloer();
 			//--- end HELLO
@@ -164,8 +194,6 @@ public abstract class DistributedRepository extends DataRepository {
 			communicationLock.writeUnlock(token);
 		}
 		
-		if (error) {
-			throw new DataLoadException("Failed to load data from `store`");
-		}
+		return error;
 	}
 }

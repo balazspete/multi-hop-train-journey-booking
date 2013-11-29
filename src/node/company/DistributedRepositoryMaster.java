@@ -12,15 +12,17 @@ import communication.protocols.*;
 import communication.unicast.UnicastSocketClient;
 import data.request.DataTransfer;
 import data.trainnetwork.BookableSection;
+import data.trainnetwork.Seat;
 
 public class DistributedRepositoryMaster extends DistributedRepository {
 
 	// Time between backups (in seconds)
 	private final int TIME_BETWEEN_BACKUPS = 100;
 	
+	public static String CLUSTER_NAME;
+	
 	public DistributedRepositoryMaster() throws RepositoryException {
 		super();
-		scheduledBackup();
 	}
 
 	@Override
@@ -30,11 +32,14 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		// Accept and handle `Hello` requests from other nodes
 		protocols.add(new HelloProtocol(nodes));
 		
+		// Accept and handle `ClusterHello` requests
+		protocols.add(new ClusterHelloProtocol(CLUSTER_NAME, nodes));
+		
 		// Accept and handle distributed transactions
-		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
-		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
-		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
-		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
+		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
+		protocols.add(new TransactionTerminationProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionTerminationReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
 		
 		return protocols;
 	}
@@ -42,7 +47,7 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	private void scheduledBackup() {
 		while (true) {
 			try {
-				sleep(1000 * 10);//TIME_BETWEEN_BACKUPS);
+				sleep(1000 * TIME_BETWEEN_BACKUPS);
 			} catch (InterruptedException e) {
 				System.err.println("Failed to wait for backup: " + e.getMessage());
 			}
@@ -104,39 +109,5 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		} finally {
 			communicationLock.writeUnlock(t);
 		}
-		
 	}
-
-	public void test() {
-		TransactionContent<String, Vault<BookableSection>> c = TransactionContentGenerator.getTestContent();
-		
-		TransactionCoordinator<String, Vault<BookableSection>> tc
-			= new TransactionCoordinator<String, Vault<BookableSection>>(c, sections, nodes, communicationLock);
-		
-		transactionCoordinators.put(tc.getTransactionId(), tc);
-		
-		tc.start();
-		
-		while (true) {
-			System.out.println(nodes);
-			try {
-				sleep(2000);
-			} catch (InterruptedException e) {
-				// Just loop around, no biggie
-			}
-		}
-	}
-	
-	
-	public static void main(String[] args) {
-		DistributedRepositoryMaster r;
-		try {
-			r = new DistributedRepositoryMaster();
-			r.start();
-			r.test();
-		} catch (RepositoryException e) {
-			e.printStackTrace();
-		}
-	}
-	
 }

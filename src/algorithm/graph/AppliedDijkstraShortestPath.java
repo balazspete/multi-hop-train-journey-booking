@@ -91,7 +91,7 @@ public final class AppliedDijkstraShortestPath
 				DateTime previousTime = times.get(target);
 				DateTime newTime = section.getStartTime().plusSeconds((int) section.getJourneyLength());
 
-				if(newTime.isBefore(previousTime)) {
+				if(previousTime == null || newTime.isBefore(previousTime)) {
 					reversePath.put(target, section);
 					nodeList.add(target);
 					times.put(target, newTime);
@@ -133,7 +133,6 @@ public final class AppliedDijkstraShortestPath
 			double myDistance = distances.get(current);
 			
 			for(Section section : network.outgoingEdgesOf(current)) {
-				
 				if (section.isAvailable(currentTime)) {
 					continue;
 				}

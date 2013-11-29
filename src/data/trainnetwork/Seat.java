@@ -1,5 +1,6 @@
 package data.trainnetwork;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -8,9 +9,14 @@ import java.security.SecureRandom;
  * @author Balazs Pete
  *
  */
-public class Seat {
+public class Seat implements Serializable {
 	
-	private String id;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3197202742981022435L;
+	
+	private String id, sectionId = null;
 	
 	/**
 	 * Create a new Seat
@@ -26,6 +32,30 @@ public class Seat {
 	 */
 	public String getId() {
 		return id;
+	}
+	
+	/**
+	 * Add the corresponding {@link Section} (will be stored as an ID reference)
+	 * @param section The section the seat belongs to
+	 */
+	public void addSection(Section section) {
+		sectionId = section.getID();
+	}
+	
+	/**
+	 * Get the ID of the corresponding {@link Section}
+	 * @return The id of the section
+	 */
+	public String getSectionId() {
+		return sectionId;
+	}
+	
+	/**
+	 * Get the abstract ID of the section (format: <station>-<station>-<id>)
+	 * @return The abstract id of the section
+	 */
+	public String getAbstractSectionId() {
+		return sectionId.split("=")[0];
 	}
 	
 	/**

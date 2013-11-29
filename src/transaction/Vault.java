@@ -41,7 +41,7 @@ public class Vault<T> extends Lock<T> {
 	 * Commit the changes 
 	 * @param token The lock token
 	 */
-	public void commit(Token token) {
+	public synchronized void commit(Token token) {
 		if (canWrite(token)) {
 			base = cloner.deepClone(lockedData);
 			lockedData = null;
@@ -52,21 +52,14 @@ public class Vault<T> extends Lock<T> {
 	 * Discard the changes
 	 * @param token The lock token
 	 */
-	public void abort(Token token) {
+	public synchronized void abort(Token token) {
 		if (canWrite(token)) {
 			lockedData = null;
 		}
 	}
 	
+	@Override
 	public String toString() {
 		return "vault["+base.toString()+"]";
-	}
-	
-	public void debugPrint() {
-		System.out.println("--- BEGIN VAULT DEBUG ---");
-		System.out.println("Base: " + base);
-		System.out.println("LockedData: " + lockedData);
-		System.out.println("Is `base` and `locked` the same? " + (base == lockedData));
-		System.out.println("--- END VAULT DEBUG ---");
 	}
 }

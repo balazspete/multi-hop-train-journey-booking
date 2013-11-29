@@ -4,14 +4,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 import node.data.RepositoryException;
+import transaction.TransactionContent;
+import transaction.TransactionCoordinator;
 import transaction.Vault;
+import communication.protocols.BookingProtocol;
+import communication.protocols.CancelBookingProtocol;
+import communication.protocols.CancelPreBookingProtocol;
 import communication.protocols.HelloProtocol;
+import communication.protocols.PreBookingProtocol;
 import communication.protocols.Protocol;
-import communication.protocols.TransactionCommitProtocol;
-import communication.protocols.TransactionCommitReplyProtocol;
+import communication.protocols.SectionStatusUpdateRequestHandlingProtocol;
+import communication.protocols.TransactionTerminationProtocol;
+import communication.protocols.TransactionTerminationReplyProtocol;
 import communication.protocols.TransactionExecutionProtocol;
 import communication.protocols.TransactionExecutionReplyProtocol;
 import data.trainnetwork.BookableSection;
+import data.trainnetwork.Seat;
 
 public class DistributedRepositorySlave extends DistributedRepository {
 
@@ -27,38 +35,36 @@ public class DistributedRepositorySlave extends DistributedRepository {
 		protocols.add(new HelloProtocol(nodes));
 		
 		// Accept and handle distributed transactions
-		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
-		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
-		protocols.add(new TransactionCommitProtocol<String, Vault<BookableSection>>(transactions, communicationLock));
-		protocols.add(new TransactionCommitReplyProtocol<String, Vault<BookableSection>>(transactionCoordinators));
+		protocols.add(new TransactionExecutionProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionExecutionReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
+		protocols.add(new TransactionTerminationProtocol<String, Vault<BookableSection>, Set<Seat>>(transactions, communicationLock));
+		protocols.add(new TransactionTerminationReplyProtocol<String, Vault<BookableSection>, Set<Seat>>(transactionCoordinators));
 		
-		// TODO add client handling
+		// Client booking/cancelling handling
+		protocols.add(new PreBookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
+		protocols.add(new BookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
+		protocols.add(new CancelPreBookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
+		protocols.add(new CancelBookingProtocol(transactionCoordinators, sections, nodes, communicationLock));
+		
+		protocols.add(new SectionStatusUpdateRequestHandlingProtocol(sections));
 		
 		return protocols;
 	}
 
 	public void test() {
-		while (true) {
-			//sections.debugPrint();
-			System.out.println(nodes);
-			try {
-				sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public static void main(String[] args) {
-		DistributedRepositorySlave s;
 		try {
-			s = new DistributedRepositorySlave();
-			s.start();
-			s.test();
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
 		}
+		
+		TransactionContent<String, Vault<BookableSection>, Set<Seat>> c = TransactionContentGenerator.getTestContent();
+		
+		TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>> tc
+			= new TransactionCoordinator<String, Vault<BookableSection>, Set<Seat>>(c, sections, nodes, communicationLock);
+		
+		transactionCoordinators.put(tc.getTransactionId(), tc);
+		
+		tc.start();
 	}
 }

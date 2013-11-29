@@ -9,14 +9,14 @@ import transaction.TransactionContent;
  * @author Balazs Pete
  *
  */
-public class TransactionExecutionMessage<KEY, VALUE> extends TransactionMessage {
+public class TransactionExecutionMessage<KEY, VALUE, RETURN> extends TransactionMessage {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7804040847207632803L;
 	
-	private TransactionContent<KEY, VALUE> content;
+	private TransactionContent<KEY, VALUE, RETURN> content;
 	
 	public TransactionExecutionMessage(String transactionId) {
 		super(transactionId);
@@ -35,6 +35,6 @@ public class TransactionExecutionMessage<KEY, VALUE> extends TransactionMessage 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setContents(Serializable content) {
-		this.content = (TransactionContent<KEY, VALUE>) content;
+		this.content = (TransactionContent<KEY, VALUE, RETURN>) content;
 	}
 }

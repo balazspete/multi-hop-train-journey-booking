@@ -10,15 +10,15 @@ import data.InconsistentDataException;
  * @author Balazs Pete
  *
  */
-public class TransactionManager<KEY, VALUE> {
+public class TransactionManager<KEY, VALUE, RETURN> {
 
 	private Map<String, Transaction> transactionsTable;
-	private Vault<Map<KEY, VALUE>> dataVault;
+	private ShallowLock<Map<KEY, VALUE>> dataVault;
 	
 	/**
 	 * Create a new TransactionManager
 	 */
-	public TransactionManager(Vault<Map<KEY, VALUE>> data) {
+	public TransactionManager(ShallowLock<Map<KEY, VALUE>> data) {
 		this.dataVault = data;
 		transactionsTable = new HashMap<String, Transaction>();
 	}
@@ -28,7 +28,7 @@ public class TransactionManager<KEY, VALUE> {
 	 * @param content The content to execute
 	 * @throws FailedTransactionException Thrown if transaction creation or execution failed
 	 */
-	public void execute(TransactionContent<KEY, VALUE> content) throws FailedTransactionException {
+	public void execute(TransactionContent<KEY, VALUE, RETURN> content) throws FailedTransactionException {
 		content.setData(dataVault);
 		try {
 			Transaction t = initiateTransaction(content);
@@ -48,7 +48,6 @@ public class TransactionManager<KEY, VALUE> {
 			Transaction t = getTransaction(transactionId);
 			t.commit();
 			transactionsTable.remove(transactionId);
-			System.out.println("Transaction COMMITTED - ID: " + transactionId);
 		} catch (InvalidTransactionException e) {
 			throw new InconsistentDataException("Transaction with id {" + transactionId + "} does not exist while it should");
 		}
@@ -63,13 +62,12 @@ public class TransactionManager<KEY, VALUE> {
 			Transaction t = getTransaction(transactionId);
 			t.abort();
 			transactionsTable.remove(transactionId);
-			System.out.println("Transaction ABORTED - ID: " + transactionId);
 		} catch (InvalidTransactionException e) {
 			// Do nothing, no harm will be caused
 		}
 	}
 	
-	private Transaction initiateTransaction(TransactionContent<KEY, VALUE> content) throws InvalidTransactionException {
+	private Transaction initiateTransaction(TransactionContent<KEY, VALUE, RETURN> content) throws InvalidTransactionException {
 		if (transactionsTable.containsKey(content.getId()))
 			throw new InvalidTransactionException("Transaction ID already exists");
 		
