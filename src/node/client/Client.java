@@ -2,12 +2,15 @@ package node.client;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import org.joda.time.DateTime;
@@ -29,6 +32,7 @@ import node.data.ClientDataLoader;
 import node.data.StaticDataLoadException;
 import data.system.ClusterInfo;
 import data.system.NodeInfo;
+import data.system.Ticket;
 import data.trainnetwork.Network;
 import data.trainnetwork.Seat;
 import data.trainnetwork.Section;
@@ -59,8 +63,11 @@ public class Client extends Thread {
 	
 	private MainWindow mainWindow;
 	private BookingWindow bookingWindow;
+	private TicketsWindow ticketsWindow;
 	
 	private boolean searching = false;
+	
+	private List<Ticket> tickets = new ArrayList<Ticket>();
 	
 	public Client(String location) throws FatalNodeException {
 		staticServerLocation = location;
@@ -111,6 +118,12 @@ public class Client extends Thread {
 				bookingWindow.setVisible(true);
 			}
 		});
+		mainWindow.getBtnCancelABooking().addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				createNewTicketsWindow();
+			}
+		});
 		
 		bookingWindow.getSearchButton().addMouseListener(new MouseAdapter(){
 			@Override
@@ -140,28 +153,6 @@ public class Client extends Thread {
 		return companyInterface.getStatusUpdate(sections);
 	}
 	
-//	public void test() {
-//		String
-//			source = "DUBPS",
-//			target = "GALWY";
-//		
-//		try {
-//			HashSet<Section> sections = findJourney(source, target);
-//			Set<Seat> seats = bookJourney(sections);
-//			
-//			for (Seat seat : seats) {
-//				System.out.println(seat.toString());
-//			}
-//			
-//			System.out.println(getStatusUpdate(sections));
-//			
-//			
-////			cancelJourney(seats);
-//		} catch (BookingException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
 	private Station getStation(String stationId) {
 		for (Station station : network.vertexSet()) {
 			if (station.getID().equalsIgnoreCase(stationId)) {
@@ -174,9 +165,9 @@ public class Client extends Thread {
 	
 	private void handleSearchRequest() {
 		bookingWindow.printStatus("Searching...");
-		String originID = bookingWindow.getOriginID();
-		String destinationID = bookingWindow.getDestinationID();
-		DateTime from = bookingWindow.getStartDateTime();
+		final String originID = bookingWindow.getOriginID();
+		final String destinationID = bookingWindow.getDestinationID();
+		final DateTime from = bookingWindow.getStartDateTime();
 		
 		searching = true;
 		System.out.println("Client: Starting path search with parameters {source:'" + originID + 
@@ -202,19 +193,37 @@ public class Client extends Thread {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					Set<Seat> journey = bookJourney(new HashSet<Section>(sections));
+					
+					Ticket ticket = new Ticket(originID, destinationID, from, journey);
+					tickets.add(ticket);
+					
+					JOptionPane.showMessageDialog(window, "Ticket has been booked!\n" + ticket);
 					window.dispose();
-					
-					// TODO display journey information in a new screen
-					
 				} catch (BookingException ex) {
 					String message = "Failed to book journey: " + ex.getMessage();
 					System.err.println(message);
-					JOptionPane.showMessageDialog(window, message, "Failed to book journey", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, message, "Failed to book journey", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
 		
 		window.setVisible(true);
-		// TODO display result & book
+	}
+	
+	private void createNewTicketsWindow() {
+		ticketsWindow = new TicketsWindow(tickets);
+		Vector<JButton> buttons = ticketsWindow.getCancelButtons();
+		for (int i = 0; i < buttons.size(); i++) {
+			final int index = i;
+			buttons.get(i).addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					cancelJourney(tickets.get(index).getSeats());
+					ticketsWindow.dispose();
+					JOptionPane.showMessageDialog(null, "Ticket cancelled");
+				}
+			});
+		}
+		ticketsWindow.setVisible(true);
 	}
 }
