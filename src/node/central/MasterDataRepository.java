@@ -1,8 +1,6 @@
 package node.central;
 
 import java.io.*;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.*;
 
 import node.NodeConstants;
@@ -149,23 +147,5 @@ public class MasterDataRepository extends StaticDataRepository {
 		System.out.println(sections.size());
 		System.out.println(stations.size());
 		System.out.println(nodes);
-	}
-	
-	public static void main(String[] args) {
-		try {
-			System.out.println(Inet4Address.getLocalHost().getHostAddress());
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		MasterDataRepository repo;
-		try {
-			repo = new MasterDataRepository();
-			repo.start();
-			//repo.test();
-		} catch (RepositoryException e) {
-			e.printStackTrace();
-		}
 	}
 }

@@ -209,18 +209,4 @@ public class DistributedRepositoryDataStore extends DataRepository {
 			sections.add(s);
 		}
 	}
-	
-	/**
-	 * Run a {@link DistributedRepositoryDataStore}
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		try {
-			DistributedRepositoryDataStore ds = new DistributedRepositoryDataStore();
-			ds.test();
-			ds.start();
-		} catch (RepositoryException e) {
-			e.printStackTrace();
-		}
-	}
 }

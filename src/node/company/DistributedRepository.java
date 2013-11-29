@@ -40,9 +40,11 @@ public abstract class DistributedRepository extends DataRepository {
 	}
 	
 	protected static String REPOSITORY_NAME;
-	public static final int PORT = NodeConstants.DYNAMIC_CLUSTER_PORT;
+	public static final int 
+		PORT = NodeConstants.DYNAMIC_CLUSTER_PORT,
+		HELLO_RATE = 60;
 	
-	protected static String DATA_STORE_LOCATION;
+	public static String DATA_STORE_LOCATION;
 	protected static final int DATA_STORE_PORT = NodeConstants.DYNAMIC_CLUSTER_STORE_PORT;
 
 	protected static ShallowLock<Map<String, Vault<BookableSection>>> sections;
@@ -58,13 +60,29 @@ public abstract class DistributedRepository extends DataRepository {
 		sayHello();
 	}
 
+	public void run() {
+		super.run();
+		
+		UnicastSocketClient client = new UnicastSocketClient(DATA_STORE_LOCATION, DATA_STORE_PORT);
+		while (true) {
+			try {
+				sleep(1000 * HELLO_RATE);
+				getNodeInfo(client);
+				sayHello();
+			} catch (InterruptedException e) {
+				// Just loop around...
+				System.err.println("Failed to wait the minimum HELLO time: " + e.getMessage());
+			}
+		}
+	}
+	
 	@Override
 	protected void initialize() throws DistributedRepositoryException {
 		sections = new ShallowLock<Map<String, Vault<BookableSection>>>(new HashMap<String, Vault<BookableSection>>());
 		transactions = new TransactionManager<String, Vault<BookableSection>, Set<Seat>>(sections);
 		transactionCoordinators = new TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>>();
 		communicationLock = new WriteOnlyLock<Integer>(new Integer(NodeConstants.DYNAMIC_CLUSTER_PORT));
-		nodes = new HashSet<NodeInfo>();
+		nodes = Collections.synchronizedSet(new HashSet<NodeInfo>());
 		
 		try {
 			restoreFromStore();

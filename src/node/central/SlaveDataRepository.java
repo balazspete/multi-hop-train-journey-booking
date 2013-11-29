@@ -29,7 +29,7 @@ public class SlaveDataRepository extends StaticDataRepository {
 	
 	private Network network;
 	
-	private static String MASTER_LOCATION;
+	public static String MASTER_LOCATION;
 	
 	/**
 	 * Create a {@link SlaveDataRepository}
@@ -100,25 +100,5 @@ public class SlaveDataRepository extends StaticDataRepository {
 			communicationsLock.writeUnlock(token);
 		}
 		//--- end HELLO
-	}
-	
-	public void test() {
-		System.out.println(network.vertexSet().size());
-		System.out.println(network.edgeSet().size());
-	}
-
-	public static void main(String[] args) {
-		try {
-			if (args.length < 1 || !(args[0] instanceof String)) {
-				throw new RepositoryException("Arg1 required to be the master node's location of the static data cluster");
-			}
-			
-			SlaveDataRepository.MASTER_LOCATION = args[0];
-			SlaveDataRepository repo = new SlaveDataRepository();
-			repo.start();
-			//repo.test();
-		} catch (RepositoryException e) {
-			e.printStackTrace();
-		}
 	}
 }

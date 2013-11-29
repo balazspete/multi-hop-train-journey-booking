@@ -19,7 +19,7 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 	// Time between backups (in seconds)
 	private final int TIME_BETWEEN_BACKUPS = 100;
 	
-	protected static String CLUSTER_NAME;
+	public static String CLUSTER_NAME;
 	
 	public DistributedRepositoryMaster() throws RepositoryException {
 		super();
@@ -108,28 +108,6 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 			System.err.println("DistributedRepositoryMaster|backup: " + e.getMessage());
 		} finally {
 			communicationLock.writeUnlock(t);
-		}
-	}
-
-	public static void main(String[] args) {
-		DistributedRepositoryMaster r;
-		try {
-			if (args.length < 1 || !(args[0] instanceof String)) {
-				throw new RepositoryException("Arg1 required to be the master node's location of the static data cluster");
-			}
-			
-			if (args.length < 2 || !(args[1] instanceof String)) {
-				throw new RepositoryException("Arg1 required to be the name of the static data cluster");
-			}
-
-			DistributedRepositoryMaster.DATA_STORE_LOCATION = args[0];
-			DistributedRepositoryMaster.CLUSTER_NAME = args[1];
-			r = new DistributedRepositoryMaster();
-			r.start();
-			// TODO re-enable backups
-			//r.scheduledBackup();
-		} catch (RepositoryException e) {
-			e.printStackTrace();
 		}
 	}
 }

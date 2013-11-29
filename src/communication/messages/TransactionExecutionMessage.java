@@ -1,9 +1,6 @@
 package communication.messages;
 
 import java.io.Serializable;
-import java.util.Set;
-
-import data.trainnetwork.Seat;
 
 import transaction.TransactionContent;
 

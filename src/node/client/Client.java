@@ -88,9 +88,6 @@ public class Client extends Thread {
 	
 	@Override
 	public void run() {
-		System.out.println("running");
-		test();
-		
 		
 	}
 	
@@ -145,21 +142,7 @@ public class Client extends Thread {
 		return null;
 	}
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		try {
-			if (args.length < 1 || !(args[0] instanceof String)) {
-				throw new FatalNodeException("Arg1 required to be the master node's location of the static data cluster");
 			}
-			
-			Client c = new Client(args[0]);
-			c.start();
-		} catch (FatalNodeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	
