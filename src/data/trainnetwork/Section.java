@@ -36,6 +36,13 @@ public class Section extends DefaultWeightedEdge {
 	protected DateTime startTime;
 	protected long journeyLength;
 	protected int cost, maxPassengers, sectionNumber;
+	/**
+	 * @return the cost
+	 */
+	public int getCost() {
+		return cost;
+	}
+
 	protected Status status;
 
 	/**
@@ -179,12 +186,15 @@ public class Section extends DefaultWeightedEdge {
 	}
 	
 	public double getWeight(Section other) {
-		if (other != null &&
-				other.getRouteID().equalsIgnoreCase(routeID)) {
+		if (other != null && isOfSameRoute(other)) {
 			return getWeight();
 		} else {
 			return getWeight() * DIFFERENT_ROUTE_MULTIPLICATOR;
 		}
+	}
+	
+	public boolean isOfSameRoute(Section other) {
+		return other.getRouteID().equalsIgnoreCase(routeID);
 	}
 	
 	@Override

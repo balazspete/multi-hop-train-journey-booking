@@ -66,4 +66,8 @@ public class Seat implements Serializable {
 	public boolean equals(Seat seat) {
 		return id.equals(seat.getId());
 	}
+	
+	public String toString() {
+		return id;
+	}
 }
