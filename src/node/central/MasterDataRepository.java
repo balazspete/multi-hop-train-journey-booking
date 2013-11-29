@@ -11,6 +11,7 @@ import org.json.simple.*;
 import org.json.simple.parser.*;
 
 import transaction.Lock.Token;
+import util.JSONTools;
 
 import communication.CommunicationException;
 import communication.messages.ClusterHelloMessage;
@@ -34,18 +35,22 @@ public class MasterDataRepository extends StaticDataRepository {
 	
 	private static final int PORT = NodeConstants.STATIC_CLUSTER_MASTER_PORT;
 	
-	private static final String 
-		CLUSTER_NAME = "CENTRAL STATIC DATA CLUSTER",
-		ROUTES_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/compiled_routes.json", 
-		STATIONS_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/stations.json",
-		COMPANY_LOCATIONS_DATA = "/Users/balazspete/Projects/multi-hop-train-booking/companies.json";
+	private static final String CLUSTER_NAME = "CENTRAL STATIC DATA CLUSTER";
+	private static String STATIONS_AND_ROUTES_DATA, COMPANY_LOCATIONS_DATA;
 	
 	/**
 	 * Create a new {@link MasterDataRepository}
 	 * @throws RepositoryException Thrown if the initialisation failed
 	 */
-	public MasterDataRepository() throws RepositoryException {
+	public MasterDataRepository(
+			String stations_and_routes_data, 
+			String company_locations_data) 
+	throws RepositoryException {
 		super(PORT);
+		
+		STATIONS_AND_ROUTES_DATA = stations_and_routes_data;
+		COMPANY_LOCATIONS_DATA = company_locations_data;
+		
 		try {
 			update();
 			connectToCompanyDataClusters();
@@ -70,13 +75,15 @@ public class MasterDataRepository extends StaticDataRepository {
 		JSONParser parser = new JSONParser();
 		
 		try {
-			JSONArray _stations = (JSONArray) parser.parse(new FileReader(STATIONS_DATA));
+			JSONObject rawData = (JSONObject) parser.parse(new FileReader(STATIONS_AND_ROUTES_DATA));
+			
+			JSONArray _stations = (JSONArray) JSONTools.getParameter(rawData, "stations");
 			for (Object _station : _stations) {
 				Station station = Station.getStationFromJSON((JSONObject) _station);
 				stations.add(station);
 			}
 
-			JSONArray routes = (JSONArray) parser.parse(new FileReader(ROUTES_DATA));
+			JSONArray routes = (JSONArray) JSONTools.getParameter(rawData, "routes");
 			for (Object _route : routes) {
 				Route route = Route.getRouteFromJSON((JSONObject) _route);
 				routeToCompanies.add(new RouteToCompany(route));
@@ -141,11 +148,5 @@ public class MasterDataRepository extends StaticDataRepository {
 		}
 		
 		communicationsLock.writeUnlock(token);
-	}
-
-	public void test() {
-		System.out.println(sections.size());
-		System.out.println(stations.size());
-		System.out.println(nodes);
 	}
 }
