@@ -141,9 +141,6 @@ public class Client extends Thread {
 		
 		return null;
 	}
-	
-			}
-	}
 
 	
 	
