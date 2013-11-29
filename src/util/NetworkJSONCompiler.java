@@ -43,13 +43,13 @@ public class NetworkJSONCompiler {
 		}
 	}
 
-	public static Map compile(JSONArray stations, JSONArray routes, DateTime day) throws MissingParameterException, IOException {
+	public static Map compile(JSONArray stations, JSONArray routes, DateTime[] days) throws MissingParameterException, IOException {
 		LinkedHashMap network = new LinkedHashMap();
 		
 		verifyStations(stations);
 		network.put("stations", stations);
 		
-		Vector _routes = compileRoutes(routes, day);
+		Vector _routes = compileRoutes(routes, days);
 		network.put("routes", _routes);
 		
 		return network;
@@ -68,7 +68,7 @@ public class NetworkJSONCompiler {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static Vector compileRoutes(JSONArray routes, DateTime day) throws MissingParameterException, IOException {
+	private static Vector compileRoutes(JSONArray routes, DateTime[] days) throws MissingParameterException, IOException {
 		Vector result = new Vector();
 		
 		for (int a = 0; a<routes.size(); a++) {
@@ -113,11 +113,13 @@ public class NetworkJSONCompiler {
 				
 				int i = 0;
 				JSONArray arr = new JSONArray();
-				for (Section s : _sections) {
-					JSONObject _s = s.toJSON(reverse);
-					_s.put("time", time.toDateTime(day).toString());
-					arr.add(_s.clone());
-					time = time.plusSeconds(((int) s.getLength())+300);
+				for (DateTime day : days) {
+					for (Section s : _sections) {
+						JSONObject _s = s.toJSON(reverse);
+						_s.put("time", time.toDateTime(day).toString());
+						arr.add(_s.clone());
+						time = time.plusSeconds(((int) s.getLength())+300);
+					}
 				}
 				
 				route.put("routeID", ((JSONObject) arr.get(0)).get("start") + "-" + ((JSONObject) arr.get(sectionsSize-1)).get("end") + "-" +startsCount);
@@ -139,14 +141,19 @@ public class NetworkJSONCompiler {
 			return;
 		}
 		
-		DateTime day = DateTime.now();
+		int max_days = 5;
+		DateTime[] days = new DateTime[max_days];
+		for (int i = 0; i < max_days; i++) {
+			days[i] = DateTime.now().plusDays(i);
+		}
+		
 		JSONParser parser = new JSONParser();
 		
 		try {
 			JSONArray stations = (JSONArray) parser.parse(new FileReader(args[0]));
 			JSONArray routes = (JSONArray) parser.parse(new FileReader(args[1]));
 			
-			Map result = compile(stations, routes, day);
+			Map result = compile(stations, routes, days);
 			
 			PrintStream out;
 			if(args.length == 2 || args[2].equalsIgnoreCase("stdout")) {

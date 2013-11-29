@@ -18,29 +18,26 @@ public class StaticDataClusterApp {
 		if (args[0].equalsIgnoreCase("--help")) {
 			System.out.println(
 				"StaticDataClusterApp usage:\n" +
-				"StaticDataClusterApp \"master\"\n" +
+				"StaticDataClusterApp \"master\" stations-and-routes company-locations\n" +
 				"StaticDataClusterApp master-location\n"
 			);
 			return;
 		}
 		
 		if (args[0].equalsIgnoreCase("master")) {
-			initMaster();
+			initMaster(args);
 		} else {
 			initSlave(args);
 		}
 	}
 
-	private static void initMaster() {
+	private static void initMaster(String[] args) {
 		try {
-			System.out.println(Inet4Address.getLocalHost().getHostAddress());
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
-		}
+			if (args.length < 3) {
+				throw new RepositoryException("Arg2 - 'raw stations&routes data', Arg3 - 'company locations'");
+			}
 		
-		MasterDataRepository repo;
-		try {
-			repo = new MasterDataRepository();
+			MasterDataRepository repo = new MasterDataRepository(args[1], args[2]);
 			repo.start();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
