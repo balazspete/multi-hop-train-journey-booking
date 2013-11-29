@@ -49,6 +49,7 @@ public class PathWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public PathWindow(Network network, List<Section> sections, String origin, String target) {
+		setResizable(false);
 		this.sections = sections;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

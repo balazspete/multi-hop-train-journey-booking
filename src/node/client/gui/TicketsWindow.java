@@ -32,6 +32,7 @@ public class TicketsWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public TicketsWindow(List<Ticket> tickets) {
+		setResizable(false);
 		cancelButtons = new Vector<JButton>();
 		
 		setBounds(100, 100, 450, 300);
