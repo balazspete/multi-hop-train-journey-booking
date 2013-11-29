@@ -1,9 +1,15 @@
 package node.client;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
+
+import org.joda.time.DateTime;
 
 import algorithm.graph.AppliedDijkstraShortestPath;
 
@@ -17,6 +23,7 @@ import transaction.WriteOnlyLock;
 
 import node.FatalNodeException;
 import node.NodeConstants;
+import node.client.gui.*;
 import node.data.ClientDataLoader;
 import node.data.StaticDataLoadException;
 import data.system.ClusterInfo;
@@ -33,6 +40,8 @@ import data.trainnetwork.Station;
  */
 public class Client extends Thread {
 	
+	public static final int MAX_DATES = 5;
+	
 	private static WriteOnlyLock<Integer> communicationsLock = new WriteOnlyLock<Integer>(1);
 	
 	private static Network network;
@@ -46,6 +55,11 @@ public class Client extends Thread {
 	private String staticServerLocation;
 	
 	private CompanyRepositoryInterface companyInterface;
+	
+	private MainWindow mainWindow;
+	private BookingWindow bookingWindow;
+	
+	private boolean searching = false;
 	
 	public Client(String location) throws FatalNodeException {
 		staticServerLocation = location;
@@ -88,11 +102,27 @@ public class Client extends Thread {
 	
 	@Override
 	public void run() {
+		mainWindow = new MainWindow();
+		bookingWindow = new BookingWindow(network.vertexSet());
+		mainWindow.getBtnBookTrainJourney().addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				bookingWindow.setVisible(true);
+			}
+		});
 		
+		bookingWindow.getSearchButton().addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (!searching) handleSearchRequest();
+			}
+		});
+		
+		mainWindow.setVisible(true);
 	}
 	
-	public HashSet<Section> findJourney(String source, String target) {
-		AppliedDijkstraShortestPath dijkstra = new AppliedDijkstraShortestPath(network, getStation(source), getStation(target));
+	public HashSet<Section> findJourney(String source, String target, DateTime from) {
+		AppliedDijkstraShortestPath dijkstra = new AppliedDijkstraShortestPath(network, getStation(source), getStation(target), from);
 		return new HashSet<Section>(dijkstra.getPath());
 	}
 	
@@ -110,27 +140,27 @@ public class Client extends Thread {
 		return companyInterface.getStatusUpdate(sections);
 	}
 	
-	public void test() {
-		String
-			source = "DUBPS",
-			target = "GALWY";
-		
-		try {
-			HashSet<Section> sections = findJourney(source, target);
-			Set<Seat> seats = bookJourney(sections);
-			
-			for (Seat seat : seats) {
-				System.out.println(seat.toString());
-			}
-			
-			System.out.println(getStatusUpdate(sections));
-			
-			
-//			cancelJourney(seats);
-		} catch (BookingException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void test() {
+//		String
+//			source = "DUBPS",
+//			target = "GALWY";
+//		
+//		try {
+//			HashSet<Section> sections = findJourney(source, target);
+//			Set<Seat> seats = bookJourney(sections);
+//			
+//			for (Seat seat : seats) {
+//				System.out.println(seat.toString());
+//			}
+//			
+//			System.out.println(getStatusUpdate(sections));
+//			
+//			
+////			cancelJourney(seats);
+//		} catch (BookingException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	private Station getStation(String stationId) {
 		for (Station station : network.vertexSet()) {
@@ -142,9 +172,27 @@ public class Client extends Thread {
 		return null;
 	}
 	
-			}
-	}
+	private void handleSearchRequest() {
+		bookingWindow.printStatus("Searching...");
+		String originID = bookingWindow.getOriginID();
+		String destinationID = bookingWindow.getDestinationID();
+		DateTime from = bookingWindow.getStartDateTime();
+		
+		searching = true;
+		System.out.println("Client: Starting path search with parameters {source:'" + originID + 
+				"', target:'" + destinationID + "', time:'" + from + "'");
+		
+		HashSet<Section> sections = findJourney(originID, destinationID, from);
+		System.out.println("Client: Search ended");
+		searching = false;
 
-	
-	
+		if (sections.size() == 0) {
+			String message = "Your search returned no results";
+			bookingWindow.printStatus(message);
+			JOptionPane.showMessageDialog(bookingWindow, message);
+			return;
+		}
+		
+		// TODO display result & book
+	}
 }
