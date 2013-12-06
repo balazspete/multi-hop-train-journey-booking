@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.joda.time.DateTime;
+
 import transaction.Lock.Token.LockType;
 
 import com.rits.cloning.Cloner;
@@ -36,6 +38,7 @@ public class Lock<T> {
 		
 		private String id;
 		private LockType type;
+		private DateTime time;
 		
 		/**
 		 * Create a new lock with
@@ -44,6 +47,7 @@ public class Lock<T> {
 		public Token(LockType type) {
 			id = new BigInteger(130, new SecureRandom()).toString(32);
 			this.type = type;
+			time = DateTime.now();
 		}
 		
 		/**
@@ -69,6 +73,10 @@ public class Lock<T> {
 		 */
 		protected String getId() {
 			return id;
+		}
+		
+		public boolean isOld(){
+			return time.plusSeconds(60).isBefore(DateTime.now());
 		}
 		
 		@Override
@@ -145,6 +153,7 @@ public class Lock<T> {
 		pendingQueue.add(t);
 		
 		while (writeMode || !pendingQueue.peek().equals(t)) {
+			cleanTokens();
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -174,6 +183,7 @@ public class Lock<T> {
 		pendingQueue.add(t);
 		
 		while (currentLocks.size() > 0 || !pendingQueue.peek().equals(t)) {
+			cleanTokens();
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -227,5 +237,18 @@ public class Lock<T> {
 	 */
 	public boolean isReadLocked() {
 		return !writeMode && currentLocks.size() > 0;
+	}
+	
+	protected void cleanTokens() {
+		Set<Token> toRemove = new HashSet<Token>();
+		for(Token token : currentLocks) {
+			if (token.isOld()) {
+				toRemove.add(token);
+			}
+		}
+		for(Token token : currentLocks) {
+			currentLocks.remove(token);
+			writeMode = false;
+		}
 	}
 }
