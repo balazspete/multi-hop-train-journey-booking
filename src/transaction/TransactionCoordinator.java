@@ -105,16 +105,22 @@ public class TransactionCoordinator<KEY, VALUE, RETURN> extends Thread {
 		if (stage == TransactionStage.INITIAL) {
 			try {
 				doLocalTransaction();
-				doRemoteTransaction();
-				stage = TransactionStage.COMMIT;
 			} catch (FailedTransactionException e) {
+				// Well we failed, kill transaction...
+				transaction.abort();
+				stage = TransactionStage.ABORTED;
 				status = TransactionStatus.DEAD;
-				stage = TransactionStage.ABORT;
 				synchronized (this) {
 					notifyAll();
 				}
+				
 				return;
 			}
+			
+			// we are ready to commit locally...
+			stage = TransactionStage.COMMIT;
+			// Now send transaction over to the others
+			doRemoteTransaction();	
 		} else if (stage == TransactionStage.COMMIT || stage == TransactionStage.ABORT){ 
 			if (stage == TransactionStage.COMMIT) {
 				transaction.commit();
