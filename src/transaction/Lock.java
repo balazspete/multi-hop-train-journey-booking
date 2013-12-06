@@ -240,7 +240,7 @@ public class Lock<T> {
 		return !writeMode && currentLocks.size() > 0;
 	}
 	
-	protected void cleanTokens() {
+	private void cleanTokens() {
 		final Lock _this = this;
 		Runnable clean = new Runnable(){
 			public void run() {
@@ -263,13 +263,5 @@ public class Lock<T> {
 		};
 		
 		new Thread(clean).start();
-	}
-	
-	public static void main(String[] args) {
-		Lock l = new Lock(new Integer(2));
-		l.writeLock();
-		l.readLock();
-		System.out.println("here");
-		System.exit(0);
 	}
 }
