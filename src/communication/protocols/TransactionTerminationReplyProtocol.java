@@ -5,6 +5,14 @@ import transaction.TransactionCoordinatorManager;
 import communication.messages.Message;
 import communication.messages.TransactionTerminationReplyMessage;
 
+/**
+ * A protocol handling the final transaction message from a remote node
+ * @author Balazs Pete
+ *
+ * @param <KEY>
+ * @param <VALUE>
+ * @param <RETURN>
+ */
 public class TransactionTerminationReplyProtocol<KEY, VALUE, RETURN> implements Protocol {
 
 	private TransactionCoordinatorManager<KEY, VALUE, RETURN> manager;

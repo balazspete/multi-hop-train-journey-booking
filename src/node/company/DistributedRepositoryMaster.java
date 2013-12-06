@@ -14,6 +14,11 @@ import data.request.DataTransfer;
 import data.trainnetwork.BookableSection;
 import data.trainnetwork.Seat;
 
+/**
+ * The master node for the distributed repository (aka Dynamic Data Cluster Master)
+ * @author Balazs Pete
+ *
+ */
 public class DistributedRepositoryMaster extends DistributedRepository {
 
 	// Time between backups (in seconds)
@@ -44,7 +49,10 @@ public class DistributedRepositoryMaster extends DistributedRepository {
 		return protocols;
 	}
 	
-	private void scheduledBackup() {
+	/**
+	 * Initiate scheduled backups
+	 */
+	public void scheduledBackup() {
 		while (true) {
 			try {
 				sleep(1000 * TIME_BETWEEN_BACKUPS);

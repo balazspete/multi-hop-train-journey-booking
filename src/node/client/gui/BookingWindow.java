@@ -24,6 +24,11 @@ import node.client.Client;
 import java.awt.Color;
 import java.util.Set;
 
+/**
+ * The interface to book a journey
+ * @author Balazs Pete
+ *
+ */
 public class BookingWindow extends JFrame {
 
 	/**

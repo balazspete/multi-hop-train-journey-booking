@@ -21,6 +21,11 @@ import communication.protocols.TransactionExecutionReplyProtocol;
 import data.trainnetwork.BookableSection;
 import data.trainnetwork.Seat;
 
+/**
+ * The slave node for a distributed repository (aka Dynamic Data Cluster Slave)
+ * @author Balazs Pete
+ *
+ */
 public class DistributedRepositorySlave extends DistributedRepository {
 
 	public DistributedRepositorySlave() throws RepositoryException {
@@ -51,6 +56,7 @@ public class DistributedRepositorySlave extends DistributedRepository {
 		return protocols;
 	}
 
+	@Deprecated
 	public void test() {
 		try {
 			sleep(5000);

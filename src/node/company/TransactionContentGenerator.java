@@ -16,6 +16,11 @@ import transaction.SudoTransactionContent;
 import transaction.TransactionContent;
 import transaction.Vault;
 
+/**
+ * CreateGet the {@link TransactionContent} for the required transaction type 
+ * @author Balazs Pete
+ *
+ */
 public abstract class TransactionContentGenerator extends TransactionContent<String, Vault<BookableSection>, Set<Seat>> {
 
 	/**
@@ -37,6 +42,11 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 		return c;
 	}
 	
+	/**
+	 * Get the {@link TransactionContent} for prebooking seats
+	 * @param sections The sections we wish to book seats for
+	 * @return The generated transaction content
+	 */
 	public static SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>> getSeatPreBookingContent(final HashSet<Section> sections) {
 		SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>> content 
 				= new SudoTransactionContent<String, Vault<BookableSection>, Set<Seat>>() {
@@ -79,6 +89,11 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 		return content;
 	}
 	
+	/**
+	 * Get the {@link TransactionContent} for booking seats
+	 * @param sections The sections we wish to book seats for
+	 * @return The generated transaction content
+	 */
 	public static TransactionContent<String, Vault<BookableSection>, Set<Seat>> getSeatReservingContent(final HashSet<Seat> seats) {
 		TransactionContent<String, Vault<BookableSection>, Set<Seat>> content 
 				= new TransactionContent<String, Vault<BookableSection>, Set<Seat>>() {
@@ -111,6 +126,11 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 		return content;
 	}
 	
+	/**
+	 * Get the {@link TransactionContent} for cancelling seats
+	 * @param sections The seats we wish to cancel
+	 * @return The generated transaction content
+	 */
 	public static TransactionContent<String, Vault<BookableSection>, Set<Seat>> getSeatCancellingContent(final HashSet<Seat> seats) {
 		TransactionContent<String, Vault<BookableSection>, Set<Seat>> content 
 				= new TransactionContent<String, Vault<BookableSection>, Set<Seat>>() {
@@ -144,6 +164,11 @@ public abstract class TransactionContentGenerator extends TransactionContent<Str
 		return content;
 	}
 	
+	/**
+	 * Get the {@link TransactionContent} for cancelling prebookings
+	 * @param sections The seats we wish to cancel
+	 * @return The generated transaction content
+	 */
 	public static TransactionContent<String, Vault<BookableSection>, Set<Seat>> getSeatPrebookCancelContent(final HashSet<Seat> seats) {
 		TransactionContent<String, Vault<BookableSection>, Set<Seat>> content 
 				= new TransactionContent<String, Vault<BookableSection>, Set<Seat>>() {

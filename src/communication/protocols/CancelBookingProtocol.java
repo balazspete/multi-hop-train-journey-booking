@@ -15,6 +15,11 @@ import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
 import data.trainnetwork.Seat;
 
+/**
+ * A protocol used to handle booking cancellation transaction messages 
+ * @author Balazs Pete
+ *
+ */
 public class CancelBookingProtocol extends BookingProtocol {
 
 	public CancelBookingProtocol(

@@ -2,6 +2,11 @@ package communication.messages;
 
 import java.io.Serializable;
 
+/**
+ * A message containing either COMMIT or ABRT action for remote nodes
+ * @author Balazs Pete
+ *
+ */
 public class TransactionTerminationMessage extends TransactionMessage {
 
 	/**

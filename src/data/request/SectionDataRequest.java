@@ -4,6 +4,11 @@ import org.joda.time.DateTime;
 
 import data.trainnetwork.SectionInfo;
 
+/**
+ * A request for {@link Section}s
+ * @author Balazs Pete
+ *
+ */
 public class SectionDataRequest extends DataRequest<SectionInfo> {
 
 	/**

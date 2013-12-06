@@ -7,6 +7,7 @@ import java.io.Serializable;
  * @author Balazs Pete
  *
  */
+@Deprecated
 public class TextMessage extends Message {
 	
 	/**

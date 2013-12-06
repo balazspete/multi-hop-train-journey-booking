@@ -125,8 +125,6 @@ public class CompanyRepositoryInterface {
 			String sectionId = seat.getAbstractSectionId();
 			NodeInfo company = routeToCompanies.get(sectionId);
 			
-			System.out.println(company);
-			
 			HashSet<Seat> _seats;
 			if (!companyToSeats.containsKey(company)) {
 				_seats = new HashSet<Seat>();
@@ -137,7 +135,7 @@ public class CompanyRepositoryInterface {
 			
 			_seats.add(seat);
 		}
-		System.out.println(companyToSeats);
+
 		cancelBooking(companyToSeats, Action.CANCEL);
 	}
 	
@@ -155,6 +153,7 @@ public class CompanyRepositoryInterface {
 	 * @param sections The sections to request a status update on
 	 * @return The updated sections
 	 */
+	@SuppressWarnings("unchecked")
 	public Set<Section> getStatusUpdate(Set<Section> sections) {
 		HashMap<NodeInfo, HashSet<Section>> companyToSections = sortSectionsByCompany(sections);
 		HashSet<Section> replied = new HashSet<Section>();

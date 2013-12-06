@@ -21,6 +21,11 @@ import data.system.NodeInfo;
 import data.trainnetwork.BookableSection;
 import data.trainnetwork.Seat;
 
+/**
+ * A protocol used to handle booking transaction messages 
+ * @author Balazs Pete
+ *
+ */
 public class BookingProtocol implements Protocol {
 
 	private TransactionCoordinatorManager<String, Vault<BookableSection>, Set<Seat>> transactionCoordinators;

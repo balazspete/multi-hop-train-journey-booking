@@ -6,6 +6,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.Font;
 
+/**
+ * The main interface of the client
+ * @author Balazs Pete
+ *
+ */
 public class MainWindow extends JFrame {
 
 	/**

@@ -1,6 +1,11 @@
 import node.company.*;
 import node.data.RepositoryException;
 
+/**
+ * A launcher wrapper for the dynamic data cluster modules 
+ * @author Balazs Pete
+ *
+ */
 public class DynamicDataClusterApp {
 
 	/**
@@ -23,7 +28,7 @@ public class DynamicDataClusterApp {
 		}
 		
 		if (args[0].equalsIgnoreCase("data-store")) {
-			initDataStore();
+			initDataStore(args);
 			return;
 		}
 		
@@ -36,8 +41,13 @@ public class DynamicDataClusterApp {
 	}
 
 	
-	private static void initDataStore() {
+	private static void initDataStore(String[] args) {
 		try {
+			if (args.length < 2 || !(args[1] instanceof String)) {
+				throw new RepositoryException("Arg1 required to be the data store's save file location");
+			}
+			
+			DistributedRepositoryDataStore.STORE_FILE_PATH= args[1];
 			DistributedRepositoryDataStore ds = new DistributedRepositoryDataStore();
 			ds.test();
 			ds.start();
@@ -62,7 +72,7 @@ public class DynamicDataClusterApp {
 			r = new DistributedRepositoryMaster();
 			r.start();
 			// TODO re-enable backups
-			//r.scheduledBackup();
+			r.scheduledBackup();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}

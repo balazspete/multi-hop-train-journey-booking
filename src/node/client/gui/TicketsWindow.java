@@ -18,6 +18,11 @@ import java.awt.Component;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * the interface displaying the booked tickets
+ * @author Balazs Pete
+ *
+ */
 public class TicketsWindow extends JFrame {
 
 	/**

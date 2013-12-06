@@ -10,6 +10,11 @@ import communication.messages.HelloType;
 import communication.messages.Message;
 import data.system.NodeInfo;
 
+/**
+ * A protocol handling hello messages and registering them
+ * @author Balazs pete
+ *
+ */
 public class HelloProtocol implements Protocol {
 
 	private Set<NodeInfo> nodes;

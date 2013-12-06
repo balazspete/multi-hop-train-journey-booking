@@ -16,7 +16,7 @@ import node.data.DataRepository;
 import node.data.RepositoryException;
 
 /**
- * A node used to store BookableSection data
+ * A node used to store BookableSection data (aka Dynamic Data Cluster Data Store)
  * @author Balazs Pete
  *
  */
@@ -43,29 +43,13 @@ public class DistributedRepositoryDataStore extends DataRepository {
 	public static class Store<DATA> extends HashSet<DATA> implements Serializable {
 
 		private static final long serialVersionUID = -5604189350057652145L;
-		private static final String
-			EXTENSION = ".cache",
-			// TODO get this from args or something
-			CACHE = "/Users/balazspete/Projects/multi-hop-train-booking/distributed_datastore";
+		private static final String EXTENSION = ".cache";
 		
 		private String name, cache;
-		
-		public Store(String name) {
-			this(name, CACHE);
-		}
 		
 		public Store(String name, String cache) {
 			this.name = name;
 			this.cache = cache;
-		}
-		
-		/**
-		 * Load a {@link Store} from the default file
-		 * @return The loaded store
-		 * @throws StoreActionException Thrown if the specified creation of load failed (may be due to file errors, etc)
-		 */
-		public static Store<?> restore(String name) throws StoreActionException {
-			return restore(CACHE, name);
 		}
 		
 		/**
@@ -154,6 +138,8 @@ public class DistributedRepositoryDataStore extends DataRepository {
 			}
 		}
 	}
+	
+	public static String STORE_FILE_PATH; 
 
 	protected static Store<BookableSection> sections;
 	protected StoreSaver saver;
@@ -171,17 +157,17 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		saver.start();
 		
 		// NodeInfos should not be backed up
-		nodes = new Store<NodeInfo>("nodeinfos");
+		nodes = new Store<NodeInfo>(STORE_FILE_PATH, "nodeinfos");
 	}
 	
 	@SuppressWarnings("rawtypes")
 	private Store<?> getStore(String name) {
 		try {
-			return Store.restore(name);
+			return Store.restore(STORE_FILE_PATH, name);
 		} catch (StoreActionException e) {
 			// No previously created cache, initiate blank Store
 			System.err.println("No previous cache found for `" + name + "`, creating blank data-store...");
-			return new Store(name);
+			return new Store(STORE_FILE_PATH, name);
 		}
 	}
 

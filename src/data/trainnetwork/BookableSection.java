@@ -4,6 +4,11 @@ import java.util.*;
 
 import org.joda.time.DateTime;
 
+/**
+ * A {@link Section} allowing seat reservations
+ * @author Balazs Pete
+ *
+ */
 public class BookableSection extends Section {
 
 	/**

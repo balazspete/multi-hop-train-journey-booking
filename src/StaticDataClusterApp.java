@@ -1,9 +1,11 @@
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
-
 import node.central.*;
 import node.data.RepositoryException;
 
+/**
+ * A launcher wrapper for the static data cluster modules 
+ * @author Balazs Pete
+ *
+ */
 public class StaticDataClusterApp {
 
 	/**

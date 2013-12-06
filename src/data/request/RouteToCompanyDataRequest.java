@@ -2,6 +2,11 @@ package data.request;
 
 import data.system.RouteToCompany;
 
+/**
+ * A request to {@link RouteToCompany} mappings
+ * @author Balazs Pete
+ *
+ */
 public class RouteToCompanyDataRequest extends DataRequest<RouteToCompany> {
 
 	/**

@@ -22,6 +22,11 @@ import java.util.Vector;
 import javax.swing.JTextPane;
 import java.awt.SystemColor;
 
+/**
+ * The interface displaying the found journey
+ * @author Balazs Pete
+ *
+ */
 public class PathWindow extends JFrame {
 
 	/**
