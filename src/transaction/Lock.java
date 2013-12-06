@@ -27,6 +27,8 @@ public class Lock<T> {
 	 */
 	public static class Token {
 		
+		public static final int TIMEOUT = 200;
+		
 		/**
 		 * Type of a lock (READ or WRITE)
 		 * @author Balazs Pete
@@ -76,7 +78,7 @@ public class Lock<T> {
 		}
 		
 		public boolean isOld(){
-			return time.plusSeconds(60).isBefore(DateTime.now());
+			return time.plusSeconds(TIMEOUT).isBefore(DateTime.now());
 		}
 		
 		@Override
@@ -99,6 +101,7 @@ public class Lock<T> {
 	 */
 	public Lock(T data) {
 		lockedData = cloner.deepClone(data);
+		cleanTokens();
 	}
 	
 	/**
@@ -153,7 +156,6 @@ public class Lock<T> {
 		pendingQueue.add(t);
 		
 		while (writeMode || !pendingQueue.peek().equals(t)) {
-			cleanTokens();
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -183,7 +185,6 @@ public class Lock<T> {
 		pendingQueue.add(t);
 		
 		while (currentLocks.size() > 0 || !pendingQueue.peek().equals(t)) {
-			cleanTokens();
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -240,15 +241,35 @@ public class Lock<T> {
 	}
 	
 	protected void cleanTokens() {
-		Set<Token> toRemove = new HashSet<Token>();
-		for(Token token : currentLocks) {
-			if (token.isOld()) {
-				toRemove.add(token);
+		final Lock _this = this;
+		Runnable clean = new Runnable(){
+			public void run() {
+				while (true) {
+					Set<Token> toRemove = new HashSet<Token>();
+					for(Token token : currentLocks) {
+						if (token.isOld()) {
+							toRemove.add(token);
+						}
+					}
+					for(Token token : toRemove) {
+						currentLocks.remove(token);
+						writeMode = false;
+					}
+					synchronized(_this) {
+						_this.notify();
+					}
+				}
 			}
-		}
-		for(Token token : currentLocks) {
-			currentLocks.remove(token);
-			writeMode = false;
-		}
+		};
+		
+		new Thread(clean).start();
+	}
+	
+	public static void main(String[] args) {
+		Lock l = new Lock(new Integer(2));
+		l.writeLock();
+		l.readLock();
+		System.out.println("here");
+		System.exit(0);
 	}
 }
