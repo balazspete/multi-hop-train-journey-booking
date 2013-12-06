@@ -132,12 +132,36 @@ public class Client extends Thread {
 			}
 		});
 		
+		bookingWindow.getBtnR().addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					refreshData(DateTime.now());
+				} catch (FatalNodeException exx) {
+					String msg= "Failed to refresh data, local copy might be outdated. Error: " + exx.getMessage();
+					System.err.println(msg);
+					JOptionPane.showMessageDialog(null, msg);
+				}
+			}
+		});
+		
 		mainWindow.setVisible(true);
 	}
 	
 	public List<Section> findJourney(String source, String target, DateTime from) {
 		AppliedDijkstraShortestPath dijkstra = new AppliedDijkstraShortestPath(network, getStation(source), getStation(target), from);
 		return dijkstra.getPath();
+	}
+	
+	private void refreshData(DateTime from) throws FatalNodeException{
+		loader = new ClientDataLoader(info.getLocation(), CLUSTER_PORT, network, routeToCompanies, communicationsLock);
+		try {
+			loader.getData(from, null, false);
+			
+			loader.getStations();
+		} catch (StaticDataLoadException e) {
+			throw new FatalNodeException(e.getMessage());
+		}
 	}
 	
 	public Set<Seat> bookJourney(HashSet<Section> path) throws BookingException {
@@ -203,6 +227,12 @@ public class Client extends Thread {
 					String message = "Failed to book journey: " + ex.getMessage();
 					System.err.println(message);
 					JOptionPane.showMessageDialog(null, message, "Failed to book journey", JOptionPane.ERROR_MESSAGE);
+					
+					try {
+						refreshData(from);
+					} catch (FatalNodeException exx) {
+						System.err.println("Failed to refresh data, local copy might be outdated. Error: " + exx.getMessage());
+					}
 				}
 			}
 		});

@@ -48,6 +48,14 @@ public class BookingWindow extends JFrame {
 		cheapest_journey = "Cheapest journey",
 		least_hops = "Least number of hops";
 	private JButton btnSearchButton;
+	private JButton btnR;
+
+	/**
+	 * @return the btnR
+	 */
+	public JButton getBtnR() {
+		return btnR;
+	}
 
 	/**
 	 * Create the frame.
@@ -144,6 +152,10 @@ public class BookingWindow extends JFrame {
 		lblLoading.setBounds(16, 206, 528, 16);
 		lblLoading.setVisible(false);
 		contentPane.add(lblLoading);
+		
+		btnR = new JButton("R");
+		btnR.setBounds(403, 6, 37, 29);
+		contentPane.add(btnR);
 		
 		MouseAdapter optionsAdapter = new MouseAdapter() {
 			@Override
