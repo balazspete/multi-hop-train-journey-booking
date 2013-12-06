@@ -167,7 +167,7 @@ public class DistributedRepositoryDataStore extends DataRepository {
 		} catch (StoreActionException e) {
 			// No previously created cache, initiate blank Store
 			System.err.println("No previous cache found for `" + name + "`, creating blank data-store...");
-			return new Store(STORE_FILE_PATH, name);
+			return new Store(name, STORE_FILE_PATH);
 		}
 	}
 
