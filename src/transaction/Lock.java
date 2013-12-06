@@ -247,14 +247,17 @@ public class Lock<T> {
 			public void run() {
 				while (true) {
 					Set<Token> toRemove = new HashSet<Token>();
-					for(Token token : currentLocks) {
-						if (token.isOld()) {
-							toRemove.add(token);
+
+					synchronized (_this) {
+						for(Token token : currentLocks) {
+							if (token.isOld()) {
+								toRemove.add(token);
+							}
 						}
-					}
-					for(Token token : toRemove) {
-						currentLocks.remove(token);
-						writeMode = false;
+						for(Token token : toRemove) {
+							currentLocks.remove(token);
+							writeMode = false;
+						}
 					}
 					synchronized(_this) {
 						_this.notify();
