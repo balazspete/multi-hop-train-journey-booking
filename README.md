@@ -3,11 +3,20 @@ Multi-hop Train Journey Booking
 
 Individual Programming Project for Mobile and Ubiquitous Computing
 
-See `Report.pdf` for more information.
+#### Requirements
 
-Under MIT License, see `LICENSE` for more information.
+* Design and implement (a prototype) of a system to allow travel agents to perform on-line booking of (multi-hop) train journeys.
+    * Focus on choosing an appropriate organization of the system and suitable algorithms for ticket booking and cancellation.
+    * Use only sockets for communication between the parts of the system and write in Java.
+* May ignore security and availability concerns - specifically you may assume that nodes and disks do not fail but you should allow for the possibility of communication failure.
+* You need only provide a rudimentary user interface.
+* In designing the system you should also consider that such a system might have to scale to support different deployments.
 
-Repository public since Thursday, 19th of December 2013 (_13 days past demonstration and submission date of 6 December 2013_).
+#### Disclaimers
+
+* See `Report.pdf` for more information.
+* Under MIT License, see `LICENSE` for more information.
+* Repository public since Thursday, 19th of December 2013 (_13 days past demonstration and submission date of 6 December 2013_).
 
 ## Compile data
 
