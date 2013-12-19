@@ -4,7 +4,9 @@ Multi-hop Train Journey Booking
 Individual Programming Project for Mobile and Ubiquitous Computing
 
 See `Report.pdf` for more information.
+Under MIT License, see `LICENSE` for more information.
 
+Repository public since Thursday, 19th of December 2013 (13 days past demonstration and submission date of 6 December 2013).
 
 ## Compile data
 
